@@ -1,9 +1,39 @@
+const API_BASE = "http://localhost:8000";
 const allowedRoots = new Set();
 const continueAnywayHosts = new Set();
 const skipOnce = new Map();
 const lastByTab = new Map();
 const lastSafeUrl = new Map();
 let protectionEnabled = true;
+
+const TRUSTED_ROOTS = new Set([
+  "google.com",
+  "youtube.com",
+  "youtu.be",
+  "gstatic.com",
+  "googleusercontent.com",
+  "googlevideo.com",
+  "wikipedia.org",
+  "github.com",
+  "microsoft.com",
+  "live.com",
+  "office.com",
+  "apple.com",
+  "icloud.com",
+  "cloudflare.com",
+  "amazon.com",
+  "facebook.com",
+  "instagram.com",
+  "whatsapp.com",
+  "twitter.com",
+  "x.com",
+  "linkedin.com",
+  "reddit.com",
+  "bing.com",
+  "duckduckgo.com",
+  "yahoo.com",
+  "mozilla.org",
+]);
 
 chrome.storage.local.get({ protectionEnabled: true }, (stored) => {
   protectionEnabled = stored.protectionEnabled !== false;
@@ -57,6 +87,10 @@ function isAllowed(host) {
   return allowedRoots.has(root) || allowedRoots.has(host);
 }
 
+function isTrusted(host) {
+  return TRUSTED_ROOTS.has(rootHost(host));
+}
+
 function setBadge(tabId, classification) {
   const map = {
     malware: { text: "BLK", color: "#e26156" },
@@ -85,6 +119,30 @@ function blockedUrl() {
   return chrome.runtime.getURL("blocked.html");
 }
 
+async function analyzeQuietly(tabId, url) {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/analyze`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, client: "extension" }),
+    });
+    const result = await res.json();
+    if (!res.ok) return;
+    await remember(tabId, url, result);
+    setBadge(tabId, result.classification);
+    if (result.classification === "malware" || result.classification === "phishing") {
+      skipOnce.set(tabId, blockedUrl());
+      await chrome.tabs.update(tabId, { url: blockedUrl() });
+      return;
+    }
+    if (result.classification === "benign") {
+      allowedRoots.add(rootHost(hostOf(url)));
+    }
+  } catch {
+    // Trusted navigations continue even if the API is down.
+  }
+}
+
 chrome.webNavigation.onCommitted.addListener((details) => {
   if (details.frameId !== 0) return;
   if (isIgnored(details.url)) return;
@@ -106,6 +164,10 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 
   const host = hostOf(url);
   if (isAllowed(host)) return;
+  if (isTrusted(host)) {
+    analyzeQuietly(tabId, url);
+    return;
+  }
 
   setBadge(tabId, "checking");
   chrome.tabs.update(tabId, { url: checkingUrl(url, tabId) });

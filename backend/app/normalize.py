@@ -4,7 +4,7 @@ from urllib.parse import urlsplit, urlunsplit
 
 import idna
 
-MAX_URL_LENGTH = 2048
+MAX_URL_LENGTH = 4096
 SUPPORTED_SCHEMES = {"http", "https"}
 
 

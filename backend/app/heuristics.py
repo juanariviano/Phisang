@@ -5,6 +5,7 @@ import re
 from urllib.parse import unquote, urlsplit
 
 from .models import HeuristicResult
+from .reputation import is_well_known_host
 
 SUSPICIOUS_TOKENS = (
     "login",
@@ -100,18 +101,20 @@ def score(normalized_url: str) -> HeuristicResult:
         signals.append("Hostname contains many hyphens, a common phishing pattern")
 
     token_hits = [token for token in SUSPICIOUS_TOKENS if token in haystack]
-    if token_hits:
+    well_known = is_well_known_host(host)
+    if token_hits and not well_known:
         risk += min(40, 12 * len(token_hits))
         shown = ", ".join(token_hits[:4])
         signals.append(f"Login or verification terms appear in the URL ({shown})")
 
     url_len = len(normalized_url)
-    if url_len > 120:
-        risk += 15
-        signals.append("URL is significantly longer than a typical website address")
-    elif url_len > 75:
-        risk += 8
-        signals.append("URL is longer than usual")
+    if not well_known:
+        if url_len > 120:
+            risk += 15
+            signals.append("URL is significantly longer than a typical website address")
+        elif url_len > 75:
+            risk += 8
+            signals.append("URL is longer than usual")
 
     tld = labels[-1] if labels else ""
     if tld in SUSPICIOUS_TLDS:
@@ -123,7 +126,7 @@ def score(normalized_url: str) -> HeuristicResult:
         signals.append(f"URL uses a non-standard port ({parts.port})")
 
     percent_count = normalized_url.count("%")
-    if percent_count >= 4:
+    if percent_count >= 4 and not well_known:
         risk += 10
         signals.append("URL contains heavy percent-encoding that can hide the path")
 

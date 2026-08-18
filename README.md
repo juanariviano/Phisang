@@ -5,7 +5,7 @@ Chrome extension + web scanner + API that classifies URLs as **malware**, **phis
 Detection follows the product flowchart, minus HTML crawling:
 
 1. Normalize the URL (no DNS, no visit).
-2. Look it up in [URLhaus](https://urlhaus.abuse.ch/) (exact URL, then host). A match blocks immediately as malware.
+2. Look it up in [URLhaus](https://urlhaus.abuse.ch/). An **exact URL** match (or the same path on that host, or any listing on a malware IP) blocks immediately. A few unrelated URLhaus rows on a large site such as `www.google.com` do **not** block every page on that host.
 3. Run a **placeholder lexical “ML”** (heuristics, not a trained model).
 4. If the URL does not look benign, or benign confidence is **≤ 80%**, send the URL string to **Gemini** for classification and educational reasoning.
 5. Show a block interstitial or allow navigation with an explicit **not listed ≠ safe** caveat.
@@ -54,7 +54,7 @@ Use these in the **scanner**. Do **not** open the malware sample in a normal tab
 
 | Case | URL | Expected path |
 |---|---|---|
-| Benign, high confidence | `https://www.wikipedia.org` | URLhaus miss → heuristic allow (caveat shown) |
+| Benign Google search | `https://www.google.com/search?q=youtube` | Not listed (unrelated google.com URLhaus rows are ignored) |
 | Known malware | `http://77.73.133.113/lego/mine.exe` | URLhaus match → `malware`, no Gemini |
 | Phishing-looking, unlisted | `https://secure-login-paypal-verify.account-update.xyz/signin?session=unlock` | Heuristic escalate → Gemini `phishing` + reasoning |
 | Degraded | Omit `GEMINI_API_KEY` and retry the phishing URL | `unavailable` — not treated as benign |

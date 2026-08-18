@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Optional
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -8,9 +9,11 @@ from .cache import get_cached, set_cached
 from .config import settings
 from .models import ThreatIntel
 from .normalize import hostname_of
+from .reputation import is_ip_host
 
 URLHAUS_URL_ENDPOINT = "https://urlhaus-api.abuse.ch/v1/url/"
 URLHAUS_HOST_ENDPOINT = "https://urlhaus-api.abuse.ch/v1/host/"
+CACHE_PREFIX = "v2"
 
 
 class UrlhausError(RuntimeError):
@@ -59,6 +62,61 @@ def _to_intel(payload: dict[str, Any], match_kind: str) -> ThreatIntel:
     )
 
 
+def _same_listed_url(current: str, listed: str) -> bool:
+    """True only if the current URL is the listed indicator or under the same path."""
+    try:
+        cur = urlsplit(current)
+        lis = urlsplit(listed)
+    except ValueError:
+        return False
+    if (cur.hostname or "").lower() != (lis.hostname or "").lower():
+        return False
+    cur_path = (cur.path or "/").rstrip("/") or "/"
+    lis_path = (lis.path or "/").rstrip("/") or "/"
+    if lis_path == "/":
+        return cur_path == "/"
+    if cur_path == lis_path:
+        return True
+    return cur_path.startswith(lis_path + "/")
+
+
+def _intel_from_host(normalized_url: str, host: str, payload: dict[str, Any]) -> ThreatIntel:
+    status = payload.get("query_status")
+    if status in {"no_results", "invalid_host", "invalid_url"}:
+        return ThreatIntel(matched=False, source="URLhaus", feed_status="ok")
+    if status != "ok":
+        raise UrlhausError(f"URLhaus host lookup status: {status}")
+
+    # Dedicated malware IPs: any listing on the IP is enough to block.
+    if is_ip_host(host):
+        return _to_intel(payload, "host")
+
+    listed = payload.get("urls") or []
+    if not isinstance(listed, list):
+        return ThreatIntel(matched=False, source="URLhaus", feed_status="ok")
+
+    for item in listed:
+        if not isinstance(item, dict):
+            continue
+        listed_url = item.get("url")
+        if not listed_url or not _same_listed_url(normalized_url, str(listed_url)):
+            continue
+        urlhaus_id = item.get("id") or item.get("urlhaus_reference")
+        return ThreatIntel(
+            matched=True,
+            source="URLhaus",
+            threat_type=_threat_type(item) or _threat_type(payload),
+            id=str(urlhaus_id) if urlhaus_id is not None else None,
+            first_seen=_first_seen(item) or _first_seen(payload),
+            url_status=item.get("url_status"),
+            match_kind="host",
+            feed_status="ok",
+        )
+
+    # Other URLhaus rows on this hostname are unrelated to the current path.
+    return ThreatIntel(matched=False, source="URLhaus", feed_status="ok")
+
+
 async def _post(endpoint: str, data: dict[str, str]) -> dict[str, Any]:
     try:
         async with httpx.AsyncClient(timeout=settings.urlhaus_timeout_seconds) as client:
@@ -76,7 +134,7 @@ async def _post(endpoint: str, data: dict[str, str]) -> dict[str, Any]:
 
 
 async def lookup(normalized_url: str) -> ThreatIntel:
-    url_key = f"url:{normalized_url}"
+    url_key = f"{CACHE_PREFIX}:url:{normalized_url}"
     cached = get_cached(url_key)
     if cached is not None:
         return ThreatIntel.model_validate(cached)
@@ -93,25 +151,12 @@ async def lookup(normalized_url: str) -> ThreatIntel:
         raise UrlhausError(f"URLhaus URL lookup status: {status}")
 
     host = hostname_of(normalized_url)
-    host_key = f"host:{host}"
-    cached_host = get_cached(host_key)
-    if cached_host is not None:
-        intel = ThreatIntel.model_validate(cached_host)
-        set_cached(url_key, intel.model_dump())
-        return intel
+    host_raw_key = f"{CACHE_PREFIX}:hostraw:{host}"
+    host_payload = get_cached(host_raw_key)
+    if host_payload is None:
+        host_payload = await _post(URLHAUS_HOST_ENDPOINT, {"host": host})
+        set_cached(host_raw_key, host_payload)
 
-    host_payload = await _post(URLHAUS_HOST_ENDPOINT, {"host": host})
-    host_status = host_payload.get("query_status")
-    if host_status == "ok":
-        intel = _to_intel(host_payload, "host")
-        set_cached(host_key, intel.model_dump())
-        set_cached(url_key, intel.model_dump())
-        return intel
-
-    if host_status not in {"no_results", "invalid_host", "invalid_url"}:
-        raise UrlhausError(f"URLhaus host lookup status: {host_status}")
-
-    intel = ThreatIntel(matched=False, source="URLhaus", feed_status="ok")
+    intel = _intel_from_host(normalized_url, host, host_payload)
     set_cached(url_key, intel.model_dump())
-    set_cached(host_key, intel.model_dump())
     return intel

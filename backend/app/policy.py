@@ -12,7 +12,7 @@ from .urlhaus import UrlhausError
 
 logger = logging.getLogger("linkguard")
 
-POLICY_VERSION = "poc-flowchart-v1"
+POLICY_VERSION = "poc-flowchart-v1.1"
 
 LIMITATIONS = [
     "The destination was not visited or analyzed",

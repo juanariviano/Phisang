@@ -22,6 +22,7 @@ Rules:
 - Prefer phishing when the URL impersonates login, verification, billing, or a brand
   on an unrelated host.
 - Prefer malware when the path looks like a payload (exe, apk, js dropper, invoice.doc).
+- Search, login, and homepage URLs on well-known sites (google.com, youtube.com, wikipedia.org, github.com, microsoft.com, apple.com) are benign even if the query string is long.
 - reasoning must be 2-4 short sentences a non-expert can learn from.
 
 Return JSON only:

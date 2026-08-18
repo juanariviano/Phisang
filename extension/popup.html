@@ -2,27 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>LinkGuard</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <header>
-      <strong>LinkGuard</strong>
-      <span id="badge" class="badge">—</span>
+      <div class="brand">
+        <span class="mark">LG</span>
+        <strong>LinkGuard</strong>
+      </div>
+      <span id="badge" class="badge">Idle</span>
     </header>
     <label class="toggle">
       <input type="checkbox" id="enabled" checked />
-      Protect navigations
+      <span>Protect navigations</span>
     </label>
     <p id="url" class="url">No active tab result yet.</p>
-    <p id="summary"></p>
+    <p id="summary" class="summary"></p>
     <p id="caveat" class="caveat hidden"></p>
     <ul id="signals"></ul>
     <details>
       <summary>Technical details</summary>
-      <pre id="tech">No scan yet. Browse to an http(s) page with the backend running.</pre>
+      <pre id="tech">Browse to an http(s) page with the API on localhost:8000.</pre>
     </details>
-    <p class="fine">Not listed ≠ safe · URLhaus / abuse.ch · POC only</p>
+    <p class="fine">Not listed is not safe · URLhaus / abuse.ch</p>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -2,11 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>LinkGuard blocked this page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="pages.css" />
   </head>
-  <body class="page blocked">
-    <main class="card">
+  <body class="shell blocked">
+    <main class="panel">
       <p class="eyebrow" id="eyebrow">LinkGuard protection</p>
       <h1 id="title">This URL was blocked</h1>
       <p id="url" class="url"></p>
@@ -18,10 +22,7 @@
         <button id="go-back" type="button">Go back</button>
         <button id="continue" type="button" class="ghost">Continue anyway (demo only)</button>
       </div>
-      <p class="fine">
-        Educational interstitial · destination was not crawled ·
-        <span>URLhaus data by abuse.ch</span>
-      </p>
+      <p class="fine">Educational interstitial · destination was not crawled · URLhaus data by abuse.ch</p>
     </main>
     <script src="blocked.js"></script>
   </body>

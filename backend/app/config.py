@@ -5,7 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 ROOT_DIR = Path(__file__).resolve().parents[2]
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BACKEND_DIR / "data"
-WEB_DIR = ROOT_DIR / "web"
+WEB_SRC = ROOT_DIR / "web"
+WEB_DIR = WEB_SRC / "dist" if (WEB_SRC / "dist").exists() else WEB_SRC
 
 
 class Settings(BaseSettings):

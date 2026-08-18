@@ -1,0 +1,23 @@
+{
+  "name": "linkguard-scanner",
+  "private": true,
+  "version": "0.1.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "framer-motion": "^12.23.12",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.12",
+    "@vitejs/plugin-react": "^5.0.2",
+    "tailwindcss": "^4.1.12",
+    "vite": "^7.1.3"
+  }
+}

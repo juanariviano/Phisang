@@ -2,22 +2,26 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>LinkGuard is checking this link</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="pages.css" />
   </head>
-  <body class="page checking">
-    <main class="card">
-      <div class="pulse" aria-hidden="true"></div>
-      <p class="eyebrow">LinkGuard · local check then server if needed</p>
+  <body class="shell checking">
+    <main class="panel">
+      <div class="orb" aria-hidden="true"></div>
+      <p class="eyebrow">LinkGuard · three-gate check</p>
       <h1>Checking this URL</h1>
-      <p id="url" class="url">…</p>
+      <p id="url" class="url"></p>
       <ol class="steps">
-        <li>URLhaus known-malware lookup</li>
-        <li>Placeholder lexical model</li>
-        <li>Gemini only if confidence is low or the URL looks suspicious</li>
+        <li><span>01</span> URLhaus known-malware lookup</li>
+        <li><span>02</span> Placeholder lexical model</li>
+        <li><span>03</span> Gemini only if confidence is low</li>
       </ol>
       <p class="fine">The destination page is not visited during analysis.</p>
-      <p id="status" class="fine">Contacting LinkGuard API…</p>
+      <p id="status" class="fine">Contacting LinkGuard API</p>
     </main>
     <script src="checking.js"></script>
   </body>

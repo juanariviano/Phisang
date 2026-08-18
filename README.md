@@ -33,10 +33,22 @@ cd backend
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
+cd ../web
+npm install
+npm run build
+
+cd ../backend
 uvicorn app.main:app --reload --port 8000
 ```
 
 Scanner: [http://localhost:8000](http://localhost:8000)
+
+During UI work you can also run the scanner with Vite (proxies `/api` to port 8000):
+
+```bash
+cd web && npm run dev
+```
 
 ### Load the extension
 
@@ -45,6 +57,7 @@ Scanner: [http://localhost:8000](http://localhost:8000)
 3. **Load unpacked** → select the `extension/` folder
 4. Keep the API running on port 8000
 5. Leave **Protect navigations** on in the toolbar popup while demoing; turn it off when you need to browse normally
+6. After UI changes, reload the unpacked extension
 
 The extension intercepts `http(s)` navigations (except the scanner itself), shows a checking page, then either continues or replaces the tab with a blocked interstitial.
 

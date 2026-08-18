@@ -1,0 +1,64 @@
+body {
+  margin: 0;
+  width: 340px;
+  background: #0b1020;
+  color: #f4efe4;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  padding: 14px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #1b243c;
+}
+
+.toggle {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 10px 0 8px;
+  font-size: 13px;
+}
+
+.url {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  color: #9aa3b8;
+  word-break: break-all;
+}
+
+.caveat {
+  background: rgba(228, 192, 122, 0.1);
+  border-left: 3px solid #e4c07a;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.hidden { display: none !important; }
+
+ul { padding-left: 18px; font-size: 12px; color: #d7d2c6; }
+details { margin-top: 8px; }
+pre {
+  white-space: pre-wrap;
+  font-size: 11px;
+  background: #0d1428;
+  padding: 8px;
+  border-radius: 8px;
+}
+.fine { color: #9aa3b8; font-size: 11px; }
+
+.malware { color: #e26156; }
+.phishing { color: #e39a3c; }
+.benign { color: #8b95a8; }
+.unavailable { color: #8b7cf6; }

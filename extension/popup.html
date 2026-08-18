@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LinkGuard</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <strong>LinkGuard</strong>
+      <span id="badge" class="badge">—</span>
+    </header>
+    <label class="toggle">
+      <input type="checkbox" id="enabled" checked />
+      Protect navigations
+    </label>
+    <p id="url" class="url">No active tab result yet.</p>
+    <p id="summary"></p>
+    <p id="caveat" class="caveat hidden"></p>
+    <ul id="signals"></ul>
+    <details>
+      <summary>Technical details</summary>
+      <pre id="tech">No scan yet. Browse to an http(s) page with the backend running.</pre>
+    </details>
+    <p class="fine">Not listed ≠ safe · URLhaus / abuse.ch · POC only</p>
+    <script src="popup.js"></script>
+  </body>
+</html>

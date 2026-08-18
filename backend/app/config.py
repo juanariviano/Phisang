@@ -1,0 +1,29 @@
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+DATA_DIR = BACKEND_DIR / "data"
+WEB_DIR = ROOT_DIR / "web"
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=str(ROOT_DIR / ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+    urlhaus_auth_key: str = ""
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.0-flash"
+    urlhaus_timeout_seconds: float = 8.0
+    cache_ttl_seconds: int = 900
+    heuristic_benign_threshold: int = 80
+    api_host: str = "0.0.0.0"
+    api_port: int = 8000
+
+
+settings = Settings()
+DATA_DIR.mkdir(parents=True, exist_ok=True)

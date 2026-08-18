@@ -1,0 +1,128 @@
+:root {
+  --bg: #0b1020;
+  --card: #141c33;
+  --text: #f4efe4;
+  --muted: #9aa3b8;
+  --gold: #e4c07a;
+  --malware: #e26156;
+  --phishing: #e39a3c;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(800px 320px at 0% 0%, rgba(226, 97, 86, 0.18), transparent 55%),
+    var(--bg);
+  color: var(--text);
+}
+
+.page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  width: min(640px, 100%);
+  background: var(--card);
+  border: 1px solid rgba(244, 239, 228, 0.1);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  color: var(--gold);
+}
+
+h1 { margin: 0 0 10px; font-size: 32px; letter-spacing: -0.03em; }
+
+.url {
+  font-family: ui-monospace, "IBM Plex Mono", monospace;
+  font-size: 13px;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.summary { line-height: 1.5; }
+
+.steps { color: var(--muted); line-height: 1.7; }
+
+.signals, .tech { padding: 0; margin: 16px 0; }
+.signals { list-style: none; display: grid; gap: 8px; }
+.signals li, .tech div {
+  background: #0d1428;
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(244, 239, 228, 0.08);
+}
+
+.tech { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tech dt {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.tech dd { margin: 4px 0 0; }
+
+.reasoning {
+  background: rgba(228, 192, 122, 0.08);
+  border-left: 3px solid var(--gold);
+  padding: 12px 14px;
+  border-radius: 8px;
+  line-height: 1.55;
+}
+.reasoning h2 { margin: 0 0 8px; font-size: 14px; color: var(--gold); }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 8px; }
+
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  background: var(--gold);
+  color: #1a1206;
+}
+
+button.ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(244, 239, 228, 0.16);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.fine { color: var(--muted); font-size: 12px; }
+.hidden { display: none !important; }
+
+.pulse {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #6cb3d9;
+  box-shadow: 0 0 0 0 rgba(108, 179, 217, 0.7);
+  animation: pulse 1.4s infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes pulse {
+  70% { box-shadow: 0 0 0 12px rgba(108, 179, 217, 0); }
+}
+
+body.is-phishing {
+  background:
+    radial-gradient(800px 320px at 0% 0%, rgba(227, 154, 60, 0.2), transparent 55%),
+    var(--bg);
+}

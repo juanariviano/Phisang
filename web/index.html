@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LinkGuard — Know before you click</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <span class="logo" aria-hidden="true">LG</span>
+          <div>
+            <strong>LinkGuard</strong>
+            <p>POC scanner · URLhaus + heuristic ML + Gemini</p>
+          </div>
+        </div>
+        <div id="health-pill" class="pill pill-unknown">Checking API…</div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <p class="eyebrow">Malicious URL detection · v0.1 POC</p>
+          <h1>Check a link before it becomes a mistake.</h1>
+          <p class="lede">
+            LinkGuard looks up known malware in URLhaus, runs a placeholder lexical model,
+            and asks Gemini only when the local check is inconclusive. The destination page
+            is never fetched.
+          </p>
+        </section>
+
+        <form id="scan-form" class="scanner" autocomplete="off">
+          <label for="url-input">URL to analyze</label>
+          <div class="scan-row">
+            <input
+              id="url-input"
+              name="url"
+              type="text"
+              spellcheck="false"
+              placeholder="https://example.com/path"
+              required
+            />
+            <button type="submit" id="scan-btn">Analyze</button>
+          </div>
+          <div class="examples" id="examples">
+            <span>Try:</span>
+            <button type="button" data-url="https://www.wikipedia.org">Benign</button>
+            <button type="button" data-url="http://77.73.133.113/lego/mine.exe">URLhaus malware</button>
+            <button type="button" data-url="https://secure-login-paypal-verify.account-update.xyz/signin?session=unlock">Phishing-looking</button>
+          </div>
+          <p class="fineprint">
+            Do not open the malware sample in a browser tab. The scanner never visits it.
+            Attribution: threat matches come from
+            <a href="https://urlhaus.abuse.ch/" target="_blank" rel="noreferrer">URLhaus / abuse.ch</a>.
+          </p>
+        </form>
+
+        <section id="result" class="result hidden" aria-live="polite"></section>
+
+        <section class="inventory">
+          <div class="inventory-head">
+            <h2>Scan inventory</h2>
+            <button type="button" id="refresh-inventory" class="text-btn">Refresh</button>
+          </div>
+          <div id="inventory-list" class="inventory-list">No scans yet.</div>
+        </section>
+      </main>
+
+      <footer>
+        <p>
+          Policy <code>poc-flowchart-v1</code> · Not listed is not safe · No page crawl ·
+          Heuristic is not a trained model
+        </p>
+      </footer>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>

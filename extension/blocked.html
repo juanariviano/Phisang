@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LinkGuard blocked this page</title>
+    <link rel="stylesheet" href="pages.css" />
+  </head>
+  <body class="page blocked">
+    <main class="card">
+      <p class="eyebrow" id="eyebrow">LinkGuard protection</p>
+      <h1 id="title">This URL was blocked</h1>
+      <p id="url" class="url"></p>
+      <p id="summary" class="summary"></p>
+      <section id="reasoning" class="reasoning hidden"></section>
+      <ul id="signals" class="signals"></ul>
+      <dl id="tech" class="tech"></dl>
+      <div class="actions">
+        <button id="go-back" type="button">Go back</button>
+        <button id="continue" type="button" class="ghost">Continue anyway (demo only)</button>
+      </div>
+      <p class="fine">
+        Educational interstitial · destination was not crawled ·
+        <span>URLhaus data by abuse.ch</span>
+      </p>
+    </main>
+    <script src="blocked.js"></script>
+  </body>
+</html>

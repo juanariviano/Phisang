@@ -3,30 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>LinkGuard</title>
+    <title>Phisang</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@300..700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme.css" />
     <link rel="stylesheet" href="popup.css" />
   </head>
-  <body>
-    <header>
-      <div class="brand">
-        <span class="mark">LG</span>
-        <strong>LinkGuard</strong>
-      </div>
-      <span id="badge" class="badge">Idle</span>
-    </header>
-    <label class="toggle">
-      <input type="checkbox" id="enabled" checked />
-      <span>Protect navigations</span>
-    </label>
-    <p id="url" class="url">No active tab result yet.</p>
-    <p id="summary" class="summary"></p>
-    <p id="caveat" class="caveat hidden"></p>
-    <ul id="signals"></ul>
-    <details>
-      <summary>Technical details</summary>
-      <pre id="tech">Browse to an http(s) page with the API on localhost:8000.</pre>
-    </details>
-    <p class="fine">Not listed is not safe · URLhaus / abuse.ch</p>
+  <body class="is-idle">
+    <div id="hazard" class="hazard-rule" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <svg class="brand-mark" viewBox="48 2 64 192" width="13" height="39" aria-hidden="true"><path d="M80 38 C 78 27 76 20 74 12" fill="none" stroke="#467235" stroke-width="9" stroke-linecap="round"/><path d="M80 34 C 66 44 56 84 56 120 C 56 152 66 174 80 184 C 75 150 71 100 76 40 Z" fill="#FFBF00"/><path d="M76 40 C 71 100 75 150 80 184 C 85 186 89 184 91 178 C 87 148 87 96 84 40 Z" fill="#FFBF00"/><ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill="#8A5A0F"/><path d="M84 40 C 87 96 87 148 91 178 C 101 168 104 146 104 120 C 104 84 94 44 80 34 Z" fill="#FFBF00"/></svg>
+          <strong>Phisang</strong>
+        </div>
+        <span id="badge" class="badge">Idle</span>
+      </header>
+
+      <section class="verdict">
+        <div id="banana" class="banana-slot" aria-hidden="false"></div>
+        <div class="verdict-text">
+          <h1 class="verdict-title">
+            <span id="verdict">No result</span>
+            <span id="ripeness" class="ripeness"></span>
+          </h1>
+          <p id="hint" class="verdict-hint">
+            Open an http(s) page while the Phisang API is running on localhost:8000.
+          </p>
+        </div>
+      </section>
+
+      <p id="caveat" class="caveat hidden"></p>
+
+      <p class="section-label">The peel</p>
+      <ul id="peel" class="peel"></ul>
+
+      <p id="signals-label" class="section-label hidden">Signals</p>
+      <ul id="signals" class="signals"></ul>
+
+      <label class="toggle" for="enabled">
+        <span>Check pages before they load</span>
+        <input type="checkbox" id="enabled" checked />
+      </label>
+
+      <details>
+        <summary>Technical details</summary>
+        <pre id="tech">Browse to an http(s) page with the API on localhost:8000.</pre>
+      </details>
+
+      <p class="fine">Not listed is not safe · URLhaus data by abuse.ch</p>
+    </div>
+
+    <script src="peel.js"></script>
+    <script src="banana.js"></script>
+    <script src="verdicts.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

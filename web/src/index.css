@@ -1,30 +1,256 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --color-ink: #141416;
-  --color-panel: #1c1c20;
-  --color-mist: #9c9ca6;
-  --color-paper: #f3f1ec;
-  --color-accent: #b85c4e;
-  --color-malware: #b85c4e;
-  --color-phishing: #c4883a;
-  --color-benign: #8d9199;
-  --color-checking: #7a8b96;
-  --color-unavailable: #7d8478;
+
+  /* The surface is an inspection bench, not the fruit. Both values are the
+     palette's green desaturated far down, so no new hue enters. */
+  --color-bench: #e8ebe0;
+  --color-paper: #f4f6ee;
+
+  /* Greens are the ink. */
+  --color-ink: #16210f;
+  --color-forest: #283f24;
+  --color-leaf: #467235;
+  --color-rind: #5c8f47;
+
+  /* Signal only. #FFBF00 is 1.37:1 on the bench — a fill, never text. */
+  --color-peel: #ffbf00;
+  --color-flesh: #fff78d;
+
+  /* Rot. */
+  --color-spot: #e0a526;
+  --color-rot: #8a5a0f;
+  --color-bruise: #0e1408;
+
+  /* Verdict tones. All are text-legible on the bench; hue never signals
+     alone, so each pairs with a pattern and a word. */
+  --color-malware: #0e1408;
+  --color-phishing: #8a5a0f;
+  --color-benign: #283f24;
+  --color-checking: #467235;
+  --color-unavailable: #467235;
 }
 
 html {
-  background: var(--color-ink);
+  background: var(--color-bench);
 }
 
 body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--color-bench);
+  color: var(--color-forest);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-peel);
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* --- The bench ----------------------------------------------------------
+   A cutting-mat grid: this is a surface you inspect things on. Minor rules
+   every 24px, a heavier one every 120px, both nearly invisible. */
+.bench {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--color-leaf) 9%, transparent) 0 1px,
+      transparent 1px 120px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-leaf) 9%, transparent) 0 1px,
+      transparent 1px 120px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--color-leaf) 4%, transparent) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-leaf) 4%, transparent) 0 1px,
+      transparent 1px 24px
+    );
+}
+
+/* --- Ripeness patterns --------------------------------------------------
+   Each verdict carries a pattern as well as a hue, so the state survives
+   greyscale and colour-blindness. */
+
+.pat-hazard {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-peel) 0 10px,
+    var(--color-bruise) 10px 20px
+  );
+}
+
+.pat-speckle {
+  background-color: var(--color-spot);
+  background-image:
+    radial-gradient(circle at 20% 30%, var(--color-rot) 2.2px, transparent 2.3px),
+    radial-gradient(circle at 68% 22%, var(--color-rot) 3px, transparent 3.1px),
+    radial-gradient(circle at 44% 74%, var(--color-rot) 2.5px, transparent 2.6px),
+    radial-gradient(circle at 86% 68%, var(--color-rot) 1.8px, transparent 1.9px);
+  background-size: 32px 32px;
+}
+
+.pat-hatch {
+  background-color: var(--color-bench);
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--color-leaf) 30%, transparent) 0 1.5px,
+    transparent 1.5px 8px
+  );
+}
+
+.hazard-rule {
+  height: 7px;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-peel) 0 9px,
+    var(--color-bruise) 9px 18px
+  );
+}
+
+/* --- The banana ---------------------------------------------------------
+   The peel hinges on the stem. `transform-box: view-box` is what makes the
+   origin resolve in viewBox units — without it the origin falls back to each
+   strip's own bounding box and the strips scissor across each other. */
+.peel-flap {
+  transform-box: view-box;
+  transform-origin: 80px 36px;
+  transition: transform 760ms cubic-bezier(0.34, 1.28, 0.5, 1);
+}
+
+.peel-fruit {
+  transition: opacity 420ms ease 220ms;
+}
+
+.banana-pulse {
+  animation: banana-breathe 1.9s ease-in-out infinite;
+}
+
+@keyframes banana-breathe {
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+/* --- Peel strips --------------------------------------------------------
+   Defined here rather than inline so the rotted variants stay in one place. */
+.strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-left: 2.5px solid var(--color-leaf);
+  border-radius: 0 0.375rem 0.375rem 0;
+  background: var(--color-bench);
+}
+
+.strip-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-leaf);
+  white-space: nowrap;
+}
+
+.strip-value {
+  font-family: var(--font-mono);
+  line-height: 1.5;
+  color: var(--color-ink);
+  word-break: break-all;
+}
+
+.strip-note {
+  grid-column: 2;
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--color-leaf);
+}
+
+/* --- The scan sweep -----------------------------------------------------
+   While a URL is being read, a light bar passes down the strips. The motion
+   depicts the actual work — the string being scanned — rather than filling a
+   generic progress bar. */
+.sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.sweep::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 42%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--color-peel) 32%, transparent),
+    transparent
+  );
+  animation: sweep 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes sweep {
+  from {
+    top: -45%;
+  }
+  to {
+    top: 100%;
+  }
+}
+
+/* --- The rot ------------------------------------------------------------
+   Severity is darkness. A clean result stays on paper; malware bruises it. */
+.rotted {
+  background: var(--color-bruise);
+  color: var(--color-flesh);
+}
+
+.rotted .on-rot {
+  color: var(--color-peel);
+}
+
+.rotted .off-rot {
+  color: color-mix(in srgb, var(--color-flesh) 62%, transparent);
+}
+
+.rotted .rule-rot {
+  border-color: color-mix(in srgb, var(--color-peel) 28%, transparent);
+}
+
+.rotted .strip {
+  background: color-mix(in srgb, var(--color-peel) 7%, transparent);
+  border-left-color: color-mix(in srgb, var(--color-peel) 50%, transparent);
+}
+
+.rotted .strip-value {
+  color: var(--color-peel);
+}
+
+.rotted .strip-label,
+.rotted .strip-note {
+  color: color-mix(in srgb, var(--color-flesh) 60%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -34,5 +260,16 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .sweep::after {
+    display: none;
+  }
+
+  .peel-flap,
+  .peel-fruit,
+  .banana-pulse {
+    transition: none;
+    animation: none;
   }
 }

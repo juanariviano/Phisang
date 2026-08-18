@@ -3,9 +3,9 @@ import { MagneticButton } from "./MagneticButton.jsx";
 
 export function ScanForm({ url, setUrl, busy, error, onSubmit }) {
   return (
-    <form onSubmit={onSubmit} className="mt-10 flex flex-col gap-2" autoComplete="off">
-      <label htmlFor="url-input" className="text-sm text-mist">
-        URL to analyze
+    <form onSubmit={onSubmit} className="mt-9 flex flex-col gap-2.5" autoComplete="off">
+      <label htmlFor="url-input" className="text-sm font-bold text-forest">
+        URL to peel
       </label>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-stretch">
         <input
@@ -13,28 +13,33 @@ export function ScanForm({ url, setUrl, busy, error, onSubmit }) {
           value={url}
           onChange={(event) => setUrl(event.target.value)}
           spellCheck={false}
+          inputMode="url"
           placeholder="https://example.com/path"
-          className="w-full rounded-2xl border border-white/10 bg-ink px-4 py-3.5 font-mono text-sm text-paper outline-none transition-[border-color] placeholder:text-mist/50 focus:border-accent/60"
+          aria-describedby="url-help"
+          aria-invalid={error ? "true" : undefined}
+          className="w-full rounded-lg border-[2.5px] border-ink bg-paper px-4 py-3.5 font-mono text-sm text-ink outline-none transition-colors placeholder:text-leaf/70 focus:bg-flesh/45"
         />
         <MagneticButton disabled={busy} className="w-full sm:w-auto">
-          {busy ? "Analyzing" : "Analyze"}
+          {busy ? "Peeling" : "Peel URL"}
         </MagneticButton>
       </div>
       {error ? (
-        <p className="text-sm text-accent" role="alert">
+        <p className="text-sm font-semibold text-rot" role="alert">
           {error}
         </p>
       ) : (
-        <p className="text-sm text-mist">HTTP and HTTPS only. Query strings stay on this machine and the local API.</p>
+        <p id="url-help" className="text-sm text-leaf">
+          HTTP and HTTPS only. The address stays on this machine and the local API.
+        </p>
       )}
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <span className="text-xs uppercase tracking-[0.16em] text-mist">Try</span>
+        <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-leaf">Try</span>
         {EXAMPLES.map((item) => (
           <button
             key={item.url}
             type="button"
             onClick={() => setUrl(item.url)}
-            className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-paper transition-transform active:scale-[0.98] hover:border-white/25"
+            className="cursor-pointer rounded-full border-2 border-leaf/55 px-3.5 py-1.5 text-xs font-semibold text-forest transition-all duration-200 hover:border-ink hover:bg-paper active:scale-95"
           >
             {item.label}
           </button>

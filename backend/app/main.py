@@ -16,17 +16,17 @@ from .normalize import UrlError
 from .policy import POLICY_VERSION, analyze, map_url_error
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
-logger = logging.getLogger("linkguard")
+logger = logging.getLogger("phisang")
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     init_cache()
-    logger.info("LinkGuard API ready policy=%s cache=%s", POLICY_VERSION, cache_ready())
+    logger.info("Phisang API ready policy=%s cache=%s", POLICY_VERSION, cache_ready())
     yield
 
 
-app = FastAPI(title="LinkGuard POC", version=POLICY_VERSION, lifespan=lifespan)
+app = FastAPI(title="Phisang POC", version=POLICY_VERSION, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,

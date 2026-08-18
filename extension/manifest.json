@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "LinkGuard",
+  "name": "Phisang",
   "version": "0.1.0",
-  "description": "POC malicious URL guard: URLhaus lookup, heuristic scoring, and Gemini reasoning.",
+  "description": "Reads the peel, never the fruit: URLhaus lookup, lexical scoring, and Gemini reasoning on the URL string alone.",
   "action": {
-    "default_title": "LinkGuard",
+    "default_title": "Phisang",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
@@ -34,8 +34,13 @@
   ],
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*"],
-      "js": ["content.js"],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ]

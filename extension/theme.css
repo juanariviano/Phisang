@@ -1,0 +1,260 @@
+/* Phisang shared tokens — kept in step with web/src/index.css. */
+
+:root {
+  /* The surface is an inspection bench, not the fruit. Both values are the
+     palette's green desaturated far down, so no new hue enters. */
+  --bench: #e8ebe0;
+  --paper: #f4f6ee;
+  --flesh: #fff78d;
+  --peel: #ffbf00;
+
+  /* Greens are the ink, not the room. */
+  --ink: #16210f;
+  --forest: #283f24;
+  --leaf: #467235;
+  --rind: #5c8f47;
+
+  /* Rot. */
+  --spot: #e0a526;
+  --rot: #8a5a0f;
+  --bruise: #0e1408;
+
+  --font-display: "Bricolage Grotesque", "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--peel);
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* --- The bench ----------------------------------------------------------
+   A cutting-mat grid: this is a surface you inspect things on. */
+.bench-grid {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--leaf) 9%, transparent) 0 1px,
+      transparent 1px 120px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--leaf) 9%, transparent) 0 1px,
+      transparent 1px 120px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--leaf) 4%, transparent) 0 1px,
+      transparent 1px 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--leaf) 4%, transparent) 0 1px,
+      transparent 1px 24px
+    );
+}
+
+/* --- Ripeness patterns --------------------------------------------------
+   Each verdict carries a pattern as well as a hue. A bright page cannot
+   signal danger with colour alone. */
+
+.pat-hazard {
+  background-image: repeating-linear-gradient(-45deg, var(--peel) 0 10px, var(--bruise) 10px 20px);
+}
+
+.pat-speckle {
+  background-color: var(--spot);
+  background-image:
+    radial-gradient(circle at 20% 30%, var(--rot) 2.2px, transparent 2.3px),
+    radial-gradient(circle at 68% 22%, var(--rot) 3px, transparent 3.1px),
+    radial-gradient(circle at 44% 74%, var(--rot) 2.5px, transparent 2.6px),
+    radial-gradient(circle at 86% 68%, var(--rot) 1.8px, transparent 1.9px);
+  background-size: 32px 32px;
+}
+
+.pat-hatch {
+  background-color: var(--bench);
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, var(--leaf) 30%, transparent) 0 1.5px,
+    transparent 1.5px 8px
+  );
+}
+
+.hazard-rule {
+  height: 7px;
+  flex: none;
+  background-image: repeating-linear-gradient(-45deg, var(--peel) 0 9px, var(--bruise) 9px 18px);
+}
+
+/* --- The banana --------------------------------------------------------
+   The peel hinges on the stem. `transform-box: view-box` is what makes the
+   origin resolve in viewBox units — without it the origin falls back to each
+   strip's own bounding box and the strips scissor across each other. */
+
+.peel-flap {
+  transform-box: view-box;
+  transform-origin: 80px 36px;
+  transition: transform 760ms cubic-bezier(0.34, 1.28, 0.5, 1);
+}
+
+.banana.is-open .flap-l {
+  transform: rotate(var(--peel-open, 0deg));
+}
+
+.banana.is-open .flap-r {
+  transform: rotate(calc(-1 * var(--peel-open, 0deg)));
+}
+
+.banana.is-open .flap-c {
+  transform: rotate(5deg);
+}
+
+.peel-fruit {
+  opacity: 0;
+  transition: opacity 420ms ease 220ms;
+}
+
+.banana.is-open .peel-fruit {
+  opacity: 1;
+}
+
+.banana-pulse {
+  animation: banana-breathe 1.9s ease-in-out infinite;
+}
+
+@keyframes banana-breathe {
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+/* --- The peel: shared strip list --------------------------------------- */
+
+.peel {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.peel-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 10px;
+  padding: 7px 10px;
+  border-left: 2.5px solid var(--leaf);
+  border-radius: 0 8px 8px 0;
+  background: var(--bench);
+  animation: strip-in 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes strip-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.peel-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--leaf);
+  white-space: nowrap;
+}
+
+.peel-value {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.peel-note {
+  grid-column: 2;
+  margin-top: 3px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--leaf);
+}
+
+.peel-empty {
+  padding: 14px 10px;
+  border: 2px dashed color-mix(in srgb, var(--leaf) 45%, transparent);
+  border-radius: 8px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--leaf);
+}
+
+/* --- The rot -----------------------------------------------------------
+   Severity is darkness. Malware is the only state that bruises the surface. */
+
+.rotted {
+  background: var(--bruise);
+  color: var(--flesh);
+}
+
+.rotted .peel-strip {
+  background: color-mix(in srgb, var(--peel) 7%, transparent);
+  border-left-color: color-mix(in srgb, var(--peel) 50%, transparent);
+}
+
+.rotted .peel-value {
+  color: var(--peel);
+}
+
+.rotted .peel-label,
+.rotted .peel-note {
+  color: color-mix(in srgb, var(--flesh) 60%, transparent);
+}
+
+.spin {
+  animation: spin 1.1s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .peel-flap,
+  .peel-fruit,
+  .banana-pulse {
+    transition: none;
+    animation: none;
+  }
+}

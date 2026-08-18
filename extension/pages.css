@@ -1,21 +1,11 @@
-:root {
-  --ink: #141416;
-  --panel: #1c1c20;
-  --paper: #f3f1ec;
-  --mist: #9c9ca6;
-  --accent: #b85c4e;
-  --phishing: #c4883a;
-  --line: rgba(243, 241, 236, 0.1);
-}
-
-* { box-sizing: border-box; }
-
-html, body {
+html,
+body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: Outfit, "Segoe UI", system-ui, sans-serif;
+  background: var(--bench);
+  color: var(--forest);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 .shell {
@@ -23,172 +13,434 @@ html, body {
   display: grid;
   place-items: center;
   padding: clamp(16px, 4vw, 40px);
-  background:
-    radial-gradient(720px 280px at 0% 0%, rgba(184, 92, 78, 0.16), transparent 55%),
-    var(--ink);
 }
 
-.shell.is-phishing,
-body.is-phishing {
-  background:
-    radial-gradient(720px 280px at 0% 0%, rgba(196, 136, 58, 0.16), transparent 55%),
-    var(--ink);
+/* Malware bruises the entire page. Severity is darkness — this is the loudest
+   thing Phisang can do, and only one state gets it. */
+body.is-malware {
+  background: var(--bruise);
+  color: var(--flesh);
 }
 
 .panel {
-  width: min(640px, 100%);
-  background: color-mix(in srgb, var(--panel) 92%, transparent);
-  border: 1px solid var(--line);
-  border-radius: 2rem;
+  width: min(660px, 100%);
+  overflow: hidden;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  border-radius: 0.9rem;
+  animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.is-malware .panel {
+  background: color-mix(in srgb, var(--peel) 5%, transparent);
+  border-color: var(--peel);
+}
+
+.panel > .body {
   padding: clamp(20px, 4vw, 36px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  animation: rise 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The frame states what kind of stop this is. Caution tape is reserved for
+   malware; phishing gets the spotted peel so the two never read alike. */
+body.is-phishing .hazard-rule {
+  height: 10px;
+  background-color: color-mix(in srgb, var(--spot) 26%, var(--bench));
+  background-image:
+    radial-gradient(circle at 14% 46%, var(--rot) 2.4px, transparent 2.5px),
+    radial-gradient(circle at 52% 68%, var(--rot) 1.8px, transparent 1.9px),
+    radial-gradient(circle at 78% 32%, var(--rot) 2.1px, transparent 2.2px);
+  background-size: 26px 10px;
 }
 
 @keyframes rise {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- Head -------------------------------------------------------------- */
+
+.masthead {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+
+.brand-mark {
+  display: block;
+  flex: none;
+  /* Upright the sealed fruit is 1:3 and reads as a sliver; the lockup tilts it. */
+  transform: rotate(-20deg);
+}
+
+.masthead strong {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+body.is-malware .masthead {
+  color: var(--peel);
+}
+
+.verdict-head {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .eyebrow {
+  margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 11px;
-  color: var(--accent);
+  letter-spacing: 0.18em;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--leaf);
 }
 
 h1 {
-  margin: 10px 0 12px;
-  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  margin: 8px 0 14px;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5.4vw, 2.9rem);
+  font-weight: 800;
   letter-spacing: -0.04em;
-  line-height: 1.1;
+  line-height: 0.96;
+  color: var(--ink);
 }
 
-.url {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 12px;
-  color: var(--mist);
-  word-break: break-all;
-  line-height: 1.5;
+.ripeness-line {
+  margin: 0 0 12px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--leaf);
 }
 
-.summary { line-height: 1.55; color: var(--paper); }
+body.is-malware .ripeness-line {
+  color: color-mix(in srgb, var(--flesh) 62%, transparent);
+}
+body.is-phishing .ripeness-line {
+  color: var(--rot);
+}
+
+.banana-slot {
+  flex: none;
+  line-height: 0;
+}
+
+.summary {
+  margin: 0;
+  max-width: 56ch;
+  line-height: 1.55;
+  color: var(--forest);
+}
+
+body.is-malware .eyebrow {
+  color: color-mix(in srgb, var(--flesh) 62%, transparent);
+}
+body.is-malware h1 {
+  color: var(--peel);
+}
+body.is-malware .summary {
+  color: var(--flesh);
+}
+
+body.is-phishing .eyebrow {
+  color: var(--rot);
+}
+body.is-phishing .summary {
+  color: var(--rot);
+}
+
+/* --- Sections ---------------------------------------------------------- */
+
+.section-label {
+  margin: 26px 0 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--leaf);
+}
+
+body.is-malware .section-label {
+  color: color-mix(in srgb, var(--flesh) 62%, transparent);
+}
 
 .steps {
-  color: var(--mist);
-  line-height: 1.8;
   padding: 0;
   list-style: none;
-  margin: 20px 0;
+  margin: 24px 0;
 }
 
 .steps li {
   display: grid;
-  grid-template-columns: 2rem 1fr;
-  gap: 10px;
-  border-top: 1px solid var(--line);
-  padding: 10px 0;
-  animation: rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  grid-template-columns: 1.6rem 1fr;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--leaf) 35%, transparent);
+  padding: 12px 0;
+  color: var(--forest);
+  animation: rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.steps li:nth-child(2) { animation-delay: 0.12s; }
-.steps li:nth-child(3) { animation-delay: 0.24s; }
-.steps span { font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--accent); }
+.steps li:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.steps li:nth-child(3) {
+  animation-delay: 0.2s;
+}
 
-.signals, .tech { padding: 0; margin: 16px 0; }
-.signals { list-style: none; }
+.steps span {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--peel);
+}
+
+.signals {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
 .signals li {
-  border-top: 1px solid var(--line);
-  padding: 10px 0;
-  color: var(--mist);
+  border-top: 1px solid color-mix(in srgb, var(--leaf) 35%, transparent);
+  padding: 11px 0;
+  color: var(--forest);
   font-size: 14px;
+  line-height: 1.5;
+}
+
+body.is-malware .signals li {
+  color: var(--peel);
+  border-top-color: color-mix(in srgb, var(--peel) 28%, transparent);
 }
 
 .tech {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0;
+  padding: 0;
+  margin: 0;
 }
 
 @media (min-width: 640px) {
-  .tech { grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .tech {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+  }
 }
 
-.tech div { border-top: 1px solid var(--line); padding: 10px 0; }
-.tech dt {
-  font-size: 11px;
-  color: var(--mist);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.tech div {
+  border-top: 1px solid color-mix(in srgb, var(--leaf) 35%, transparent);
+  padding: 10px 0;
 }
-.tech dd { margin: 4px 0 0; font-size: 14px; }
+
+.tech dt {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--leaf);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.tech dd {
+  margin: 4px 0 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink);
+  word-break: break-all;
+}
+
+body.is-malware .tech div {
+  border-top-color: color-mix(in srgb, var(--peel) 28%, transparent);
+}
+body.is-malware .tech dt {
+  color: color-mix(in srgb, var(--flesh) 62%, transparent);
+}
+body.is-malware .tech dd {
+  color: var(--peel);
+}
 
 .reasoning {
-  border-left: 2px solid var(--accent);
-  padding: 4px 0 4px 14px;
+  border-left: 4px solid var(--ink);
+  padding: 4px 0 4px 16px;
+  margin: 24px 0 0;
   line-height: 1.55;
 }
-.reasoning h2 { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
 
-.actions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin: 22px 0 10px;
+.reasoning h2 {
+  margin: 0 0 6px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--leaf);
 }
 
-@media (min-width: 520px) {
-  .actions { grid-template-columns: auto 1fr; align-items: center; }
+.reasoning p {
+  margin: 0;
+  color: var(--forest);
+}
+
+body.is-malware .reasoning {
+  border-left-color: var(--peel);
+}
+body.is-malware .reasoning h2 {
+  color: color-mix(in srgb, var(--flesh) 62%, transparent);
+}
+body.is-malware .reasoning p {
+  color: var(--flesh);
+}
+
+body.is-phishing .reasoning {
+  border-left-color: var(--rot);
+}
+body.is-phishing .reasoning h2 {
+  color: var(--rot);
+}
+
+/* --- Actions ----------------------------------------------------------- */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 30px 0 14px;
 }
 
 button {
   border: 0;
   border-radius: 999px;
-  padding: 12px 18px;
-  font-weight: 650;
-  font-family: inherit;
+  padding: 13px 26px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  background: var(--accent);
-  color: var(--paper);
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--ink);
+  color: var(--peel);
+  transition:
+    transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.18s ease;
 }
 
-button:active { transform: scale(0.98); }
+button:hover {
+  background: var(--forest);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+body.is-malware button {
+  background: var(--peel);
+  color: var(--bruise);
+}
+body.is-malware button:hover {
+  background: var(--flesh);
+}
 
 button.ghost {
   background: transparent;
-  color: var(--mist);
-  border: 1px solid var(--line);
-  font-weight: 500;
-  font-size: 13px;
-  justify-self: start;
+  color: var(--leaf);
+  border: 2px solid color-mix(in srgb, var(--leaf) 45%, transparent);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 11px 16px;
 }
 
-.fine { color: var(--mist); font-size: 12px; line-height: 1.5; }
-.hidden { display: none !important; }
-
-.orb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--accent);
-  margin-bottom: 18px;
-  position: relative;
+button.ghost:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+  background: transparent;
 }
 
-.orb::after {
-  content: "";
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  animation: orbit 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+body.is-malware button.ghost {
+  background: transparent;
+  color: color-mix(in srgb, var(--flesh) 62%, transparent);
+  border-color: color-mix(in srgb, var(--peel) 30%, transparent);
+}
+body.is-malware button.ghost:hover {
+  color: var(--peel);
+  border-color: var(--peel);
+  background: transparent;
 }
 
-@keyframes orbit {
-  50% { transform: scale(1.35); opacity: 0.35; }
+.fine {
+  color: var(--leaf);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+body.is-malware .fine {
+  color: color-mix(in srgb, var(--flesh) 55%, transparent);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- Checking page ----------------------------------------------------- */
+
+.gauge {
+  height: 7px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--leaf) 28%, transparent);
+  margin: 0 0 24px;
+}
+
+.gauge > div {
+  height: 100%;
+}
+
+.ripening {
+  background-image: linear-gradient(
+    90deg,
+    var(--leaf) 0%,
+    var(--rind) 30%,
+    var(--peel) 68%,
+    var(--flesh) 100%
+  );
+  background-size: 260% 100%;
+  animation: ripen 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes ripen {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .panel, .steps li, .orb::after { animation: none; }
+  .ripening {
+    animation: none;
+    background-position: 50% 0;
+  }
 }

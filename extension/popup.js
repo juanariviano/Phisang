@@ -1,42 +1,60 @@
-const badge = document.getElementById("badge");
-const urlEl = document.getElementById("url");
-const summary = document.getElementById("summary");
-const caveat = document.getElementById("caveat");
-const signals = document.getElementById("signals");
-const tech = document.getElementById("tech");
-const enabled = document.getElementById("enabled");
+const { VERDICTS, renderBanana, renderPeel, escapeHtml } = self.Phisang;
+
+const el = {
+  badge: document.getElementById("badge"),
+  banana: document.getElementById("banana"),
+  verdict: document.getElementById("verdict"),
+  ripeness: document.getElementById("ripeness"),
+  hint: document.getElementById("hint"),
+  caveat: document.getElementById("caveat"),
+  peel: document.getElementById("peel"),
+  signals: document.getElementById("signals"),
+  signalsLabel: document.getElementById("signals-label"),
+  tech: document.getElementById("tech"),
+  enabled: document.getElementById("enabled"),
+};
 
 chrome.storage.local.get({ protectionEnabled: true }, (stored) => {
-  enabled.checked = stored.protectionEnabled !== false;
+  el.enabled.checked = stored.protectionEnabled !== false;
 });
-enabled.addEventListener("change", () => {
-  chrome.storage.local.set({ protectionEnabled: enabled.checked });
+el.enabled.addEventListener("change", () => {
+  chrome.storage.local.set({ protectionEnabled: el.enabled.checked });
 });
 
 function render(payload) {
-  if (!payload?.result) {
-    summary.textContent = "Open an http(s) page while the LinkGuard API is running on localhost:8000.";
+  if (!payload || !payload.result) {
+    renderBanana(el.banana, "unavailable", 92);
+    renderPeel(el.peel, "");
     return;
   }
-  const result = payload.result;
-  const cls = result.classification || "unavailable";
-  badge.textContent = cls;
-  badge.className = `badge ${cls}`;
-  urlEl.textContent = payload.url || result.normalized_url || "";
-  summary.textContent = result.llm?.reasoning || (result.signals || [])[0] || "No explanation available.";
 
-  if (cls === "benign") {
-    caveat.classList.remove("hidden");
-    caveat.textContent = "Not listed ≠ safe. This result only means LinkGuard found no URLhaus match and no strong lexical risk.";
-  } else if (cls === "unavailable") {
-    caveat.classList.remove("hidden");
-    caveat.textContent = "Degraded result: a required check failed. This is not a clean verdict.";
+  const result = payload.result;
+  const cls = VERDICTS[result.classification] ? result.classification : "unavailable";
+  const meta = VERDICTS[cls];
+  renderBanana(el.banana, cls, 92);
+
+  document.body.className = "is-" + cls;
+
+  el.badge.textContent = meta.badge;
+  el.verdict.textContent = meta.verdict;
+  el.ripeness.textContent = meta.ripeness;
+  el.hint.textContent = meta.hint;
+
+  if (meta.caveat) {
+    el.caveat.textContent = meta.caveat;
+    el.caveat.classList.remove("hidden");
   }
 
-  signals.innerHTML = (result.signals || [])
-    .map((item) => `<li>${String(item).replaceAll("&", "&amp;").replaceAll("<", "&lt;")}</li>`)
-    .join("");
-  tech.textContent = JSON.stringify(
+  renderPeel(el.peel, payload.url || result.normalized_url || "");
+
+  const reasoning = result.llm && result.llm.reasoning ? [result.llm.reasoning] : [];
+  const lines = reasoning.concat(result.signals || []);
+  if (lines.length) {
+    el.signalsLabel.classList.remove("hidden");
+    el.signals.innerHTML = lines.map((item) => "<li>" + escapeHtml(item) + "</li>").join("");
+  }
+
+  el.tech.textContent = JSON.stringify(
     {
       scan_id: result.scan_id,
       normalized_url: result.normalized_url,
@@ -52,6 +70,6 @@ function render(payload) {
 }
 
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  const tabId = tabs[0]?.id;
+  const tabId = tabs[0] && tabs[0].id;
   chrome.runtime.sendMessage({ type: "GET_TAB_RESULT", tabId }, render);
 });

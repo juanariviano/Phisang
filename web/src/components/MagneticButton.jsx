@@ -12,10 +12,8 @@ export function MagneticButton({ children, className = "", disabled, ...props })
     const node = ref.current;
     if (!node || disabled) return;
     const rect = node.getBoundingClientRect();
-    const dx = event.clientX - (rect.left + rect.width / 2);
-    const dy = event.clientY - (rect.top + rect.height / 2);
-    x.set(dx * 0.22);
-    y.set(dy * 0.22);
+    x.set((event.clientX - (rect.left + rect.width / 2)) * 0.18);
+    y.set((event.clientY - (rect.top + rect.height / 2)) * 0.18);
   }
 
   function onLeave() {
@@ -29,10 +27,11 @@ export function MagneticButton({ children, className = "", disabled, ...props })
       type="submit"
       disabled={disabled}
       style={{ x: springX, y: springY }}
-      whileTap={{ scale: 0.98 }}
+      whileTap={{ scaleX: 1.04, scaleY: 0.9 }}
+      transition={{ type: "spring", stiffness: 520, damping: 18 }}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className={`relative isolate overflow-hidden rounded-full bg-accent px-6 py-3.5 text-sm font-semibold tracking-tight text-paper transition-opacity disabled:opacity-40 ${className}`}
+      className={`relative isolate cursor-pointer rounded-full bg-ink px-8 py-3.5 font-display text-sm font-extrabold uppercase tracking-[0.1em] text-peel transition-colors hover:bg-forest disabled:cursor-not-allowed disabled:bg-leaf/40 disabled:text-paper ${className}`}
       {...props}
     >
       <span className="relative">{children}</span>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Grain } from "./components/Grain.jsx";
 import { InventoryRail } from "./components/InventoryRail.jsx";
+import { Banana } from "./components/Banana.jsx";
 import { Pipeline } from "./components/Pipeline.jsx";
 import { ResultPanel } from "./components/ResultPanel.jsx";
+import { Bench } from "./components/Bench.jsx";
 import { ScanForm } from "./components/ScanForm.jsx";
 
 export default function App() {
@@ -11,17 +11,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
-  const [health, setHealth] = useState(null);
   const [scans, setScans] = useState([]);
-
-  async function loadHealth() {
-    try {
-      const res = await fetch("/api/v1/health");
-      setHealth(await res.json());
-    } catch {
-      setHealth({ status: "down" });
-    }
-  }
 
   async function loadInventory() {
     try {
@@ -34,7 +24,6 @@ export default function App() {
   }
 
   useEffect(() => {
-    loadHealth();
     loadInventory();
   }, []);
 
@@ -53,13 +42,12 @@ export default function App() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message || "Could not analyze this URL");
+        setError(data.message || "Could not peel this address");
         setResult(null);
         return;
       }
       setResult(data);
       loadInventory();
-      loadHealth();
     } catch {
       setError("Backend unreachable. Start the API on port 8000.");
     } finally {
@@ -67,58 +55,44 @@ export default function App() {
     }
   }
 
-  const healthLabel =
-    health?.status === "ok" && health.gemini_configured
-      ? "API ready"
-      : health?.status === "down"
-        ? "API unreachable"
-        : "API degraded";
-
   return (
     <div className="relative min-h-[100dvh] overflow-x-hidden">
-      <Grain />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-24 top-[-8rem] h-72 w-72 rounded-full bg-accent/15 blur-3xl md:h-96 md:w-96"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-16 top-40 h-64 w-64 rounded-full bg-paper/5 blur-3xl"
-      />
+      <Bench />
 
-      <div className="relative mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6 md:px-8 md:py-12">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl bg-accent text-sm font-bold tracking-wide text-paper">
-              LG
-            </span>
-            <div>
-              <p className="text-sm font-semibold tracking-tight">LinkGuard</p>
-              <p className="text-xs text-mist">URLhaus · lexical gate · Gemini</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 self-start rounded-full border border-white/10 px-3 py-1.5 text-xs text-mist sm:self-auto">
-            <span className="relative flex size-2">
-              <span className="absolute inset-0 animate-ping rounded-full bg-accent/70" />
-              <span className="relative size-2 rounded-full bg-accent" />
-            </span>
-            {healthLabel}
-          </div>
+      <div className="relative mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-6 md:px-8 md:py-10">
+        <header className="flex items-center gap-3">
+          {/* The brand mark is the same banana the verdicts use, sealed. Upright
+              it is 1:3 and reads as a sliver, so the lockup tilts it. */}
+          <Banana state="benign" frame="tight" height={38} className="rotate-[-20deg]" />
+          <p className="font-display text-xl font-extrabold leading-none tracking-tight text-ink">
+            Phisang
+          </p>
         </header>
 
-        <main className="mt-12 grid grid-cols-1 items-start gap-10 lg:mt-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-16">
+        <main className="mt-12 grid grid-cols-1 items-start gap-10 lg:mt-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
           <section>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-accent">Malicious URL detection · POC</p>
-            <h1 className="mt-4 max-w-[14ch] text-4xl font-semibold tracking-tighter md:text-6xl md:leading-none">
-              Inspect the link. Skip the page.
-            </h1>
-            <p className="mt-5 max-w-[62ch] text-base leading-relaxed text-mist">
-              LinkGuard checks known malware in URLhaus, scores the URL string with a placeholder model, and asks Gemini only when that local check is inconclusive. Destinations are never crawled.
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-leaf">
+              Malicious URL detection · POC
             </p>
+            <h1 className="mt-3.5 max-w-[12ch] font-display text-[clamp(2.9rem,7.6vw,5.25rem)] font-extrabold leading-[0.88] tracking-[-0.04em] text-ink">
+              We read the peel, never the fruit.
+            </h1>
+            <p className="mt-6 max-w-[54ch] text-base leading-relaxed text-forest">
+              Phisang splits an address into its parts, checks the known-malware feed, scores the
+              string, and asks Gemini only when the local check is inconclusive. The page it points
+              at is never opened.
+            </p>
+
             <ScanForm url={url} setUrl={setUrl} busy={busy} error={error} onSubmit={onSubmit} />
-            <p className="mt-8 max-w-[62ch] text-xs leading-relaxed text-mist">
+
+            <p className="mt-10 max-w-[54ch] text-xs leading-relaxed text-leaf">
               Do not open the malware sample in a normal tab. Threat matches are attributed to{" "}
-              <a className="text-paper underline-offset-4 hover:underline" href="https://urlhaus.abuse.ch/" target="_blank" rel="noreferrer">
+              <a
+                className="font-semibold text-ink underline underline-offset-2"
+                href="https://urlhaus.abuse.ch/"
+                target="_blank"
+                rel="noreferrer"
+              >
                 URLhaus / abuse.ch
               </a>
               .
@@ -126,20 +100,24 @@ export default function App() {
           </section>
 
           <aside className="lg:sticky lg:top-8">
-            {busy || result ? <ResultPanel busy={busy} result={result} /> : <Pipeline />}
+            {busy || result ? (
+              <ResultPanel busy={busy} result={result} url={url} />
+            ) : (
+              <Pipeline url={url} />
+            )}
           </aside>
         </main>
 
         <InventoryRail scans={scans} onRefresh={loadInventory} />
 
-        <footer className="mt-16 overflow-hidden border-t border-white/8 pt-6">
-          <motion.p
-            className="whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] text-mist"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
-          >
-            Policy poc-flowchart-v1.1 · Not listed is not safe · No page crawl · Heuristic is not a trained model · URLhaus by abuse.ch · Policy poc-flowchart-v1.1 · Not listed is not safe · No page crawl · Heuristic is not a trained model · URLhaus by abuse.ch ·
-          </motion.p>
+        <footer className="mt-14 border-t-[2.5px] border-ink pt-5">
+          <ul className="flex flex-wrap gap-x-6 gap-y-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-leaf">
+            <li>Policy poc-flowchart-v1.1</li>
+            <li>Not listed is not safe</li>
+            <li>No page crawl</li>
+            <li>Heuristic is not a trained model</li>
+            <li>URLhaus by abuse.ch</li>
+          </ul>
         </footer>
       </div>
     </div>

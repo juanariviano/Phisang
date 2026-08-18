@@ -3,27 +3,29 @@ import { CLASS_META } from "../lib/copy.js";
 
 export function InventoryRail({ scans, onRefresh }) {
   return (
-    <section className="mt-16 border-t border-white/8 pt-8">
+    <section className="mt-20 border-t-[2.5px] border-ink pt-7">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.18em] text-mist">Inventory</p>
-          <h2 className="mt-2 text-xl font-semibold tracking-tight">Recent scans</h2>
+          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-leaf">The bunch</p>
+          <h2 className="mt-1 font-display text-xl font-extrabold tracking-tight text-ink">
+            Recent peels
+          </h2>
         </div>
         <button
           type="button"
           onClick={onRefresh}
-          className="text-sm text-mist underline-offset-4 transition-colors hover:text-paper hover:underline"
+          className="cursor-pointer rounded-full border-2 border-leaf/55 px-3.5 py-1.5 text-xs font-semibold text-forest transition-colors duration-200 hover:border-ink hover:bg-paper"
         >
           Refresh
         </button>
       </div>
 
       {!scans.length ? (
-        <p className="mt-8 max-w-[42ch] text-sm leading-relaxed text-mist">
-          Nothing stored yet. Analyze a URL and the verdict will land here for this API session.
+        <p className="mt-7 max-w-[46ch] text-sm leading-relaxed text-leaf">
+          Nothing here yet. Peel an address and the verdict lands here for this API session.
         </p>
       ) : (
-        <ul className="mt-6 divide-y divide-white/8">
+        <ul className="mt-5">
           {scans.map((scan, index) => {
             const meta = CLASS_META[scan.classification] || CLASS_META.unavailable;
             return (
@@ -31,13 +33,19 @@ export function InventoryRail({ scans, onRefresh }) {
                 key={scan.scan_id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05, type: "spring", stiffness: 100, damping: 20 }}
-                className="grid grid-cols-1 gap-2 py-4 md:grid-cols-[140px_minmax(0,1fr)] md:items-center"
+                transition={{ delay: index * 0.045, type: "spring", stiffness: 120, damping: 20 }}
+                className="grid grid-cols-1 items-center gap-1.5 border-t border-leaf/35 py-3 md:grid-cols-[11rem_minmax(0,1fr)]"
               >
-                <span className={`text-xs font-semibold uppercase tracking-[0.14em] ${meta.tone}`}>
-                  {meta.title}
+                <span className="flex items-center gap-2">
+                  <span
+                    className={`size-3 shrink-0 rounded-full border border-ink/45 ${meta.dot}`}
+                    aria-hidden="true"
+                  />
+                  <span className={`text-xs font-extrabold uppercase tracking-[0.1em] ${meta.tone}`}>
+                    {meta.verdict}
+                  </span>
                 </span>
-                <span className="truncate font-mono text-xs text-mist" title={scan.normalized_url}>
+                <span className="truncate font-mono text-xs text-leaf" title={scan.normalized_url}>
                   {scan.normalized_url}
                 </span>
               </motion.li>

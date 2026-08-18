@@ -10,7 +10,7 @@ from .models import AnalyzeResponse, LlmResult, ThreatIntel
 from .normalize import UrlError, normalize_url, redact_url
 from .urlhaus import UrlhausError
 
-logger = logging.getLogger("linkguard")
+logger = logging.getLogger("phisang")
 
 POLICY_VERSION = "poc-flowchart-v1.1"
 

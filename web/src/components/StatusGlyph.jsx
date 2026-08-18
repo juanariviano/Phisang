@@ -1,21 +1,20 @@
 import {
-  CircleDashed,
   CircleNotch,
-  MinusCircle,
+  Eye,
+  EyeSlash,
+  SealWarning,
   ShieldWarning,
-  Warning,
 } from "@phosphor-icons/react";
 
 const MAP = {
   malware: ShieldWarning,
-  phishing: Warning,
-  benign: CircleDashed,
-  unavailable: MinusCircle,
+  phishing: SealWarning,
+  benign: Eye,
+  unavailable: EyeSlash,
   checking: CircleNotch,
 };
 
-export function StatusGlyph({ kind, size = 28 }) {
-  const Icon = MAP[kind] || MinusCircle;
-  const spin = kind === "checking" ? "animate-spin" : "";
-  return <Icon size={size} weight="regular" className={spin} />;
+export function StatusGlyph({ kind, size = 28, weight = "bold" }) {
+  const Icon = MAP[kind] || EyeSlash;
+  return <Icon size={size} weight={weight} className={kind === "checking" ? "animate-spin" : ""} />;
 }

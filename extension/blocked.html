@@ -3,27 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>LinkGuard blocked this page</title>
+    <meta name="theme-color" content="#16210F" />
+    <title>Phisang stopped this page</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@300..700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme.css" />
     <link rel="stylesheet" href="pages.css" />
   </head>
-  <body class="shell blocked">
+  <body class="shell is-malware bench-grid">
     <main class="panel">
-      <p class="eyebrow" id="eyebrow">LinkGuard protection</p>
-      <h1 id="title">This URL was blocked</h1>
-      <p id="url" class="url"></p>
-      <p id="summary" class="summary"></p>
-      <section id="reasoning" class="reasoning hidden"></section>
-      <ul id="signals" class="signals"></ul>
-      <dl id="tech" class="tech"></dl>
-      <div class="actions">
-        <button id="go-back" type="button">Go back</button>
-        <button id="continue" type="button" class="ghost">Continue anyway (demo only)</button>
+      <div class="hazard-rule" aria-hidden="true"></div>
+      <div class="body">
+        <div class="masthead">
+          <svg class="brand-mark" viewBox="48 2 64 192" width="13" height="39" aria-hidden="true"><path d="M80 38 C 78 27 76 20 74 12" fill="none" stroke="#467235" stroke-width="9" stroke-linecap="round"/><path d="M80 34 C 66 44 56 84 56 120 C 56 152 66 174 80 184 C 75 150 71 100 76 40 Z" fill="#FFBF00"/><path d="M76 40 C 71 100 75 150 80 184 C 85 186 89 184 91 178 C 87 148 87 96 84 40 Z" fill="#FFBF00"/><ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill="#8A5A0F"/><path d="M84 40 C 87 96 87 148 91 178 C 101 168 104 146 104 120 C 104 84 94 44 80 34 Z" fill="#FFBF00"/></svg>
+          <strong>Phisang</strong>
+        </div>
+
+        <div class="verdict-head">
+          <div id="banana" class="banana-slot"></div>
+          <div>
+            <p class="eyebrow" id="eyebrow">Navigation stopped</p>
+            <h1 id="title">This address was blocked</h1>
+            <p class="ripeness-line"><span id="verdict">Malware</span> · <span id="ripeness">Rotten</span></p>
+          </div>
+        </div>
+        <p id="summary" class="summary"></p>
+
+        <p class="section-label">The peel</p>
+        <ul id="peel" class="peel"></ul>
+
+        <section id="reasoning" class="reasoning hidden"></section>
+
+        <p class="section-label" id="signals-label">Signals</p>
+        <ul id="signals" class="signals"></ul>
+
+        <p class="section-label">Record</p>
+        <dl id="tech" class="tech"></dl>
+
+        <div class="actions">
+          <button id="go-back" type="button">Go back</button>
+          <button id="continue" type="button" class="ghost">Continue anyway (demo only)</button>
+        </div>
+        <p class="fine">
+          Educational interstitial · the destination was never fetched · URLhaus data by abuse.ch
+        </p>
       </div>
-      <p class="fine">Educational interstitial · destination was not crawled · URLhaus data by abuse.ch</p>
+      <div class="hazard-rule" aria-hidden="true"></div>
     </main>
+
+    <script src="peel.js"></script>
+    <script src="banana.js"></script>
+    <script src="verdicts.js"></script>
     <script src="blocked.js"></script>
   </body>
 </html>

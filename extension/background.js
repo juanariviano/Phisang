@@ -92,14 +92,16 @@ function isTrusted(host) {
 }
 
 function setBadge(tabId, classification) {
+  // Palette-native badges. The toolbar icon is 16px, so the word carries the
+  // state and the colour only reinforces it.
   const map = {
-    malware: { text: "BLK", color: "#e26156" },
-    phishing: { text: "PHS", color: "#e39a3c" },
-    benign: { text: "OK", color: "#6b7280" },
-    unavailable: { text: "?", color: "#8b7cf6" },
-    checking: { text: "..", color: "#6cb3d9" },
+    malware: { text: "STOP", color: "#FFBF00" },
+    phishing: { text: "SPOT", color: "#E0A526" },
+    benign: { text: "OK", color: "#467235" },
+    unavailable: { text: "?", color: "#8AA37E" },
+    checking: { text: "..", color: "#6FA355" },
   };
-  const spec = map[classification] || { text: "", color: "#6b7280" };
+  const spec = map[classification] || { text: "", color: "#467235" };
   chrome.action.setBadgeText({ tabId, text: spec.text });
   chrome.action.setBadgeBackgroundColor({ tabId, color: spec.color });
 }
@@ -208,7 +210,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         confidence: 0,
         decision_stage: "error",
         normalized_url: url,
-        signals: ["LinkGuard backend was unreachable"],
+        signals: ["Phisang backend was unreachable"],
         limitations: ["This is a degraded result, not a clean one"],
         error_code: "threat_intel_unavailable",
       };

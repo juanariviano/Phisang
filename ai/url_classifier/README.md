@@ -50,3 +50,18 @@ partition untouched until final evaluation, compares a logistic baseline with
 histogram gradient boosting, calibrates the chosen model, locks a validation
 threshold, and exports a versioned model bundle plus JSON metadata under
 `artifacts/`.
+
+## Model testing notebook
+
+Open the tester with the same project-local environment:
+
+```powershell
+.\ai\url_classifier\.venv\Scripts\jupyter-lab.exe ai\url_classifier\test_url_classifier.ipynb
+```
+
+Use `URLS_TO_TEST` for pasted URLs. For a CSV, set `BATCH_INPUT_CSV` and
+`BATCH_URL_COLUMN`; optionally set `BATCH_OUTPUT_CSV` to save predictions. An
+independent labeled CSV can also set `BATCH_LABEL_COLUMN`, using
+`is_phishing=1` and `is_phishing=0` for legitimate. The tester imports the
+runtime normalizer and feature extractor from `prepare_dataset.py`, performs no
+network requests, and records invalid inputs without aborting the batch.

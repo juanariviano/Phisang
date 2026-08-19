@@ -72,7 +72,7 @@ export default function App() {
         <main className="mt-12 grid grid-cols-1 items-start gap-10 lg:mt-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
           <section>
             <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-leaf">
-              Malicious URL detection · POC
+              Malicious URL detection
             </p>
             <h1 className="mt-3.5 max-w-[12ch] font-display text-[clamp(2.9rem,7.6vw,5.25rem)] font-extrabold leading-[0.88] tracking-[-0.04em] text-ink">
               We read the peel, never the fruit.
@@ -112,11 +112,7 @@ export default function App() {
 
         <footer className="mt-14 border-t-[2.5px] border-ink pt-5">
           <ul className="flex flex-wrap gap-x-6 gap-y-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-leaf">
-            <li>Policy poc-flowchart-v1.1</li>
-            <li>Not listed is not safe</li>
-            <li>No page crawl</li>
-            <li>Heuristic is not a trained model</li>
-            <li>URLhaus by abuse.ch</li>
+            <li>Made with 💘 by Phisang team</li>
           </ul>
         </footer>
       </div>

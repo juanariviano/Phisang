@@ -1,0 +1,35 @@
+# Phisang URL classifier data pipeline
+
+The preprocessing CLI converts the PhiUSIIL source dataset into a clean,
+URL-only training CSV that matches Phisang's no-destination-fetch design. It
+also produces Markdown and JSON EDA reports.
+
+Run it from the repository root:
+
+```powershell
+.\backend\.venv\Scripts\python.exe -B ai\url_classifier\prepare_dataset.py
+```
+
+Default outputs:
+
+- `datasets/processed/PhiUSIIL_url_only_clean.csv`
+- `reports/PhiUSIIL_eda_report.md`
+- `reports/PhiUSIIL_eda_summary.json`
+
+The pipeline uses only the Python standard library. It:
+
+1. Validates the source schema and labels.
+2. Accepts only HTTP(S) URLs compatible with the backend's 4,096-character limit.
+3. Normalizes scheme, hostname, IDNA, and default ports.
+4. Removes URL credentials while retaining a binary userinfo signal.
+5. Deduplicates normalized URLs and drops label conflicts.
+6. Removes page-fetch fields, unique identifiers, and known label proxies.
+7. Recomputes deterministic URL-string features.
+8. Remaps the target to `is_phishing=1` and `is_phishing=0` for legitimate.
+
+On Windows, close the generated CSV in Excel before rerunning the pipeline so
+the atomic output replacement is not held by an application-level file lock.
+
+The generated report documents strong collection bias in the source dataset.
+Use a registered-domain-grouped split and an independent external test set;
+do not use a random row split for model-performance claims.

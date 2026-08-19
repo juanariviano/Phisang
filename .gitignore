@@ -11,3 +11,4 @@ backend/data/
 .idea/
 .vscode/
 node_modules/
+web/dist/

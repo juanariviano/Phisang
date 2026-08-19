@@ -1,0 +1,206 @@
+{
+  "artifact_version": "1.0",
+  "model_version": "phisang-url-phishing-v1",
+  "created_at_utc": "2026-08-19T04:18:24.477246+00:00",
+  "selected_model": "hist_gradient_boosting",
+  "target": "is_phishing",
+  "positive_class": "phishing",
+  "feature_columns": [
+    "url_length",
+    "hostname_length",
+    "host_label_count",
+    "host_dot_count",
+    "host_hyphen_count",
+    "max_host_label_length",
+    "tld_length",
+    "is_ip",
+    "has_userinfo",
+    "has_punycode",
+    "has_non_ascii",
+    "letter_count",
+    "letter_ratio",
+    "digit_count",
+    "digit_ratio",
+    "special_count",
+    "special_ratio",
+    "dot_count",
+    "hyphen_count",
+    "underscore_count",
+    "at_count",
+    "percent_count",
+    "percent_encoded_count",
+    "url_entropy",
+    "hostname_entropy"
+  ],
+  "bias_excluded_columns": [
+    "path_length",
+    "query_length",
+    "fragment_length",
+    "path_depth",
+    "slash_count",
+    "equals_count",
+    "question_count",
+    "ampersand_count"
+  ],
+  "decision_threshold": 0.8575786266531489,
+  "threshold_policy": {
+    "source_split": "validation",
+    "maximum_false_positive_rate": 0.005
+  },
+  "split_policy": {
+    "type": "StratifiedGroupKFold",
+    "group": "public-suffix-aware registered domain",
+    "private_suffixes": true,
+    "random_state": 42,
+    "summary": [
+      {
+        "split": "train",
+        "rows": 186515,
+        "percent_rows": 79.405,
+        "phishing_percent": 41.964,
+        "registered_domain_groups": 158513
+      },
+      {
+        "split": "validation",
+        "rows": 25138,
+        "percent_rows": 10.702,
+        "phishing_percent": 47.12,
+        "registered_domain_groups": 19605
+      },
+      {
+        "split": "test",
+        "rows": 23237,
+        "percent_rows": 9.893,
+        "phishing_percent": 42.716,
+        "registered_domain_groups": 19589
+      }
+    ]
+  },
+  "dataset": {
+    "path": "ai\\url_classifier\\datasets\\processed\\PhiUSIIL_url_only_clean.csv",
+    "sha256": "9092009ad7446bf65c9f7618e4a8dd6943b2acc4d1c4efd110f286c23febdbad",
+    "rows": 234890,
+    "preprocessing_pipeline_version": "1.0.0"
+  },
+  "validation_metrics": {
+    "average_precision": 0.9940336752684773,
+    "roc_auc": 0.9925968710477943,
+    "log_loss": 0.08200342718731306,
+    "brier_score": 0.02045609987014461,
+    "precision": 0.9940823096924595,
+    "recall": 0.9360067539046011,
+    "f1": 0.9641707974606487,
+    "false_positive_rate": 0.004965019183028662,
+    "threshold": 0.8575786266531489,
+    "tn": 13227,
+    "fp": 66,
+    "fn": 758,
+    "tp": 11087
+  },
+  "test_metrics": {
+    "average_precision": 0.9908332056558873,
+    "roc_auc": 0.990604574217325,
+    "log_loss": 0.10019345592682712,
+    "brier_score": 0.02589184952206007,
+    "precision": 0.994608558912726,
+    "recall": 0.892101551480959,
+    "f1": 0.9405703967284508,
+    "false_positive_rate": 0.003606040117196304,
+    "threshold": 0.8575786266531489,
+    "tn": 13263,
+    "fp": 48,
+    "fn": 1071,
+    "tp": 8855
+  },
+  "package_versions": {
+    "python": "3.12.6",
+    "numpy": "1.26.4",
+    "pandas": "2.2.2",
+    "scikit_learn": "1.4.2",
+    "joblib": "1.4.2",
+    "tldextract": "5.3.1"
+  },
+  "limitations": [
+    "The source data has perfect or near-perfect collection shortcuts: every legitimate row uses HTTPS, begins with www, has no non-root path/query, and has URLSimilarityIndex=100.",
+    "The cleaned CSV removes direct proxy columns, but length and path-related features remain source-biased because the legitimate samples are homepages.",
+    "Use a registered-domain-grouped split and an independently sourced test dataset; random row splits are not credible for this dataset.",
+    "The cleaned target is binary phishing-vs-legitimate and must not be used to learn a malware class."
+  ],
+  "top_permutation_importance": [
+    {
+      "feature": "hostname_length",
+      "mean_importance": 0.27166323750313165,
+      "std_importance": 0.0023327407887120486
+    },
+    {
+      "feature": "url_length",
+      "mean_importance": 0.2422853464308348,
+      "std_importance": 0.0030547848425643937
+    },
+    {
+      "feature": "digit_count",
+      "mean_importance": 0.0628156636706932,
+      "std_importance": 0.0023806899121652345
+    },
+    {
+      "feature": "host_label_count",
+      "mean_importance": 0.04822101593365191,
+      "std_importance": 0.0002858071253536394
+    },
+    {
+      "feature": "max_host_label_length",
+      "mean_importance": 0.04287999629646614,
+      "std_importance": 0.0006353040622748624
+    },
+    {
+      "feature": "hostname_entropy",
+      "mean_importance": 0.007389011089920627,
+      "std_importance": 0.0002913518590684811
+    },
+    {
+      "feature": "special_count",
+      "mean_importance": 0.002988406636055448,
+      "std_importance": 0.00033324435921902726
+    },
+    {
+      "feature": "url_entropy",
+      "mean_importance": 0.00213010530072714,
+      "std_importance": 0.00016361865282391215
+    },
+    {
+      "feature": "special_ratio",
+      "mean_importance": 0.001900411094501379,
+      "std_importance": 4.503889873519505e-05
+    },
+    {
+      "feature": "tld_length",
+      "mean_importance": 0.0011456315096925278,
+      "std_importance": 0.00012097241070582079
+    },
+    {
+      "feature": "host_hyphen_count",
+      "mean_importance": 0.0008547155267861761,
+      "std_importance": 9.002753160969567e-05
+    },
+    {
+      "feature": "letter_ratio",
+      "mean_importance": 0.0004923730258755329,
+      "std_importance": 0.00020023168786248164
+    },
+    {
+      "feature": "hyphen_count",
+      "mean_importance": 0.00047515374243730274,
+      "std_importance": 9.960043379078592e-05
+    },
+    {
+      "feature": "has_non_ascii",
+      "mean_importance": 0.0,
+      "std_importance": 0.0
+    },
+    {
+      "feature": "host_dot_count",
+      "mean_importance": 0.0,
+      "std_importance": 0.0
+    }
+  ]
+}

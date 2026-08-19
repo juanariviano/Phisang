@@ -33,3 +33,20 @@ the atomic output replacement is not held by an application-level file lock.
 The generated report documents strong collection bias in the source dataset.
 Use a registered-domain-grouped split and an independent external test set;
 do not use a random row split for model-performance claims.
+
+## Model training notebook
+
+Create and activate a project-local environment, then open the notebook:
+
+```powershell
+python -m venv ai\url_classifier\.venv
+.\ai\url_classifier\.venv\Scripts\python.exe -m pip install -r ai\url_classifier\requirements-training.txt
+.\ai\url_classifier\.venv\Scripts\python.exe -m ipykernel install --prefix ai\url_classifier\.venv --name phisang-url-classifier --display-name "Phisang URL Classifier (.venv)"
+.\ai\url_classifier\.venv\Scripts\jupyter-lab.exe ai\url_classifier\train_url_classifier.ipynb
+```
+
+The notebook uses public-suffix-aware registered-domain groups, keeps the test
+partition untouched until final evaluation, compares a logistic baseline with
+histogram gradient boosting, calibrates the chosen model, locks a validation
+threshold, and exports a versioned model bundle plus JSON metadata under
+`artifacts/`.

@@ -12,3 +12,4 @@ backend/data/
 .vscode/
 node_modules/
 web/dist/
+ai/markuplm/artifacts/*

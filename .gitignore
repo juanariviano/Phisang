@@ -12,4 +12,6 @@ backend/data/
 .vscode/
 node_modules/
 web/dist/
+ai/markuplm/datasets/phreshphish_sample/
+ai/markuplm/artifacts/
 ai/markuplm/artifacts/*

@@ -1,0 +1,83 @@
+{
+  "base_model": "microsoft/markuplm-base",
+  "task": "sequence-classification",
+  "dataset": "phreshphish/phreshphish",
+  "dataset_license": "CC BY 4.0 (anti-phishing research use)",
+  "id2label": {
+    "0": "benign",
+    "1": "phishing"
+  },
+  "config": {
+    "train_per_class": 16,
+    "val_per_class": 4,
+    "test_per_class": 4,
+    "epochs": 1,
+    "batch_size": 4,
+    "learning_rate": 2e-05,
+    "warmup_ratio": 0.1,
+    "max_length": 512,
+    "seed": 42,
+    "train_shards": 1,
+    "test_shards": 1,
+    "num_workers": 4,
+    "version": "smoke",
+    "refresh_cache": false
+  },
+  "counts": {
+    "train": 30,
+    "val": 8,
+    "test": 8
+  },
+  "history": [
+    {
+      "epoch": 0,
+      "train_loss": 0.7053,
+      "val": {
+        "threshold": 0.5,
+        "accuracy": 0.5,
+        "precision_phishing": 0.5,
+        "recall_phishing": 1.0,
+        "f1_phishing": 0.6667,
+        "n": 8
+      },
+      "val_roc_auc": 0.9375,
+      "minutes": 0.4
+    }
+  ],
+  "best_epoch": 0,
+  "val_threshold_tuned": {
+    "threshold": 0.65,
+    "accuracy": 0.875,
+    "precision_phishing": 1.0,
+    "recall_phishing": 0.75,
+    "f1_phishing": 0.8571,
+    "n": 8
+  },
+  "test_at_0.5": {
+    "threshold": 0.5,
+    "accuracy": 0.5,
+    "precision_phishing": 0.5,
+    "recall_phishing": 0.5,
+    "f1_phishing": 0.5,
+    "n": 8
+  },
+  "test_at_tuned_threshold": {
+    "threshold": 0.65,
+    "accuracy": 0.5,
+    "precision_phishing": 0.5,
+    "recall_phishing": 0.25,
+    "f1_phishing": 0.3333,
+    "n": 8
+  },
+  "test_roc_auc": 0.375,
+  "test_confusion_matrix_tn_fp_fn_tp": [
+    [
+      3,
+      1
+    ],
+    [
+      3,
+      1
+    ]
+  ]
+}

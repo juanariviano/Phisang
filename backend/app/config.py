@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
     # Page-analysis stage: fetches the destination in a locked-down headless
     # browser and classifies its markup with MarkupLM.
-    page_model_dir: str = str(ROOT_DIR / "ai/markuplm/artifacts/phishing-html-classifier-v0")
+    page_model_dir: str = str(ROOT_DIR / "ai/markuplm/artifacts/phishing-html-classifier-v1")
     page_stage_enabled: bool = True
     page_fetch_concurrency: int = 2
     page_fetch_timeout_seconds: float = 20.0

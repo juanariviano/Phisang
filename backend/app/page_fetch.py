@@ -172,24 +172,27 @@ class Fetcher:
             page = await context.new_page()
             page.on("dialog", lambda dialog: asyncio.ensure_future(dialog.dismiss()))
 
+            # Any Playwright error after navigation (a renderer crash during the
+            # settle wait, a page closed mid-read) is a failed fetch, not a 500.
             try:
                 response = await page.goto(target, wait_until="load",
                                            timeout=self.nav_timeout * 1000)
+                if response is None:
+                    raise FetchFailed("target returned no response")
+
+                await self._verify_peers(response)
+                if self.settle:
+                    await page.wait_for_timeout(self.settle * 1000)
+
+                html = await page.content()
+                title = (await page.title() or "")[:200]
             except PlaywrightError as exc:
                 raise FetchFailed(_safe_reason(exc)) from None
-            if response is None:
-                raise FetchFailed("target returned no response")
-
-            await self._verify_peers(response)
-            if self.settle:
-                await page.wait_for_timeout(self.settle * 1000)
-
-            html = await page.content()
             if len(html.encode("utf-8", "ignore")) > self.max_html_bytes:
                 raise FetchFailed("page is larger than the size limit")
 
             return {"status": response.status, "final_url": page.url,
-                    "title": (await page.title() or "")[:200], "html": html}
+                    "title": title, "html": html}
         finally:
             await context.close()
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from urllib.parse import urlsplit
 
 from . import heuristics, page_stage, urlhaus
 from .config import settings
@@ -8,15 +9,23 @@ from .inventory import new_scan_id, remember
 from .models import AnalyzeResponse, PageResult, ThreatIntel
 from .normalize import UrlError, normalize_url, redact_url
 from .page_stage import PageStageError
+from .reputation import is_popular_host, is_well_known_host
 from .url_guard import UrlRejected, check_static
 from .urlhaus import UrlhausError
 
 logger = logging.getLogger("phisang")
 
-POLICY_VERSION = "poc-flowchart-v2.0"
+POLICY_VERSION = "poc-flowchart-v2.2"
+
+# Reported for a page the markup model flagged with nothing else behind it. The
+# v1 model scores ordinary sites (wikipedia.org 0.97, monkeytype.com 0.99) as
+# high as real phishing, so its call alone is too weak to block on, and the
+# benign verdict that replaces it should not look certain either.
+UNCORROBORATED_BENIGN_CONFIDENCE = 50
 
 LIMITATIONS = [
-    "The destination is fetched server-side only when the URL checks are inconclusive",
+    "The destination is fetched server-side unless the host is a well-known or top-ranked domain",
+    "A markup-model phishing call blocks only when the URL or a password field backs it up",
     "Heuristic scoring is a placeholder, not a trained model",
     "The markup classifier is a demo artifact and misreads ordinary login pages",
     "A benign / not-listed result is not a guarantee of safety",
@@ -127,7 +136,16 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
 
     heuristic = heuristics.score(normalized)
 
-    if heuristic.label == "benign" and heuristic.confidence > settings.heuristic_benign_threshold:
+    # A clean URL string is only an absence of lexical red flags, not evidence the
+    # page is safe: an unknown short domain such as zkic.com scores risk 0 and so
+    # confidence 100. Only well-known or top-ranked hosts may skip the page fetch;
+    # everything else has its markup read.
+    host = urlsplit(normalized).hostname or ""
+    reputation = ("well-known domain list" if is_well_known_host(host)
+                  else "Tranco top-domain ranking" if is_popular_host(host) else None)
+    if (heuristic.label == "benign"
+            and heuristic.confidence > settings.heuristic_benign_threshold
+            and reputation):
         return _base(
             scan_id=scan_id,
             normalized_url=normalized,
@@ -140,6 +158,7 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
             signals=heuristic.signals
             + [
                 "Not listed in URLhaus",
+                f"Host is on the {reputation}",
                 f"Placeholder ML confidence {heuristic.confidence}% exceeded the {settings.heuristic_benign_threshold}% allow threshold",
                 "The destination was not fetched — the URL checks were conclusive",
             ],
@@ -166,11 +185,34 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
     if page_result.model_accuracy is not None:
         signals.append(f"That classifier scores {page_result.model_accuracy:.0%} accuracy on its "
                        "own test split — treat the verdict as advisory")
+
+    classification = page_result.label or "unavailable"
+    confidence = page_result.confidence or 0
+    # A benign-looking page must not clear a URL that is itself a strong phishing
+    # shape (e.g. crocs-com.ru): kits often serve a clean landing page first.
+    if classification == "benign" and heuristic.label == "phishing":
+        classification = "phishing"
+        confidence = heuristic.confidence
+        signals.append("The URL itself matches strong phishing patterns, which outweighs "
+                       "the benign page reading")
+    # The reverse needs corroboration: a phishing call stands only when the URL
+    # is itself doubtful or the page asks for a password.
+    elif classification == "phishing" and heuristic.label == "benign":
+        password_inputs = (page_result.page_signals.password_inputs
+                           if page_result.page_signals else 0)
+        if not password_inputs:
+            classification = "benign"
+            confidence = UNCORROBORATED_BENIGN_CONFIDENCE
+            signals.append(
+                f"Warning: the markup classifier scored this page "
+                f"{page_result.phishing_score:.2f} phishing, but the URL looks clean and the "
+                "page asks for no password, so that call alone was not enough to block — "
+                "stay careful before entering any details")
     return _base(
         scan_id=scan_id,
         normalized_url=normalized,
-        classification=page_result.label or "unavailable",
-        confidence=page_result.confidence or 0,
+        classification=classification,
+        confidence=confidence,
         decision_stage="page",
         threat_intel=intel,
         heuristic=heuristic,

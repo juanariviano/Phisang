@@ -16,3 +16,4 @@ ai/markuplm/datasets/phreshphish_sample/
 ai/markuplm/artifacts/
 ai/markuplm/artifacts/*
 markuplm_v3.ipynb
+ai/markuplm/train_html_phishing_classifier.ipynb

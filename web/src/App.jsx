@@ -78,9 +78,9 @@ export default function App() {
               We read the peel, never the fruit.
             </h1>
             <p className="mt-6 max-w-[54ch] text-base leading-relaxed text-forest">
-              Phisang splits an address into its parts, checks the known-malware feed, scores the
-              string, and asks Gemini only when the local check is inconclusive. The page it points
-              at is never opened.
+              Phisang splits an address into its parts, checks the known-malware feed, and scores the
+              string. Only when those are inconclusive does it open the page — on our server, in a
+              locked-down browser, never in your tab.
             </p>
 
             <ScanForm url={url} setUrl={setUrl} busy={busy} error={error} onSubmit={onSubmit} />

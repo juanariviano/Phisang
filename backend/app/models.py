@@ -3,10 +3,10 @@ from typing import Any, Literal, Optional
 from pydantic import BaseModel, Field
 
 Classification = Literal["malware", "phishing", "benign", "unavailable"]
-DecisionStage = Literal["urlhaus", "heuristic", "llm", "error"]
+DecisionStage = Literal["urlhaus", "heuristic", "page", "error"]
 ClientName = Literal["web", "extension"]
 HeuristicLabel = Literal["benign", "suspicious", "phishing"]
-LlmLabel = Literal["phishing", "malware", "benign"]
+PageLabel = Literal["phishing", "benign"]
 
 
 class AnalyzeRequest(BaseModel):
@@ -32,10 +32,29 @@ class HeuristicResult(BaseModel):
     signals: list[str] = Field(default_factory=list)
 
 
-class LlmResult(BaseModel):
-    label: Optional[LlmLabel] = None
+class PageSignals(BaseModel):
+    forms: int = 0
+    password_inputs: int = 0
+    inputs: int = 0
+    links: int = 0
+    iframes: int = 0
+
+
+class PageResult(BaseModel):
+    """Verdict from fetching the destination and classifying its markup."""
+
+    label: Optional[PageLabel] = None
     confidence: Optional[int] = None
+    phishing_score: Optional[float] = None
+    threshold: Optional[float] = None
     reasoning: Optional[str] = None
+    final_url: Optional[str] = None
+    http_status: Optional[int] = None
+    # Attacker-controlled text: safe in JSON, but never render it as markup.
+    page_title: Optional[str] = None
+    page_signals: Optional[PageSignals] = None
+    model_name: Optional[str] = None
+    model_accuracy: Optional[float] = None
     status: Literal["ok", "skipped", "unavailable"] = "skipped"
 
 
@@ -47,7 +66,7 @@ class AnalyzeResponse(BaseModel):
     decision_stage: DecisionStage
     threat_intel: ThreatIntel
     heuristic: Optional[HeuristicResult] = None
-    llm: Optional[LlmResult] = None
+    page: Optional[PageResult] = None
     signals: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     policy_version: str
@@ -58,13 +77,14 @@ class HealthResponse(BaseModel):
     status: Literal["ok", "degraded"]
     policy_version: str
     urlhaus_configured: bool
-    gemini_configured: bool
+    page_stage_ready: bool
     cache_ready: bool
 
 
 class MetaResponse(BaseModel):
     policy_version: str
-    gemini_model: str
+    page_model: Optional[str] = None
+    page_model_accuracy: Optional[float] = None
     heuristic_benign_threshold: int
     cache_ttl_seconds: int
     limitations: list[str]

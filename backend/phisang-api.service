@@ -1,0 +1,92 @@
+# Hardened unit for the phishing analysis API.
+#
+# Install:
+#   sudo useradd --system --home /opt/phishing-api --shell /usr/sbin/nologin phishapi
+#   sudo cp phishing-api.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now phishing-api
+#
+# The service listens on a Unix socket, not a TCP port, so loopback traffic is
+# unnecessary and the kernel-level IPAddressDeny rules below can stay strict.
+# Put nginx (or Caddy) in front of /run/phishing-api/api.sock for TLS.
+
+[Unit]
+Description=Phishing URL analysis API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=phishapi
+Group=phishapi
+WorkingDirectory=/opt/phishing-api/api
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=MODEL_DIR=/opt/phishing-api/artifacts/phishing-html-classifier-v1
+Environment=RATE_PER_MINUTE=5
+Environment=RATE_PER_HOUR=50
+Environment=MAX_IN_FLIGHT=4
+Environment=MAX_CONCURRENCY=2
+Environment=TRUST_FORWARDED_FOR=1
+ExecStart=/opt/phishing-api/.venv/bin/uvicorn main:app \
+    --uds /run/phishing-api/api.sock \
+    --workers 1 \
+    --no-server-header \
+    --timeout-keep-alive 5
+Restart=on-failure
+RestartSec=5s
+
+RuntimeDirectory=phishing-api
+RuntimeDirectoryMode=0750
+
+# --- Second line of defence against SSRF -------------------------------------
+# Enforced by the kernel on the whole cgroup, so a bug in url_guard.py still
+# cannot reach cloud metadata or anything on the internal network.
+IPAddressDeny=any
+IPAddressAllow=0.0.0.0/1
+IPAddressAllow=128.0.0.0/1
+IPAddressAllow=::/0
+IPAddressDeny=127.0.0.0/8
+IPAddressDeny=10.0.0.0/8
+IPAddressDeny=172.16.0.0/12
+IPAddressDeny=192.168.0.0/16
+IPAddressDeny=169.254.0.0/16
+IPAddressDeny=100.64.0.0/10
+IPAddressDeny=192.0.0.0/24
+IPAddressDeny=::1/128
+IPAddressDeny=fc00::/7
+IPAddressDeny=fe80::/10
+
+# --- Filesystem and privilege confinement ------------------------------------
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/run/phishing-api
+ProtectKernelTunables=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+RemoveIPC=yes
+UMask=0077
+
+# --- Deliberately NOT set ----------------------------------------------------
+# MemoryDenyWriteExecute: would break V8's JIT and stop Chromium starting.
+# RestrictNamespaces:     Chromium's own sandbox needs user and PID namespaces;
+#                         blocking them would force --no-sandbox, which is worse.
+# PrivateDevices:         Chromium needs /dev/shm; too small a shm crashes tabs.
+SystemCallFilter=@system-service @sandbox
+SystemCallErrorNumber=EPERM
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+
+# --- Resource ceilings -------------------------------------------------------
+MemoryMax=3G
+TasksMax=512
+CPUQuota=200%
+
+[Install]
+WantedBy=multi-user.target

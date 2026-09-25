@@ -8,12 +8,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import inventory
+from . import inventory, page_stage
 from .cache import cache_ready, init_cache
 from .config import WEB_DIR, settings
 from .models import AnalyzeRequest, ErrorBody, HealthResponse, MetaResponse
 from .normalize import UrlError
-from .policy import POLICY_VERSION, analyze, map_url_error
+from .policy import LIMITATIONS, POLICY_VERSION, analyze, map_url_error
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger("phisang")
@@ -22,8 +22,13 @@ logger = logging.getLogger("phisang")
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     init_cache()
-    logger.info("Phisang API ready policy=%s cache=%s", POLICY_VERSION, cache_ready())
-    yield
+    await page_stage.startup()
+    logger.info("Phisang API ready policy=%s cache=%s page_stage=%s",
+                POLICY_VERSION, cache_ready(), page_stage.ready())
+    try:
+        yield
+    finally:
+        await page_stage.shutdown()
 
 
 app = FastAPI(title="Phisang POC", version=POLICY_VERSION, lifespan=lifespan)
@@ -40,14 +45,14 @@ app.add_middleware(
 @app.get("/api/v1/health", response_model=HealthResponse)
 def health() -> HealthResponse:
     urlhaus_ok = bool(settings.urlhaus_auth_key)
-    gemini_ok = bool(settings.gemini_api_key)
+    page_ok = page_stage.ready()
     ready = cache_ready()
-    status = "ok" if urlhaus_ok and ready else "degraded"
+    status = "ok" if urlhaus_ok and ready and page_ok else "degraded"
     return HealthResponse(
         status=status,
         policy_version=POLICY_VERSION,
         urlhaus_configured=urlhaus_ok,
-        gemini_configured=gemini_ok,
+        page_stage_ready=page_ok,
         cache_ready=ready,
     )
 
@@ -56,14 +61,11 @@ def health() -> HealthResponse:
 def meta() -> MetaResponse:
     return MetaResponse(
         policy_version=POLICY_VERSION,
-        gemini_model=settings.gemini_model,
+        page_model=page_stage.model_name(),
+        page_model_accuracy=page_stage.model_accuracy(),
         heuristic_benign_threshold=settings.heuristic_benign_threshold,
         cache_ttl_seconds=settings.cache_ttl_seconds,
-        limitations=[
-            "The destination was not visited or analyzed",
-            "Heuristic scoring is a placeholder, not a trained model",
-            "A benign / not-listed result is not a guarantee of safety",
-        ],
+        limitations=list(LIMITATIONS),
     )
 
 

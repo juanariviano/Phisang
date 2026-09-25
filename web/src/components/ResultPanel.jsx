@@ -104,10 +104,16 @@ export function ResultPanel({ busy, result, url }) {
                   Do not open this address in a normal tab.
                 </p>
               )}
-              {cls === "benign" && (
+              {cls === "benign" && result.decision_stage !== "page" && (
                 <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
                   Not listed is not safe. Phisang did not visit this page — the placeholder model
                   only inspected the address string.
+                </p>
+              )}
+              {cls === "benign" && result.decision_stage === "page" && (
+                <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
+                  Not listed is not safe. Phisang opened this page on its own server and the markup
+                  classifier found nothing — a demo-grade model that misreads ordinary login pages.
                 </p>
               )}
               {cls === "unavailable" && (
@@ -138,17 +144,48 @@ export function ResultPanel({ busy, result, url }) {
                 <Metric label="Policy" value={result.policy_version} />
               </div>
 
-              {result.llm?.reasoning && (
-                <blockquote
-                  className={`mt-7 border-l-4 py-1 pl-4 ${meta.rots ? "border-peel" : "border-ink"}`}
-                >
-                  <span className="off-rot mb-1.5 block text-[10px] font-bold uppercase tracking-[0.18em] text-leaf">
-                    Gemini reasoning
-                  </span>
-                  <p className="on-rot text-[15px] leading-relaxed text-forest">
-                    {result.llm.reasoning}
+              {result.page?.status === "ok" && (
+                <div className="mt-7">
+                  <p className="off-rot mb-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-leaf">
+                    The page we opened
                   </p>
-                </blockquote>
+                  <blockquote
+                    className={`border-l-4 py-1 pl-4 ${meta.rots ? "border-peel" : "border-ink"}`}
+                  >
+                    <p className="on-rot text-[15px] leading-relaxed text-forest">
+                      {result.page.reasoning}
+                    </p>
+                  </blockquote>
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-6">
+                    {/* page_title comes from the fetched page, so it is rendered as
+                        text only — never as markup. */}
+                    <Metric label="Page title" value={result.page.page_title || "—"} />
+                    <Metric label="HTTP status" value={result.page.http_status ?? "—"} />
+                    <Metric
+                      label="Phishing score"
+                      value={`${result.page.phishing_score?.toFixed(3) ?? "—"} / ${
+                        result.page.threshold ?? "—"
+                      }`}
+                    />
+                    <Metric
+                      label="Password fields"
+                      value={`${result.page.page_signals?.password_inputs ?? "—"} in ${
+                        result.page.page_signals?.forms ?? "—"
+                      } form(s)`}
+                    />
+                    {result.page.final_url !== result.normalized_url && (
+                      <Metric label="Redirected to" value={result.page.final_url || "—"} />
+                    )}
+                    <Metric
+                      label="Markup model"
+                      value={`${result.page.model_name || "—"}${
+                        result.page.model_accuracy
+                          ? ` · ${Math.round(result.page.model_accuracy * 100)}% acc`
+                          : ""
+                      }`}
+                    />
+                  </div>
+                </div>
               )}
 
               {result.signals?.length > 0 && (

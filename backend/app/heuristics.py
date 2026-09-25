@@ -55,6 +55,13 @@ IP_RE = re.compile(
     r"^(?:\d{1,3}\.){3}\d{1,3}$|^\[[0-9a-fA-F:]+\]$"
 )
 
+# Matches a hostname label ending in "-com", "-net", etc. — the classic
+# typosquat shape (e.g. "crocs-com.ru", "paypal-com-secure.info") where a fake
+# TLD is glued onto a brand name to read correctly at a glance. Brand-agnostic
+# by design: enumerating brand names always misses the next one (this project
+# missed "crocs" until a live scan of crocs-com.ru showed heuristic risk_score=0).
+FAKE_TLD_SUFFIX_RE = re.compile(r"-(com|net|org|co|info|gov|edu)$", re.IGNORECASE)
+
 
 def _entropy(text: str) -> float:
     if not text:
@@ -99,6 +106,17 @@ def score(normalized_url: str) -> HeuristicResult:
     if hyphen_count >= 3:
         risk += 12
         signals.append("Hostname contains many hyphens, a common phishing pattern")
+
+    real_tld = labels[-1].lower() if labels else ""
+    for label in labels[:-1]:
+        match = FAKE_TLD_SUFFIX_RE.search(label)
+        if match and match.group(1).lower() != real_tld:
+            risk += 40
+            signals.append(
+                f"Hostname label '{label}' ends in '-{match.group(1)}', mimicking a "
+                f".{match.group(1)} address while the real domain is .{real_tld}"
+            )
+            break
 
     token_hits = [token for token in SUSPICIOUS_TOKENS if token in haystack]
     well_known = is_well_known_host(host)

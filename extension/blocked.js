@@ -34,10 +34,10 @@ chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
 
   renderPeel(document.getElementById("peel"), url);
 
-  if (result.llm && result.llm.reasoning) {
+  if (result.page && result.page.reasoning) {
     const box = document.getElementById("reasoning");
     box.classList.remove("hidden");
-    box.innerHTML = "<h2>Why this matters</h2><p>" + escapeHtml(result.llm.reasoning) + "</p>";
+    box.innerHTML = "<h2>Why this matters</h2><p>" + escapeHtml(result.page.reasoning) + "</p>";
   }
 
   const signals = result.signals || [];

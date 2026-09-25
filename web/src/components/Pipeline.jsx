@@ -5,7 +5,7 @@ import { PeelStrips } from "./PeelStrips.jsx";
 const GATES = [
   { label: "URLhaus", detail: "Exact address, then the related host path" },
   { label: "Lexical model", detail: "Placeholder scoring, 80% gate" },
-  { label: "Gemini", detail: "Only when the local check is inconclusive" },
+  { label: "Page markup", detail: "Opens the page server-side when the address is inconclusive" },
 ];
 
 /**
@@ -46,7 +46,7 @@ export const Pipeline = memo(function Pipeline({ url }) {
         ))}
       </ol>
       <p className="mt-4 text-sm leading-relaxed text-leaf">
-        The destination page is never fetched or rendered.
+        The page is only ever fetched on our server, never in your browser.
       </p>
     </div>
   );

@@ -47,7 +47,7 @@ function render(payload) {
 
   renderPeel(el.peel, payload.url || result.normalized_url || "");
 
-  const reasoning = result.llm && result.llm.reasoning ? [result.llm.reasoning] : [];
+  const reasoning = result.page && result.page.reasoning ? [result.page.reasoning] : [];
   const lines = reasoning.concat(result.signals || []);
   if (lines.length) {
     el.signalsLabel.classList.remove("hidden");

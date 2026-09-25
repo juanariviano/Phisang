@@ -6,3 +6,11 @@ pydantic>=2.12.0
 pydantic-settings>=2.9.0
 idna>=3.10
 google-genai>=1.16.0
+
+# Page-analysis stage. After installing, fetch the browser:
+#   python -m playwright install chromium
+playwright>=1.49.0
+beautifulsoup4>=4.13.0
+torch>=2.9.0
+transformers>=4.57.0
+pytest>=8.3.0

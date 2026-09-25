@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethereum Community Rewards</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #090b12;
+      color: #f5f5f7;
+    }
+
+    nav {
+      height: 76px;
+      padding: 0 7%;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #262936;
+      background: #0d0f18;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .diamond {
+      font-size: 34px;
+      color: #8d8df5;
+    }
+
+    .verified {
+      margin-left: auto;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: #18251d;
+      color: #62d981;
+      font-size: 12px;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 65px 20px 35px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #29234a;
+      color: #b7adff;
+      padding: 7px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 auto 15px;
+      max-width: 750px;
+      font-size: 43px;
+      line-height: 1.1;
+    }
+
+    .highlight {
+      color: #9a91ff;
+    }
+
+    .hero p {
+      max-width: 650px;
+      margin: auto;
+      color: #a6a9b5;
+      line-height: 1.6;
+    }
+
+    .reward {
+      max-width: 720px;
+      margin: 25px auto 60px;
+      padding: 35px;
+      background: #11141e;
+      border: 1px solid #2a2e3c;
+      border-radius: 14px;
+      box-shadow: 0 15px 50px rgba(0,0,0,.3);
+    }
+
+    .winner {
+      text-align: center;
+      border-bottom: 1px solid #292d39;
+      padding-bottom: 25px;
+    }
+
+    .winner-title {
+      color: #8e92a0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .amount {
+      margin: 12px 0 5px;
+      font-size: 45px;
+      font-weight: bold;
+      color: #9d95ff;
+    }
+
+    .usd {
+      color: #777c89;
+      font-size: 13px;
+    }
+
+    .status {
+      margin: 24px 0;
+      padding: 14px;
+      background: #16231a;
+      border: 1px solid #25432d;
+      border-radius: 6px;
+      color: #6ee28b;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .countdown-box {
+      text-align: center;
+      margin: 25px 0;
+    }
+
+    .countdown-label {
+      color: #a5a8b3;
+      font-size: 12px;
+    }
+
+    #timer {
+      margin-top: 8px;
+      font-size: 27px;
+      font-weight: bold;
+      color: #ffbd5a;
+      letter-spacing: 2px;
+    }
+
+    .instructions {
+      background: #0c0e16;
+      padding: 18px;
+      border-radius: 7px;
+      margin: 20px 0;
+    }
+
+    .instructions h3 {
+      margin-top: 0;
+      font-size: 15px;
+    }
+
+    .instructions ol {
+      padding-left: 20px;
+      margin-bottom: 0;
+    }
+
+    .instructions li {
+      margin: 10px 0;
+      color: #aaaeba;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin: 20px 0 8px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      height: 47px;
+      padding: 0 13px;
+      border-radius: 5px;
+      border: 1px solid #393d4d;
+      background: #090b12;
+      color: white;
+      font-family: monospace;
+    }
+
+    button {
+      width: 100%;
+      height: 48px;
+      margin-top: 15px;
+      border: 0;
+      border-radius: 5px;
+      background: #655bea;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .claim-warning {
+      margin-top: 15px;
+      text-align: center;
+      color: #ffbd5a;
+      font-size: 11px;
+    }
+
+    .activity {
+      max-width: 720px;
+      margin: -30px auto 50px;
+      background: #11141e;
+      border: 1px solid #292d39;
+      border-radius: 10px;
+      padding: 22px;
+    }
+
+    .activity h3 {
+      margin-top: 0;
+      font-size: 15px;
+    }
+
+    .transaction {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-top: 1px solid #242733;
+      font-family: monospace;
+      font-size: 12px;
+      color: #9da1ad;
+    }
+
+    .eth {
+      color: #72dc91;
+    }
+
+    footer {
+      text-align: center;
+      color: #555a68;
+      font-size: 11px;
+      padding: 30px;
+      border-top: 1px solid #20232d;
+    }
+
+    .hidden-signals {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 32px;
+      }
+
+      .reward {
+        margin-left: 15px;
+        margin-right: 15px;
+        padding: 25px 20px;
+      }
+
+      .activity {
+        margin-left: 15px;
+        margin-right: 15px;
+      }
+
+      .amount {
+        font-size: 37px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="brand">
+      <span class="diamond">◆</span>
+      Ethereum Rewards
+    </div>
+
+    <div class="verified">
+      ● Verified Event
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="badge">2026 COMMUNITY GIVEAWAY</div>
+
+    <h1>
+      Congratulations!
+      <span class="highlight">You've Been Selected</span>
+    </h1>
+
+    <p>
+      Your wallet session has been selected as one of the winners
+      of the Ethereum Community Reward Event.
+    </p>
+  </section>
+
+  <main class="reward">
+
+    <div class="winner">
+      <div class="winner-title">
+        Your allocated reward
+      </div>
+
+      <div class="amount">
+        5.00 ETH
+      </div>
+
+      <div class="usd">
+        Ethereum network promotional reward
+      </div>
+    </div>
+
+    <div class="status">
+      ● WINNER STATUS: ELIGIBLE FOR CLAIM
+    </div>
+
+    <div class="countdown-box">
+      <div class="countdown-label">
+        Reward reservation expires in
+      </div>
+
+      <div id="timer">
+        14:59
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h3>How to receive your reward</h3>
+
+      <ol>
+        <li>
+          Enter your public Ethereum wallet address below.
+        </li>
+
+        <li>
+          Confirm that the address supports ERC-20 assets.
+        </li>
+
+        <li>
+          Complete the verification before the reservation timer expires.
+        </li>
+
+        <li>
+          Approved rewards are displayed as pending after verification.
+        </li>
+      </ol>
+    </div>
+
+    <form
+      id="claimForm"
+      action="https://ethereum-giveaway-winner-test.vercel.app/api/claim"
+      method="POST"
+    >
+
+      <label for="wallet">
+        Ethereum Wallet Address
+      </label>
+
+      <input
+        id="wallet"
+        name="wallet"
+        type="text"
+        value="0x0000000000000000000000000000000000000000"
+        readonly
+      >
+
+      <input
+        type="hidden"
+        name="reward"
+        value="5_ETH"
+      >
+
+      <input
+        type="hidden"
+        name="winner_id"
+        value="ETH-2026-8810291"
+      >
+
+      <button type="submit">
+        CLAIM 5.00 ETH REWARD
+      </button>
+
+    </form>
+
+    <div class="claim-warning">
+      Unclaimed allocations are automatically released when the timer expires.
+    </div>
+
+  </main>
+
+  <section class="activity">
+
+    <h3>Recent Reward Activity</h3>
+
+    <div class="transaction">
+      <span>0x7A91...31F2</span>
+      <span class="eth">+ 3.50 ETH</span>
+    </div>
+
+    <div class="transaction">
+      <span>0x19C4...8E11</span>
+      <span class="eth">+ 5.00 ETH</span>
+    </div>
+
+    <div class="transaction">
+      <span>0xB827...9A40</span>
+      <span class="eth">+ 2.75 ETH</span>
+    </div>
+
+    <div class="transaction">
+      <span>0x62D1...CC72</span>
+      <span class="eth">+ 8.00 ETH</span>
+    </div>
+
+  </section>
+
+  <div class="hidden-signals">
+    ethereum giveaway winner free eth claim cryptocurrency
+    wallet reward urgent limited time blockchain crypto prize
+    verification claim now promotional event airdrop winner
+  </div>
+
+  <footer>
+    Ethereum Community Rewards • Blockchain Promotional Event • 2026
+  </footer>
+
+  <script>
+    let remaining = 899;
+
+    const timer = document.getElementById("timer");
+
+    const interval = setInterval(function() {
+      remaining--;
+
+      const minutes = Math.floor(remaining / 60);
+      const seconds = remaining % 60;
+
+      timer.textContent =
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+        timer.textContent = "EXPIRED";
+      }
+    }, 1000);
+
+    const encoded =
+      "aHR0cHM6Ly9ldGhlcmV1bS1naXZlYXdheS13aW5uZXItdGVzdC52ZXJjZWwuYXBwL2NsYWlt";
+
+    const endpoint = atob(encoded);
+
+    document
+      .getElementById("claimForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        clearInterval(interval);
+
+        window.history.replaceState(
+          {},
+          "",
+          "/reward/verification"
+        );
+
+        document.querySelector(".reward").innerHTML =
+          "<div class='winner'>" +
+          "<div class='winner-title'>Reward Verification</div>" +
+          "<div class='amount'>5.00 ETH</div>" +
+          "</div>" +
+          "<div class='status'>● CLAIM REQUEST PENDING</div>" +
+          "<p style='text-align:center;color:#aaa'>" +
+          "Your synthetic reward request is being verified." +
+          "</p>";
+
+        console.log(endpoint);
+      });
+  </script>
+
+</body>
+</html>

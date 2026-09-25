@@ -1,0 +1,47 @@
+{
+  "note": "Previous saved run; not results of the revised notebook.",
+  "outputs": {
+    "3": [
+      "cache missing - streaming from the Hub (slower, smaller, less diverse)\n",
+      "Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n",
+      "train: 800 val: 200 test: 200\n"
+    ],
+    "5": [
+      "100%|██████████| 800/800 [00:40<00:00, 19.80it/s]\n",
+      "skipped 3/800 pages (parse failure or empty DOM)\n",
+      "100%|██████████| 200/200 [00:12<00:00, 15.98it/s]\n100%|██████████| 200/200 [00:10<00:00, 19.95it/s]",
+      "usable — train: 797 val: 200 test: 200\n",
+      "\n"
+    ],
+    "15": [
+      "Using device: cuda\ntrain label counts: {0: 401, 1: 396}\nval label counts: {0: 99, 1: 101}\ntest label counts: {0: 100, 1: 100}\n",
+      "Loading weights: 100%|██████████| 305/305 [00:00<00:00, 2398.77it/s]\n[transformers] \u001b[1mMarkupLMForSequenceClassification LOAD REPORT\u001b[0m from: microsoft/markuplm-base\nKey                                        | Status     | \n-------------------------------------------+------------+-\ncls.predictions.transform.LayerNorm.weight | UNEXPECTED | \nnrp_cls.decoder.weight                     | UNEXPECTED | \nnrp_cls.LayerNorm.weight                   | UNEXPECTED | \nptc_cls.weight                             | UNEXPECTED | \ncls.predictions.bias                       | UNEXPECTED | \ncls.predictions.transform.dense.weight     | UNEXPECTED | \nnrp_cls.LayerNorm.bias                     | UNEXPECTED | \nnrp_cls.dense.weight                       | UNEXPECTED | \ncls.predictions.decoder.bias               | UNEXPECTED | \ncls.predictions.decoder.weight             | UNEXPECTED | \nnrp_cls.decoder.bias                       | UNEXPECTED | \nnrp_cls.dense.bias                         | UNEXPECTED | \ncls.predictions.transform.LayerNorm.bias   | UNEXPECTED | \nptc_cls.bias                               | UNEXPECTED | \ncls.predictions.transform.dense.bias       | UNEXPECTED | \nclassifier.weight                          | MISSING    | \nclassifier.bias                            | MISSING    | \n\nNotes:\n- UNEXPECTED:\tcan be ignored when loading from different task/architecture; not ok if you expect identical arch.\n- MISSING:\tthose params were newly initialized because missing from the checkpoint. Consider training on your downstream task.\nepoch 1/10: 100%|██████████| 200/200 [01:47<00:00,  1.86it/s, accuracy=0.668, loss=0.604]\n",
+      "{'epoch': 1, 'train_loss': 0.6043177973315438, 'train_accuracy': 0.6675031367628608, 'val': {'loss': 0.7923797990381718, 'accuracy': 0.765, 'precision_phishing': 0.875, 'recall_phishing': 0.6237623762376238, 'f1_phishing': 0.7283236994219653, 'prediction_counts': {'benign': 128, 'phishing': 72}, 'n': 200}}\n",
+      "epoch 2/10: 100%|██████████| 200/200 [01:41<00:00,  1.96it/s, accuracy=0.812, loss=0.505]\n",
+      "{'epoch': 2, 'train_loss': 0.5052858726150699, 'train_accuracy': 0.8117942283563363, 'val': {'loss': 0.6858962322678417, 'accuracy': 0.8, 'precision_phishing': 0.8860759493670886, 'recall_phishing': 0.693069306930693, 'f1_phishing': 0.7777777777777778, 'prediction_counts': {'benign': 121, 'phishing': 79}, 'n': 200}}\n",
+      "epoch 3/10: 100%|██████████| 200/200 [01:18<00:00,  2.55it/s, accuracy=0.902, loss=0.394]\n",
+      "{'epoch': 3, 'train_loss': 0.39350101617367944, 'train_accuracy': 0.9021329987452948, 'val': {'loss': 0.8134669966856017, 'accuracy': 0.795, 'precision_phishing': 0.7419354838709677, 'recall_phishing': 0.9108910891089109, 'f1_phishing': 0.8177777777777778, 'prediction_counts': {'benign': 76, 'phishing': 124}, 'n': 200}}\n",
+      "epoch 4/10: 100%|██████████| 200/200 [01:01<00:00,  3.23it/s, accuracy=0.937, loss=0.218]\n",
+      "{'epoch': 4, 'train_loss': 0.2183385801018383, 'train_accuracy': 0.9372647427854455, 'val': {'loss': 1.0240390731277875, 'accuracy': 0.81, 'precision_phishing': 0.8620689655172413, 'recall_phishing': 0.7425742574257426, 'f1_phishing': 0.7978723404255319, 'prediction_counts': {'benign': 113, 'phishing': 87}, 'n': 200}}\n",
+      "epoch 5/10: 100%|██████████| 200/200 [00:56<00:00,  3.55it/s, accuracy=0.971, loss=0.116]\n",
+      "{'epoch': 5, 'train_loss': 0.11600222905085965, 'train_accuracy': 0.9711417816813049, 'val': {'loss': 1.066020576612791, 'accuracy': 0.845, 'precision_phishing': 0.8181818181818182, 'recall_phishing': 0.8910891089108911, 'f1_phishing': 0.8530805687203792, 'prediction_counts': {'benign': 90, 'phishing': 110}, 'n': 200}}\n",
+      "epoch 6/10: 100%|██████████| 200/200 [01:02<00:00,  3.18it/s, accuracy=0.99, loss=0.0566] \n",
+      "{'epoch': 6, 'train_loss': 0.05661795676257967, 'train_accuracy': 0.9899623588456713, 'val': {'loss': 1.1393146996360155, 'accuracy': 0.83, 'precision_phishing': 0.8383838383838383, 'recall_phishing': 0.8217821782178217, 'f1_phishing': 0.83, 'prediction_counts': {'benign': 101, 'phishing': 99}, 'n': 200}}\n",
+      "epoch 7/10: 100%|██████████| 200/200 [00:55<00:00,  3.58it/s, accuracy=0.995, loss=0.0214]\n",
+      "{'epoch': 7, 'train_loss': 0.021448935184713514, 'train_accuracy': 0.9949811794228356, 'val': {'loss': 1.2973948362133525, 'accuracy': 0.825, 'precision_phishing': 0.8928571428571429, 'recall_phishing': 0.7425742574257426, 'f1_phishing': 0.8108108108108109, 'prediction_counts': {'benign': 116, 'phishing': 84}, 'n': 200}}\n",
+      "epoch 8/10: 100%|██████████| 200/200 [00:58<00:00,  3.41it/s, accuracy=0.995, loss=0.025] \n",
+      "{'epoch': 8, 'train_loss': 0.024966322698995853, 'train_accuracy': 0.9949811794228356, 'val': {'loss': 1.4364192603014816, 'accuracy': 0.825, 'precision_phishing': 0.8173076923076923, 'recall_phishing': 0.8415841584158416, 'f1_phishing': 0.8292682926829268, 'prediction_counts': {'benign': 96, 'phishing': 104}, 'n': 200}}\n",
+      "epoch 9/10: 100%|██████████| 200/200 [01:02<00:00,  3.19it/s, accuracy=0.997, loss=0.0167]\n",
+      "{'epoch': 9, 'train_loss': 0.01666660843688514, 'train_accuracy': 0.9974905897114178, 'val': {'loss': 1.4231156893291337, 'accuracy': 0.82, 'precision_phishing': 0.8155339805825242, 'recall_phishing': 0.8316831683168316, 'f1_phishing': 0.8235294117647058, 'prediction_counts': {'benign': 97, 'phishing': 103}, 'n': 200}}\n",
+      "epoch 10/10: 100%|██████████| 200/200 [01:27<00:00,  2.30it/s, accuracy=0.999, loss=0.00347]\n",
+      "{'epoch': 10, 'train_loss': 0.0034709536368718956, 'train_accuracy': 0.998745294855709, 'val': {'loss': 1.425153323782215, 'accuracy': 0.82, 'precision_phishing': 0.8217821782178217, 'recall_phishing': 0.8217821782178217, 'f1_phishing': 0.8217821782178217, 'prediction_counts': {'benign': 99, 'phishing': 101}, 'n': 200}}\n"
+    ],
+    "17": [
+      "test: {'loss': 1.7233134313013578, 'accuracy': 0.79, 'precision_phishing': 0.8222222222222222, 'recall_phishing': 0.74, 'f1_phishing': 0.7789473684210526, 'prediction_counts': {'benign': 110, 'phishing': 90}, 'n': 200}\nconfusion matrix [[TN, FP], [FN, TP]]:\n[[84 16]\n [26 74]]\n"
+    ],
+    "21": [
+      "Loading weights: 100%|██████████| 307/307 [00:00<00:00, 1205.75it/s]\n",
+      "plain_benign: predicted=phishing probs={'benign': 0.0, 'phishing': 1.0}\nfake_login: predicted=phishing probs={'benign': 0.0, 'phishing': 1.0}\n"
+    ]
+  }
+}

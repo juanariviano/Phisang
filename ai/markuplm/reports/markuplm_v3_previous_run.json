@@ -1,0 +1,101 @@
+{
+  "note": "Saved outputs from the previous v3 run, before evaluation refactoring. Not results of the revised notebook.",
+  "cells": {
+    "9": [
+      "Mengambil kolam train+val ...\n  data/train-001.parquet: +3300 halaman {'phish': 1650, 'benign': 1650}\n  data/train-007.parquet: +3300 halaman {'phish': 1650, 'benign': 1650}\n  data/train-013.parquet: +3300 halaman {'benign': 1650, 'phish': 1650}\n  data/train-019.parquet: +3300 halaman {'phish': 1650, 'benign': 1650}\n  data/train-025.parquet: +3300 halaman {'phish': 1650, 'benign': 1650}\n  data/train-031.parquet: +3300 halaman {'phish': 1650, 'benign': 1650}\n  data/train-037.parquet: +3300 halaman {'benign': 1650, 'phish': 1650}\n  data/train-043.parquet: +3300 halaman {'benign': 1650, 'phish': 1650}\n  train: 26400 halaman {'phish': 13200, 'benign': 13200} dalam 47s\n\nlength matching kolam train+val: 26400 -> 15644 halaman ({'phish': 13200, 'benign': 13200} -> {'phish': 7822, 'benign': 7822})\n",
+      "   bucket (karakter)  benign  phish  disimpan/kelas\n0               100+       0      2               0\n1               215+       0     34               0\n2               464+       2    144               2\n3             1,000+       2    331               2\n4             2,154+       2   1436               2\n5             4,642+      32   1795              32\n6            10,000+     743   1165             743\n7            21,544+    1085   2273            1085\n8            46,416+    2095   1824            1824\n9           100,000+    2791   2855            2791\n10          215,443+    3546   1058            1058\n11          464,159+    2902    283             283",
+      "\nMengambil test set (split resmi) ...\n  data/test-001.parquet: +668 halaman {'benign': 334, 'phish': 334}\n  data/test-007.parquet: +668 halaman {'phish': 334, 'benign': 334}\n  data/test-013.parquet: +668 halaman {'phish': 334, 'benign': 334}\n  test: 2004 halaman {'benign': 1002, 'phish': 1002} dalam 20s\n\ndomain yang muncul di train DAN val : 0 (harus 0)\ndomain yang muncul di train DAN test: 136 (harus 0)\n",
+      "   split      n  benign  phish  phish/benign  domain unik\n0  train  13244    6622   6622           1.0        10395\n1    val   2400    1200   1200           1.0         1985\n2   test   2004    1002   1002           1.0         1837"
+    ],
+    "17": [
+      "3 node pertama TANPA pembersihan:\n    (window.NREUM||(NREUM={})).init={ajax:{deny_list:[\"bam.nr-data.net\"]}};(window.NREUM||(NREUM={})).loader_confi ...\n    Google Tag Manager for WordPress by gtm4wp.com\n    var gtm4wp_datalayer_name = \"dataLayer\";\n\tvar dataLayer = dataLayer || [];\n3 node pertama SESUDAH pembersihan:\n    The Basics of Pressure Regulators - Beswick Engineering\n    Excellence in Miniature\n    Select Language\n\n",
+      "parse train:   0%|          | 0/13244 [00:00<?, ?it/s]",
+      "train: 13105 halaman siap {'benign': 6524, 'phishing': 6581} (dilewati: 98 benign + 41 phishing) dalam 567s\n",
+      "parse val:   0%|          | 0/2400 [00:00<?, ?it/s]",
+      "val: 2386 halaman siap {'benign': 1194, 'phishing': 1192} (dilewati: 6 benign + 8 phishing) dalam 116s\n",
+      "parse test:   0%|          | 0/2004 [00:00<?, ?it/s]",
+      "test: 1921 halaman siap {'benign': 978, 'phishing': 943} (dilewati: 24 benign + 59 phishing) dalam 109s\n",
+      "       halaman  node sebelum filter  node sesudah filter  \\\ntrain  13105.0                175.1                132.3   \nval     2386.0                185.1                138.2   \ntest    1921.0                220.2                149.2   \n\n       karakter ke tokenizer  \ntrain                 3232.0  \nval                   3307.0  \ntest                  3681.0  ",
+      "\nHalaman yang gagal diparse (di produksi: halaman ini tetap harus diputuskan)\n",
+      "       benign  phishing\ntrain      98        41\nval         6         8\ntest       24        59",
+      "AUC cacah-node saja di train: 0.269\nAUC cacah-node saja di val  : 0.307\nAUC cacah-node saja di test : 0.208\n"
+    ],
+    "25": [
+      "main epoch 0 (acak):   0%|          | 0/150 [00:00<?, ?it/s]",
+      "[main] epoch 0 (bobot acak): val_loss=0.7561 acc=0.481 f1=0.643 auc=0.389\n",
+      "main epoch 1:   0%|          | 0/1639 [00:00<?, ?it/s]",
+      "/tmp/ipykernel_59/2830096490.py:93: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate\n  scheduler.step()\n",
+      "main val 1:   0%|          | 0/150 [00:00<?, ?it/s]",
+      "[main] epoch 1: train_loss=0.2973 val_loss=0.4101 acc=0.880 f1=0.866 auc=0.971 (638s)\n        -> checkpoint baru (AUC val 0.9710)\n",
+      "main epoch 2:   0%|          | 0/1639 [00:00<?, ?it/s]",
+      "main val 2:   0%|          | 0/150 [00:00<?, ?it/s]",
+      "[main] epoch 2: train_loss=0.1276 val_loss=0.2390 acc=0.928 f1=0.929 auc=0.978 (639s)\n        -> checkpoint baru (AUC val 0.9785)\n",
+      "main epoch 3:   0%|          | 0/1639 [00:00<?, ?it/s]",
+      "main val 3:   0%|          | 0/150 [00:00<?, ?it/s]",
+      "[main] epoch 3: train_loss=0.0524 val_loss=0.3543 acc=0.927 f1=0.925 auc=0.980 (633s)\n        -> checkpoint baru (AUC val 0.9799)\n",
+      "main epoch 4:   0%|          | 0/1639 [00:00<?, ?it/s]",
+      "main val 4:   0%|          | 0/150 [00:00<?, ?it/s]",
+      "[main] epoch 4: train_loss=0.0211 val_loss=0.4278 acc=0.923 f1=0.921 auc=0.981 (632s)\n        -> checkpoint baru (AUC val 0.9808)\n\nselesai dalam 43.1 menit\n",
+      "   epoch  train_loss  val_accuracy  val_precision  val_recall  val_f1  \\\n0      0         NaN        0.4807         0.4897      0.9379  0.6435   \n1      1      0.2973        0.8797         0.9768      0.7777  0.8660   \n2      2      0.1276        0.9283         0.9140      0.9455  0.9295   \n3      3      0.0524        0.9275         0.9529      0.8993  0.9253   \n4      4      0.0211        0.9233         0.9541      0.8893  0.9205   \n\n   val_auc  val_loss  val_n  \n0   0.3894    0.7561   2386  \n1   0.9710    0.4101   2386  \n2   0.9785    0.2390   2386  \n3   0.9799    0.3543   2386  \n4   0.9808    0.4278   2386  "
+    ],
+    "31": [
+      "subset kontrol: 600 halaman train, 800 halaman val\nlabel yang kebetulan tetap sama setelah diacak: 48.3% (wajar di sekitar 50%)\n\n=== run kontrol: label asli ===\n",
+      "Loading weights:   0%|          | 0/305 [00:00<?, ?it/s]",
+      "Exception in thread Thread-auto_conversion:\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/threading.py\", line 1075, in _bootstrap_inner\n    self.run()\n  File \"/usr/lib/python3.12/threading.py\", line 1012, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 116, in auto_conversion\n    raise e\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 95, in auto_conversion\n    sha = get_conversion_pr_reference(api, pretrained_model_name_or_path, **cached_file_kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 71, in get_conversion_pr_reference\n    spawn_conversion(token, private, model_id)\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 48, in spawn_conversion\n    event_id = result[\"event_id\"]\n               ~~~~~~^^^^^^^^^^^^\nKeyError: 'event_id'\n",
+      "label asli epoch 0 (acak):   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label asli] epoch 0 (bobot acak): val_loss=0.6707 acc=0.605 f1=0.470 auc=0.639\n",
+      "label asli epoch 1:   0%|          | 0/75 [00:00<?, ?it/s]",
+      "label asli val 1:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label asli] epoch 1: train_loss=0.6375 val_loss=0.5525 acc=0.739 f1=0.764 auc=0.830 (44s)\n",
+      "label asli epoch 2:   0%|          | 0/75 [00:00<?, ?it/s]",
+      "label asli val 2:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label asli] epoch 2: train_loss=0.3954 val_loss=0.4252 acc=0.801 f1=0.802 auc=0.892 (44s)\n",
+      "label asli epoch 3:   0%|          | 0/75 [00:00<?, ?it/s]",
+      "label asli val 3:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label asli] epoch 3: train_loss=0.2851 val_loss=0.3987 acc=0.819 f1=0.815 auc=0.903 (43s)\n",
+      "label asli akhir:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "\n=== run kontrol: label diacak ===\n",
+      "Loading weights:   0%|          | 0/305 [00:00<?, ?it/s]",
+      "Exception in thread Thread-auto_conversion:\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/threading.py\", line 1075, in _bootstrap_inner\n    self.run()\n  File \"/usr/lib/python3.12/threading.py\", line 1012, in run\n    self._target(*self._args, **self._kwargs)\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 116, in auto_conversion\n    raise e\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 95, in auto_conversion\n    sha = get_conversion_pr_reference(api, pretrained_model_name_or_path, **cached_file_kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 71, in get_conversion_pr_reference\n    spawn_conversion(token, private, model_id)\n  File \"/usr/local/lib/python3.12/dist-packages/transformers/safetensors_conversion.py\", line 48, in spawn_conversion\n    event_id = result[\"event_id\"]\n               ~~~~~~^^^^^^^^^^^^\nKeyError: 'event_id'\n",
+      "label diacak epoch 0 (acak):   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label diacak] epoch 0 (bobot acak): val_loss=0.6707 acc=0.605 f1=0.470 auc=0.639\n",
+      "label diacak epoch 1:   0%|          | 0/75 [00:00<?, ?it/s]",
+      "label diacak val 1:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label diacak] epoch 1: train_loss=0.7104 val_loss=0.7132 acc=0.486 f1=0.646 auc=0.448 (44s)\n",
+      "label diacak epoch 2:   0%|          | 0/75 [00:00<?, ?it/s]",
+      "label diacak val 2:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label diacak] epoch 2: train_loss=0.6690 val_loss=0.6812 acc=0.621 f1=0.573 auc=0.611 (42s)\n",
+      "label diacak epoch 3:   0%|          | 0/75 [00:00<?, ?it/s]",
+      "label diacak val 3:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "[label diacak] epoch 3: train_loss=0.6312 val_loss=0.7017 acc=0.472 f1=0.604 auc=0.582 (43s)\n",
+      "label diacak akhir:   0%|          | 0/50 [00:00<?, ?it/s]",
+      "\nlabel asli    : AUC akhir 0.903 (95% CI 0.882-0.922)\nlabel diacak  : AUC akhir 0.582 (95% CI 0.544-0.624)\n"
+    ],
+    "34": [
+      "checkpoint terbaik dimuat: /tmp/best_state.pt\nkalibrasi  :   769 halaman {'benign': 383, 'phishing': 386}\ntest final :  1152 halaman {'benign': 595, 'phishing': 557}\ndomain yang muncul di keduanya: 0 (harus 0)\n",
+      "val final:   0%|          | 0/150 [00:00<?, ?it/s]",
+      "kalibrasi:   0%|          | 0/49 [00:00<?, ?it/s]",
+      "test final:   0%|          | 0/72 [00:00<?, ?it/s]",
+      "\ntemperature terpasang di kalibrasi: T = 5.245 (>1: model terlalu yakin, skor direnggangkan)\n  NLL kalibrasi sebelum : 1.3768\n  NLL kalibrasi sesudah : 0.4696\n  NLL test final sesudah: 0.4298  (set ini tidak dipakai memasang T)\n  AUC tidak berubah oleh T: 0.9229 -> 0.9229\n  rentang p (sebelum T): phishing p5-p95 = 0.000-1.000 | benign p5-p95 = 0.000-0.391\n  rentang p (sesudah T): phishing p5-p95 = 0.167-0.860 | benign p5-p95 = 0.152-0.479\n"
+    ],
+    "35": [
+      "threshold F1-terbaik (kalibrasi)          : 0.187 (F1 0.844 di kalibrasi)\nthreshold FPR<=2% titik  (kalibrasi)  : 0.638\nthreshold FPR<=2% + margin (kalibrasi): 0.762  <- dipakai di produksi\nthreshold FPR<=2% cara v2 (validasi)  : 0.740  (pembanding saja)\n  ongkos margin di kalibrasi: recall 0.601 -> 0.541 (-0.060), FPR 0.0209 -> 0.0131\n",
+      "          set                    threshold  nilai  fpr aktual  accuracy  \\\n0   kalibrasi               0.50 (default)  0.500      0.0287    0.7997   \n1   kalibrasi        F1 terbaik @kalibrasi  0.187      0.1410    0.8453   \n2   kalibrasi     FPR<=2% titik @kalibrasi  0.638      0.0209    0.7893   \n3   kalibrasi   FPR<=2% +margin @kalibrasi  0.762      0.0131    0.7633   \n4   kalibrasi  FPR<=2% @validasi (cara v2)  0.740      0.0157    0.7685   \n5  TEST FINAL               0.50 (default)  0.500      0.0454    0.8299   \n6  TEST FINAL        F1 terbaik @kalibrasi  0.187      0.1630    0.8438   \n7  TEST FINAL     FPR<=2% titik @kalibrasi  0.638      0.0353    0.8168   \n8  TEST FINAL   FPR<=2% +margin @kalibrasi  0.762      0.0269    0.7943   \n9  TEST FINAL  FPR<=2% @validasi (cara v2)  0.740      0.0286    0.7977   \n\n   precision  recall      f1     auc  \n0     0.9567  0.6295  0.7594  0.9192  \n1     0.8560  0.8316  0.8436  0.9192  \n2     0.9667  0.6010  0.7412  0.9192  \n3     0.9766  0.5415  0.6967  0.9192  \n4     0.9727  0.5544  0.7063  0.9192  \n5     0.9349  0.6966  0.7984  0.9229  \n6     0.8301  0.8510  0.8404  0.9229  \n7     0.9459  0.6589  0.7767  0.9229  \n8     0.9545  0.6032  0.7393  0.9229  \n9     0.9525  0.6122  0.7454  0.9229  ",
+      "\nAUC validasi   : 0.9808  (95% CI 0.9762-0.9850)\nAUC test final : 0.9229  (95% CI 0.9075-0.9372)\nJarak generalisasi: -0.0578 -> selangnya TIDAK bertumpang tindih, pergeseran distribusi nyata.\n\n@ threshold operasional 0.762 di test final:\n  recall (phishing tertangkap) : 0.603  (95% CI 0.562-0.644)\n  FPR    (benign diblokir)     : 0.0269 (95% CI 0.0150-0.0398, anggaran 2%)\n\nBaseline jalan pintas (panjang HTML saja) di test: AUC 0.823\n\nclassification report - TEST FINAL @ threshold operasional 0.762\n              precision    recall  f1-score   support\n\n      benign      0.724     0.973     0.830       595\n    phishing      0.955     0.603     0.739       557\n\n    accuracy                          0.794      1152\n   macro avg      0.839     0.788     0.785      1152\nweighted avg      0.835     0.794     0.786      1152\n\n"
+    ],
+    "37": [
+      "AUC di dalam tiap desil panjang (jalan pintas panjang hampir hilang di dalam satu desil)\n",
+      "   desil          panjang    n  benign  phishing    AUC\n0      1        210-8,838  113       1       112  0.464\n1      2     8,838-14,438  118      22        96  0.865\n2      3    14,438-26,641  115      30        85  0.949\n3      4    26,641-47,762  115      37        78  0.875\n4      5    47,762-74,574  115      47        68  0.934\n5      6   74,574-128,697  115      70        45  0.908\n6      7  128,697-216,756  115      91        24  0.973\n7      8  216,756-345,678  115      90        25  0.914\n8      9  345,678-520,931  115     102        13  0.978\n9     10  520,931-996,033  116     105        11  0.841",
+      "AUC rata-rata dalam-desil: 0.870 (AUC keseluruhan 0.923, baseline panjang 0.823)\n  -> dekat dengan AUC keseluruhan = model membaca halaman, bukan mengukurnya.\n\nSubset test dicocokkan panjang: 538 halaman (269 benign / 269 phishing)\n  AUC model            : 0.929 (95% CI 0.905-0.949)\n  AUC panjang saja     : 0.517  <- harus ~0.50 di subset ini\n  AUC model di test penuh: 0.923\n\nKorelasi Spearman p_phishing vs log(panjang), DI DALAM satu kelas\n(di dalam satu kelas, panjang tidak boleh memberi informasi apa pun)\n  benign   : vs panjang HTML -0.049 | vs cacah node -0.182\n  phishing : vs panjang HTML -0.083 | vs cacah node +0.141\n"
+    ],
+    "39": [
+      "halaman test yang gagal diparse: 24 benign + 59 phishing (porsi test final: 14 + 35)\n",
+      "                          metrik  dilaporkan (v2)  jujur-produksi\n0   recall (phishing tertangkap)           0.6032          0.5672\n1  precision (blokir yang benar)           0.9545          0.9545\n2          FPR (benign diblokir)           0.0269          0.0263",
+      "Selisih recall adalah biaya yang nyata: halaman itu lolos tanpa pernah dinilai.\n-> 35 halaman phishing lolos karena tidak bisa diparse, bukan karena model salah menilai.\n"
+    ],
+    "45": [
+      "Loading weights:   0%|          | 0/307 [00:00<?, ?it/s]",
+      "threshold operasional: 0.762 | temperature: 5.245\n\n--- halaman NYATA dari test set (yang sah untuk dinilai) ---\nOK    | asli=benign   prediksi=benign   p=0.1499 | https://www.beswick.com/resources/the-basics-of-pressur\nOK    | asli=benign   prediksi=benign   p=0.1532 | https://www.quora.com/Can-a-3-48-GPA-get-me-into-the-ra\nOK    | asli=benign   prediksi=benign   p=0.1508 | https://www.reddit.com/r/askanelectrician/comments/103i\nOK    | asli=phishing prediksi=phishing p=0.8493 | https://lucent-moxie-4706f8.netlify.app\nOK    | asli=phishing prediksi=phishing p=0.8002 | http://www.to.lk/z0f76a1d14fd21a8fb5fd0d03e0fdc3d3cedae\nOK    | asli=phishing prediksi=phishing p=0.8572 | https://community.admitone.com/new-number-2025-how-do-i\n\n--- halaman buatan tangan: DETEKTOR JALAN PINTAS, bukan ukuran akurasi ---\n(v2: ketiganya 0.95-0.98 karena sama-sama pendek. v3 harus memisahkan mereka.)\nblog biasa                                 -> {'p_phishing': 0.815, 'keputusan': 'phishing'}\nform login palsu                           -> {'p_phishing': 0.8584, 'keputusan': 'phishing'}\nhalaman login asli (mirip, tapi benign)    -> {'p_phishing': 0.763, 'keputusan': 'phishing'}\n\nselisih (form palsu) - (tertinggi dari dua benign): +0.043\n  -> sempit atau negatif = jalan pintas panjang masih ada; naikkan length_buckets_per_decade.\n"
+    ]
+  }
+}

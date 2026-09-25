@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Daniel's Notes — Software, Projects & Ideas</title>
+
+  <meta
+    name="description"
+    content="A personal blog about software engineering, programming, technology, and side projects."
+  >
+</head>
+
+<body>
+
+  <header>
+    <nav class="nav">
+      <div class="brand">
+        Daniel's Notes
+      </div>
+
+      <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/archive.html">Archive</a>
+        <a href="/projects.html">Projects</a>
+        <a href="/about.html">About</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>
+      Thoughts on software, technology, and building things.
+    </h1>
+
+    <p>
+      I'm Daniel, a software engineer who enjoys experimenting with
+      backend systems, small web projects, and developer tools.
+      This is where I write down things I've learned along the way.
+    </p>
+  </section>
+
+  <main class="layout">
+
+    <section>
+
+      <article class="article">
+        <div class="date">
+          September 18, 2026
+        </div>
+
+        <h2>
+          <a href="/posts/building-a-small-api.html">
+            What I learned from building a small API from scratch
+          </a>
+        </h2>
+
+        <p>
+          Last weekend I decided to build a tiny REST API without
+          relying on a large framework. The project wasn't particularly
+          complicated, but it reminded me how much work normally happens
+          behind the abstractions we use every day.
+        </p>
+
+        <a
+          class="read-more"
+          href="/posts/building-a-small-api.html"
+        >
+          Continue reading →
+        </a>
+
+        <div class="tags">
+          <span class="tag">Programming</span>
+          <span class="tag">Backend</span>
+          <span class="tag">Web</span>
+        </div>
+      </article>
+
+      <article class="article">
+        <div class="date">
+          September 4, 2026
+        </div>
+
+        <h2>
+          <a href="/posts/home-server.html">
+            A year of running a tiny home server
+          </a>
+        </h2>
+
+        <p>
+          My home server started as an old computer sitting under a desk.
+          Over time it became a useful place for experiments, backups,
+          monitoring dashboards, and several applications that I use
+          around the house.
+        </p>
+
+        <a
+          class="read-more"
+          href="/posts/home-server.html"
+        >
+          Continue reading →
+        </a>
+
+        <div class="tags">
+          <span class="tag">Linux</span>
+          <span class="tag">Self Hosting</span>
+        </div>
+      </article>
+
+      <article class="article">
+        <div class="date">
+          August 21, 2026
+        </div>
+
+        <h2>
+          <a href="/posts/debugging.html">
+            Debugging is mostly about asking better questions
+          </a>
+        </h2>
+
+        <p>
+          When I first started programming, debugging usually meant
+          changing random lines until the program worked. These days,
+          I spend much more time trying to reduce a problem before
+          touching the code.
+        </p>
+
+        <a
+          class="read-more"
+          href="/posts/debugging.html"
+        >
+          Continue reading →
+        </a>
+
+        <div class="tags">
+          <span class="tag">Software Engineering</span>
+          <span class="tag">Debugging</span>
+        </div>
+      </article>
+
+      <article class="article">
+        <div class="date">
+          July 30, 2026
+        </div>
+
+        <h2>
+          <a href="/posts/weekend-project.html">
+            Building a weather display as a weekend project
+          </a>
+        </h2>
+
+        <p>
+          I had a spare microcontroller and a small display sitting in
+          a drawer, so I turned them into a simple desk weather station.
+          It was a fun excuse to work with hardware again.
+        </p>
+
+        <a
+          class="read-more"
+          href="/posts/weekend-project.html"
+        >
+          Continue reading →
+        </a>
+
+        <div class="tags">
+          <span class="tag">Electronics</span>
+          <span class="tag">IoT</span>
+          <span class="tag">Projects</span>
+        </div>
+      </article>
+
+    </section>
+
+    <aside>
+
+      <div class="sidebar-section">
+        <h3>About</h3>
+
+        <div class="about">
+          Software engineer, occasional electronics tinkerer,
+          and enthusiastic coffee drinker. I write about projects,
+          programming, and whatever technical topic I'm currently
+          exploring.
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Topics</h3>
+
+        <ul class="category-list">
+          <li><a href="/topics/programming.html">Programming</a></li>
+          <li><a href="/topics/web.html">Web Development</a></li>
+          <li><a href="/topics/linux.html">Linux</a></li>
+          <li><a href="/topics/electronics.html">Electronics</a></li>
+          <li><a href="/topics/projects.html">Side Projects</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section newsletter">
+        <h3>Occasional Updates</h3>
+
+        <p>
+          Get an email when I publish something new.
+          Usually no more than once or twice a month.
+        </p>
+
+        <form id="newsletterForm">
+          <input
+            id="newsletterEmail"
+            type="email"
+            placeholder="you@example.com"
+            required
+          >
+
+          <button type="submit">
+            Subscribe
+          </button>
+        </form>
+
+        <p id="newsletterMessage"></p>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <span>
+        © 2026 Daniel's Notes
+      </span>
+
+      <div>
+        <a href="/about.html">About</a>
+        <a href="/rss.xml">RSS</a>
+        <a href="/privacy.html">Privacy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById("newsletterForm");
+    const message = document.getElementById("newsletterMessage");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const email =
+        document.getElementById("newsletterEmail");
+
+      message.textContent =
+        "Thanks! This demo doesn't actually submit email addresses.";
+
+      email.value = "";
+    });
+  </script>
+
+</body>
+</html>

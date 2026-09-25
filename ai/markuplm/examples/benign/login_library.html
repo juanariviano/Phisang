@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Example Library - Member catalogue sign in</title></head>
+<body>
+<header><p>Example Library - Member catalogue sign in</p><nav aria-label="Main navigation"><a href="/">Home</a> |
+<a href="/articles">Articles</a> | <a href="/about">About</a> | <a href="/help">Help</a></nav></header>
+<main><article><h1>Sign in to your library catalogue</h1>
+<p>Use your existing Example Library membership account to renew borrowed books, check reservation dates, and save reading lists. This is an ordinary catalogue login page. Visiting the public catalogue and reading event information do not require a login. The form accepts your membership email and password only; it does not request payment-card details, an email-account password, or a banking security code.</p>
+<form action="/account/login" method="post">
+<label for="member-email">Membership email</label><input id="member-email" name="email" type="email" autocomplete="username">
+<label for="member-password">Library account password</label><input id="member-password" name="password" type="password" autocomplete="current-password">
+<button type="submit">Sign in to catalogue</button></form>
+<p><a href="/account/reset">Reset your library password</a> or <a href="/catalogue">continue browsing the public catalogue</a>. This fictional example has no working service behind its form.</p><section><h2>What your account provides</h2><p>Your catalogue account shows the books currently borrowed on your card and the dates they are due. It also lists reservations that are ready to collect. Reading lists are private to your account unless you choose to share them. Public opening hours, event descriptions, and the book search remain available without signing in. You can always ask library staff for help at the reception desk.</p></section>
+<section><h2>If you have forgotten your password</h2><p>Use the password-reset link for your library account, then follow the instructions sent to the membership email address already on file. Staff will never ask you to disclose your password in a telephone call or message. If the address on your membership record is out of date, visit the library desk for assistance. Do not enter credentials for unrelated services in this form.</p></section>
+<section><h2>Using a shared computer</h2><p>When you finish checking your loans, sign out before leaving the computer. Avoid saving a password in a browser that other people use. The library provides a public catalogue terminal for searching titles without accessing your personal account. If a session appears to belong to someone else, sign it out and tell a staff member rather than viewing or changing its details.</p></section>
+<section><h2>Privacy and support</h2><p>Account information is used to administer borrowing and reservations. Contact preferences can be reviewed after signing in. The privacy page explains retention periods and how to request corrections to membership information. For questions about a book renewal, use the help page or speak with staff. There is no urgent deadline on this login page, and library access is not restored by submitting card numbers or security codes.</p></section></article></main>
+<footer><p>Example website for local classifier testing. Links and forms are illustrative;
+this notebook reads HTML as data and does not navigate or submit it.</p>
+<nav aria-label="Footer"><a href="/privacy">Privacy information</a> |
+<a href="/accessibility">Accessibility</a> | <a href="/contact">Contact</a></nav></footer>
+</body></html>

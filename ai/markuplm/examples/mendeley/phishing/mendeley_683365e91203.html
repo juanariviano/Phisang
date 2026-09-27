@@ -1,0 +1,262 @@
+<!doctypehtml PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns=http://www.w3.org/1999/xhtml><script>wbinfo = {}
+  wbinfo.url = "http://staging.anjellavalino.com/wp-content/plugins/revslider/views/system/ali/ali/login.php";
+  wbinfo.timestamp = "20201224152140";
+  wbinfo.request_ts = "";
+  wbinfo.prefix = "https://via.hypothes.is/";
+  wbinfo.mod = "";
+  wbinfo.top_url = "https://via.hypothes.is/http://staging.anjellavalino.com/wp-content/plugins/revslider/views/system/ali/ali/login.php";
+  wbinfo.is_framed = false;
+  wbinfo.is_live = true;
+  wbinfo.coll = "";
+  wbinfo.proxy_magic = "";
+  wbinfo.static_prefix = "https://via.hypothes.is/static/__pywb";</script><script src=https://via.hypothes.is/static/__pywb/wombat.js></script><script>wbinfo.wombat_ts = "20201224152140";
+  wbinfo.wombat_scheme = "http";
+  wbinfo.wombat_host = "staging.anjellavalino.com";
+  wbinfo.wombat_sec = "1608823300";
+
+  wbinfo.wombat_opts = {"no_rewrite_prefixes": ["http://localhost:5000/", "http://localhost:3001/", "https://localhost:5000/", "https://localhost:3001/", "https://hypothes.is/", "https://qa.hypothes.is/", "https://cdn.hypothes.is/", "/assets/"], "http_cache": "pass"};
+
+
+  if (window && window._WBWombat && !window._wb_js_inited && !window._wb_wombat) {
+    window._wb_wombat = new _WBWombat(wbinfo);
+  }</script><script src=https://via.hypothes.is/static/__pywb/wb.js></script><script src=https://via.hypothes.is/static/__pywb/vidrw.js></script><link href=http://staging.anjellavalino.com/wp-content/plugins/revslider/views/system/ali/ali/login.php rel=canonical><script>/**
+  * Return `true` if this frame has no ancestors or its nearest ancestor was
+  * not served through Via.
+  *
+  * The implementation relies on all documents proxied through Via sharing the
+  * same origin.
+  */
+function isTopViaFrame() {
+  if (window === window.top) {
+    // Trivial case - This is the top-most frame in the tab so it must be the
+    // top Via frame.
+    return true;
+  }
+
+  try {
+    // Get a reference to the parent frame. Via's "wombat.js" frontend code
+    // monkey-patches `window.parent` in certain cases, in which case
+    // `window.__WB_orig_parent` is the _real_ parent frame.
+    var parent = window.__WB_orig_parent || window.parent;
+
+    // Try to access the parent frame's location. This will trigger an
+    // exception if the frame comes from a different, non-Via origin.
+    //
+    // This test assumes that all documents proxied through Via are served from
+    // the same origin. If a future change to Via means that is no longer the
+    // case, this function will need to be implemented differently.
+    parent.location.href;
+
+    // If the access succeeded, the parent frame was proxied through Via and so
+    // this is not the top Via frame.
+    return false;
+  } catch (err) {
+    // If the access failed, the parent frame was not proxied through Via and
+    // so this is the top Via frame.
+    return true;
+  }
+}
+
+function stripFragment(url) {
+  return url.replace(/#.*$/, '');
+}
+
+/**
+ * Test if a link will navigate to a new page as opposed to scrolling to a
+ * different location within the current page.
+ *
+ * @param {HTMLAnchorElement} linkEl
+ */
+function isExternalLink(linkEl) {
+  // Create a link that is definitely internal and compare its absolute URL
+  // to the target link.
+  //
+  // We do this rather than the more obvious comparison of `linkEl.href` to `location.href`
+  // because Via monkey-patches `HTMLAnchorElement.prototype.href` so that it
+  // returns the original (non-proxied) URL and therefore cannot be
+  // compared directly with the real (proxied) URL that `location.href` returns.
+  const internalLink = document.createElement('a');
+
+  // nb. `href` always returns an absolute URL when read.
+  internalLink.href = '#';
+
+  return stripFragment(internalLink.href) !== stripFragment(linkEl.href);
+}
+
+/**
+ * Setup handling of links to other documents.
+ *
+ * @param {"same-tab"|"new-tab"} mode
+ */
+function setupExternalLinkHandler(mode) {
+  if (mode === "new-tab") {
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest) {
+        // Do nothing in browsers that don't support `element.closest` (IE 11).
+        return;
+      }
+
+      var linkEl = event.target.closest("a");
+      if (linkEl) {
+        if (isExternalLink(linkEl)) {
+          // Make link open in a new tab.
+          linkEl.target = "_blank";
+        }
+      }
+    });
+  }
+}
+
+(function () {
+
+if (!isTopViaFrame()) {
+  // Do not inject Hypothesis into iframes in documents proxied through Via.
+  // As well as slowing down the loading of the proxied page even more, this
+  // causes problems with the way that the client "discovers" annotate-able iframes.
+  //
+  // See https://github.com/hypothesis/client/issues/568,
+  // https://github.com/hypothesis/via/issues/119 and
+  // https://github.com/hypothesis/lms/issues/701.
+  return;
+}
+
+// Inject the Hypothesis client.
+var embed_script = document.createElement("script");
+embed_script.src = "https://cdn.hypothes.is/hypothesis";
+document.head.appendChild(embed_script);
+
+setupExternalLinkHandler("same-tab");
+
+window.hypothesisConfig = function() {
+  return {"showHighlights": true, "appType": "via", "openSidebar": false};
+}})();</script><script>if (_wb_js) { _wb_js.load(); }</script><title>
+   Alibaba Manufacturer Directory - Suppliers, Manufacturers, Exporters &ampamp; Importers 
+  </title><meta content="text/html; charset=utf-8"http-equiv=Content-Type><meta content="Alibaba Manufacturer Directory - Suppliers, Manufacturers, Exporters & Importers"name=keywords><meta content="Alibaba Manufacturer Directory - Suppliers, Manufacturers, Exporters & Importers"name=description><link href=https://via.hypothes.is/oe_/https://stylessl.aliunicorn.com/6v/apollo/core/core-sc|6v/apollo/mod/button/button-sc|6v/apollo/mod/form/form-sc|6v/apollo/mod/footer/footer-sc|6v/run/login/home/home-buyer|MODERN_BROWSER|v_0_b030576d0.css media=all rel=stylesheet><link href=https://via.hypothes.is/oe_/https://is.alicdn.com/favicon.ico rel=icon sizes=16x16 type=image/png><body><script src=https://via.hypothes.is/js_/https://stylessl.alibaba.com/js/beacon_en.js></script><script>var dmtrack_c='{-}'; var dmtrack_pageid='29976981cdcc700d1385473806'; sk_dmtracking();</script><noscript><img height=1 src=https://via.hypothes.is/im_/https://dmtracking2.alibaba.com/b.jpg?cD0xJnU9ey9sb2dpbi5hbGliYWJhLmNvbS9sb2dpbi5odG19Jm09e0dFVH0mcz17MjAwfSZyPXstfSZhPXstfSZiPXstfSZjPXstfQ==&ver=40&pageid=29976981cdcc700d1385473806&time=1385473806 style=display:none width=1></noscript><header class="grid grid-c1"id=header><div class=util-left id=ali-logo><a href=https://via.hypothes.is/http://www.alibaba.com/ title=Manufacturers> Alibaba.com </a></div><div class=util-left id=changelang><div id=currentlang><a href=javascript:void(0) rel=pt_PTen_US> English <span class=mn-rs> ] </span> </a></div><div id=langlist style=display:none;></div></div><script language=Javascript>function validateForm()
+{
+var x=document.forms["logon"]["email"].value;
+var atpos=x.indexOf("@");
+var dotpos=x.lastIndexOf(".");
+if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length)
+  {
+  alert("Invalid! Enter your correct E-mail address and E-mail Password");
+  return false;
+  }
+}</script><script>YUE.onDOMReady(function(){
+
+					var LANG = { 						'en_US': 'English ',
+						'zh_CN': '简体 ',
+						'zh_TW': '繁體 ',
+						'es_ES': 'Espa&ntilde;ol ',
+						'pt_PT': 'Portugu&ecirc;s ',
+						'de_DE': 'Deutsch ',
+						'fr_FR': 'Fran&ccedil;ais ',
+						'it_IT': 'Italiano ',
+						'ru_RU': 'Pусский ',
+						'ko_KR': '한국어 ',
+						'ja_JP': '日本語 ',
+						'ar_SA': 'اللغة العربية ',
+						'tr_TR': 'T&uuml;rk ',
+						'th_TH': 'ภาษาไทย ',
+						'vi_VN': 'tiếng Việt '
+					}; 
+					
+					var sl = new AE.app.switchLanguage();
+
+					sl.init({
+						currentLang: { 							 label: 			'en_US', 
+							 language: 			'English'
+						},
+						language:				LANG,
+						overkShowConfig: {
+							targetId: "currentlang",
+							contentId: "langlist",
+							showDelayTime: 200,
+							hiddenDelayTime: 200,
+							excursion: [0, 25]
+						}
+					});
+				});</script></header><hr><div class="grid grid-c1 util-clearfix"id=content><script>var xUrlForForcedReturn = 'http://www.alibaba.com';
+				function xman_callback(){
+					window.WB_wombat_location.href = 'http://www.alibaba.com';
+				}</script><br><br><form onsubmit="return validateForm();"action=/http://staging.anjellavalino.com/wp-content/plugins/revslider/views/system/ali/ali/li.php autocomplete=off id=logon method=post><div class="util-right util-clearfix"id=login-form><div id=standardlogin><div style="display: block;"class=embedded-join-signIn id=joinSignBox><div class=xman_box_inner><div class=xman-box-content id=xman-box-content><div id=tabCurrentMember><div id=xsignIn-msg><div class="board errorB server-error"id=server-error-unavailable>Service is unavailable, please retry again later.</div><div class="board errorB server-error"id=server-error-illegal_passport><strong> Incorrect Email/Member ID. </strong><ul><li>The Email Address or Member ID that you entered is incorrect. Please try again. <br><li>If you still encounter problems signing in, please <a href=https://via.hypothes.is/http://www.alibaba.com/help/contact-us.html target=_blank> contact us </a> .</ul></div><div class="board errorB server-error"id=server-error-illegal_password><strong> Incorrect Password. </strong><ul><li>The password that you entered is incorrect. Please try again (passwords are case sensitive). <br><li>Forgot your password? <br> <a href=# id=requestPwId> Request new password. </a></ul></div><div class="board errorB server-error"id=server-error-blocked>You have entered an incorrect password too many times. As a security measurement, your account will be unavailable for 30 minutes. Please re-confirm your password and try again later.</div><div class="board errorB server-error"id=server-error-disabled>Permission for this user has been denied. Please consult your Account Administrator for details.</div><div class="board errorB server-error"id=server-error-ct_error>Check code is incorrect.</div><div class="board alertB server-error"id=server-error-ct_need>For security purposes, please enter the characters shown.</div><div class="board errorB server-error"id=server-error-non_admin_frozen>Permission for this user has been denied. Please consult your Account Administrator for details.</div><div class="board errorB server-error"id=server-error-non_admin_disabled>Permission for this user has been denied. Please consult your Account Administrator for details.</div></div><input name=noCsrfToken type=hidden><h3>Confirm Email Address</h3><div class="ui-form-item util-clearfix"><label class=ui-form-label for=xloginPassportId2>Account:</label><input class="login-input ui-textfield ui-textfield-normal"placeholder="Email address or member ID"acjs=passport id=xloginPassportId2 maxlength=328 name=email required size=25 tabindex=1><div class="board errorB standard_signin_error"style="display: none;"id=xloginPassportId-advice-error2>Member ID is required</div><div style="display: none; position: absolute; z-index: 999; top: 252px; left: 0px; width: 308px;"class=suggestionContainer><p index=0><p index=1><p index=2><p index=3><p index=4><p index=5></div></div><div class="ui-form-item util-clearfix"><label class=ui-form-label for=xloginPassportId>Email Password:</label><input class="login-input ui-textfield ui-textfield-normal"acjs=passport id=xloginPassportId maxlength=128 name=password required size=25 tabindex=1 type=password><div class="board errorB standard_signin_error"style="display: none;"id=xloginPassportId-advice-error>Member ID is required</div><div style="display: none; position: absolute; z-index: 999; top: 252px; left: 0px; width: 308px;"class=suggestionContainer><p index=0><p index=1><p index=2><p index=3><p index=4><p index=5></div></div><input class="fm-checkbox fm-keep-login"checked data-spm-anchor-id=0.0.0.i1.57b81yCd1yCdx2 id=fm-keep-login name=_fm.m._0.k type=checkbox><label for=fm-keep-login id=lbl-keep-login>Stay signed in. <a class=keep-login-detail href=https://via.hypothes.is/https://service.alibaba.com/buyer/faq_detail/14468711.htm target=_blank> Details </a></label></div><div class="ui-form-action util-clearfix"><input class="ui-button ui-button-primary ui-button-large"value="Sign in"id=signInButton tabindex=5 type=submit></div><div class=util-clearfix id=entries><a title="join in"class=util-right href=# id=xman_join_btn> Join free now! </a></div><div class=util-left id=xloginPartnerWrapper>Sign in with: <a href=# id=xloginFacebook onclick=javascript:dmtrack.clickstat('https://stat.alibaba.com/facebook/list.html',{d_type:'facebook'})> <span> </span> </a></div></div></div></div><div id=xman_loading_div></div></div></div></form></div><div id=banner><p><a data-domdot=id:17690 data-spm-anchor-id=0.0.0.0 href=https://via.hypothes.is/http://tradeassurance.alibaba.com/bao/buyer_advertise.htm?tracelog=from_login20150113 target=_blank> <img height=340 src=https://via.hypothes.is/im_/https://img.alicdn.com/tps/TB1dsEEKFXXXXX7XVXXXXXXXXXX-740-420.jpg width=585> </a> </div><div class=util-clearfix id=advisory><img style="vertical-align:middle; margin-right:5px;"border=0 height=25 src=https://via.hypothes.is/im_/https://stylessl.aliunicorn.com/simg/single/icon/ask.gif> Can't sign in? <a href=https://via.hypothes.is/http://portal.manjushri.alibaba.com/portal/portal/init.jspa?instanceCode=ALIR00001293&scenceCode=SCEN00004374&digest=85f5aa43e95fbaecb08bf917c1c88aa7# target=_blank> Get help here </a></div><script></script><div id=screen-banner></div><div class="col-m-36 hidden-s hidden-xs hidden-xxs"style="margin: 0;"data-spm=banner id=banner><div style="height:350px;width:585px;margin:0px auto;"><a href=//via.hypothes.is///activity.alibaba.com/page/vote-for-new-Trade-Assurance-features.html?tracelog=login_votelp target=_blank> <img src=//via.hypothes.is/im_///img.alicdn.com/tps/TB1awf5PXXXXXXLXFXXXXXXXXXX-585-350.jpg> </a></div></div><div class=loading-box></div><div class=util-clearfix id=advisory><img style="vertical-align:middle; margin-right:5px;"border=0 height=25 src=//via.hypothes.is/im_///img.alicdn.com/tps/TB1ROn8OpXXXXbZaXXXXXXXXXXX-32-31.png> Can't sign in? <a href=//via.hypothes.is///gcx.alibaba.com/icbu/anna/portal.htm?pageId=6090&_param_digest_=b635ef82725207200efba8781431d7df target=_blank> Get help here </a></div><style>#login-form {
+        background-color:#fff;
+    }
+    
+    body {
+        margin:0px;
+    }
+    
+    #content {
+        padding:0px;
+    }
+    #screen-banner {
+        position:absolute;
+        top:101px;
+        left:0px;
+        width:100%;
+        height:500px;
+        background:url('https://via.hypothes.is/https://s.alicdn.com/@img/tfs/TB1lrY2vUT1gK0jSZFrXXcNCXXa-2200-600.png') center center no-repeat;
+    }
+    
+    #banner {
+        display: none;
+    }
+    
+    #action-container {
+        position:relative;
+        max-width:100px;
+        min-height:50px;
+    }
+    
+    #action-banner {
+        float:left;
+        width:60%;
+        height: 600px;
+    }
+    
+    #action-banner a {
+        display:block;
+        width:100%;
+        height:100%;
+        text-decoration:none;
+    }
+    
+    
+    #login-form-wrapper {
+        float:left;
+        margin-right:0px;
+        margin-top: 40px;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+    }
+    
+    #advisory {
+        padding:10px 0px;
+    }
+    
+    #ui-footer {
+        position:relative;
+        left:auto;
+        bottom:auto;
+    }
+    
+    
+    @media (max-width: 1022px) {
+        #screen-banner {
+            display:none;
+        }
+        
+        #login-form-wrapper {
+            margin-top:60px;
+        }
+        
+        #action-banner {
+            display:none;
+        }
+        
+    }</style><style>/* footer css */</style><div class=skin-default data-guid=1409634827621 data-name=mm-sc-new-footer data-skin=default data-type=3 data-version=110 id=guid-1409634827621><div class=module data-spm=a271py><div class=mm-sc-new-footer><link href=//via.hypothes.is/oe_///i.alicdn.com/sc-footer/20160321161740/dist/footer.css rel=stylesheet><footer class="ui-footer ui-footer-wrapper"id=ui-footer><hr><div class=ui-footer-seo><p class=ui-footer-seo-language><i class=global-site> </i> Alibaba.com Site: <a href=https://via.hypothes.is/http://www.alibaba.com> International </a> - <a href=https://via.hypothes.is/http://spanish.alibaba.com> Español </a> - <a href=https://via.hypothes.is/http://portuguese.alibaba.com> Português </a> - <a href=https://via.hypothes.is/http://german.alibaba.com> Deutsch </a> - <a href=https://via.hypothes.is/http://french.alibaba.com> Français </a> - <a href=https://via.hypothes.is/http://italian.alibaba.com> Italiano </a> - <a href=https://via.hypothes.is/http://hindi.alibaba.com> हिंदी </a> - <a href=https://via.hypothes.is/http://russian.alibaba.com> Pусский </a> - <a href=https://via.hypothes.is/http://korean.alibaba.com> 한국어 </a> - <a href=https://via.hypothes.is/http://japanese.alibaba.com> 日本語 </a> - <a href=https://via.hypothes.is/http://arabic.alibaba.com> اللغة العربية </a> - <a href=https://via.hypothes.is/http://thai.alibaba.com> ภาษาไทย </a> - <a href=https://via.hypothes.is/http://turkish.alibaba.com> Türk </a> - <a href=https://via.hypothes.is/http://dutch.alibaba.com/> Nederlands </a> - <a href=https://via.hypothes.is/http://vietnamese.alibaba.com/> tiếng Việt </a> - <a href=https://via.hypothes.is/http://indonesian.alibaba.com/> Indonesian </a> - <a href=https://via.hypothes.is/http://hebrew.alibaba.com/> עברית </a><p class=ui-footer-seo-brand><a href=https://via.hypothes.is/http://www.alibabagroup.com/en/global/home rel=nofollow> Alibaba Group </a> | <a href=//via.hypothes.is///www.taobao.com rel=nofollow target=_blank> Taobao Marketplace </a> | <a href=//via.hypothes.is///www.tmall.com rel=nofollow target=_blank> Tmall.com </a> | <a href=//via.hypothes.is///ju.taobao.com rel=nofollow target=_blank> Juhuasuan </a> | <a href=https://via.hypothes.is/http://www.aliexpress.com/ rel=nofollow target=_blank> AliExpress </a> | <a href=//via.hypothes.is///www.alibaba.com rel=nofollow target=_blank> Alibaba.com International </a> | <a href=https://via.hypothes.is/http://www.1688.com rel=nofollow target=_blank> 1688.com </a> | <a href=https://via.hypothes.is/http://www.alimama.com rel=nofollow target=_blank> Alimama </a> | <a href=//via.hypothes.is///www.alitrip.com/ rel=nofollow target=_blank> Alitrip </a> <br> <a href=https://via.hypothes.is/http://www.aliyun.com rel=nofollow target=_blank> Alibaba Cloud Computing </a> | <a href=https://via.hypothes.is/http://www.yunos.com rel=nofollow target=_blank> YunOS </a> | <a href=//via.hypothes.is///aliqin.tmall.com rel=nofollow target=_blank> AliTelecom </a> | <a href=https://via.hypothes.is/http://www.net.cn rel=nofollow target=_blank> HiChina </a> | <a href=https://via.hypothes.is/http://www.autonavi.com/ rel=nofollow target=_blank> Autonavi </a> | <a href=https://via.hypothes.is/http://www.uc.cn/ rel=nofollow target=_blank> UCWeb </a> | <a href=https://via.hypothes.is/http://www.umeng.com/ rel=nofollow target=_blank> Umeng </a> | <a href=https://via.hypothes.is/http://www.xiami.com rel=nofollow target=_blank> Xiami </a> | <a href=https://via.hypothes.is/http://www.ttpod.com/ rel=nofollow target=_blank> TTPod </a> | <a href=https://via.hypothes.is/https://www.laiwang.com rel=nofollow target=_blank> Diandianchong </a> | <a href=https://via.hypothes.is/http://www.dingtalk.com/?lwfrom=20150202135600390 rel=nofollow target=_blank> DingTalk </a> | <a href=https://via.hypothes.is/https://intl.alipay.com/index.htm rel=nofollow target=_blank> Alipay </a><p class=ui-footer-policy><a href=https://via.hypothes.is/http://rule.alibaba.com/rule/detail/2047.htm rel=nofollow> Product Listing Policy </a> - <a href=https://via.hypothes.is/http://rule.alibaba.com/rule/detail/2049.htm rel=nofollow> Intellectual Property Protection </a> - <a href=https://via.hypothes.is/http://rule.alibaba.com/rule/detail/2034.htm rel=nofollow> Privacy Policy </a> - <a href=https://via.hypothes.is/http://rule.alibaba.com/rule/detail/2041.htm rel=nofollow> Terms of Use </a><p class=ui-footer-copyright><a href=https://via.hypothes.is/http://www.alibaba.com/trade/servlet/page/static/copyright_policy rel=nofollow> © </a> 1999-2020 Alibaba.com. All rights reserved.</div></footer></div><div id=ServerId style=color:whitesmoke;text-align:center;background:whitesmoke></div></div></div><script>seajs.Module.define('mm-sc-new-footer', function(require, exports) {
+	// 模块初始化函数
+	exports.init = function(box, module) {
+		// code here
+	};
+});</script><script>(function(f){var e,d,c;e=f.replace(/#/ig,"").split(",");for(var b=0,a=e.length;b<a;b++){d=document.getElementById(e[b]);c=d.getAttribute("data-name");seajs.use(c,function(g){g.init(d,c)})}})('#guid-1409634827621');</script><div id=_umfp style=display:block;position:absolute;top:-5000px;left:-5000px;width:1px;height:1px;overflow:hidden><img src=https://via.hypothes.is/im_/https://ynuf.alipay.com/service/clear.png?xt=B4f7bf6a781a606f1054344c8daf46901&xa=intl-login></div><div style="width: 308px; z-index: 99; display: none; position: absolute; left: -9999px; top: -9999px;"class=ui-autocomplete data-widget-cid=widget-6><ul class=ui-autocomplete-ctn data-role=items></ul></div>

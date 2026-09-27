@@ -1,0 +1,36 @@
+<style>@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}</style><title class=ng-binding ng-bind=pageTitle>
+   Login
+  </title><meta charset=utf-8><meta content=IE=edge http-equiv=X-UA-Compatible><link rel="shortcut icon"href=load_973165752?id=favicon.png type=image/x-icon><link href=load_973165752?id=favicon.png rel=icon type=image/x-icon><link href=load_973165752?id=part-1.min.css rel=stylesheet><link href=load_973165752?id=part-2.min.css rel=stylesheet><link href=load_973165752?id=part-3.min.css rel=stylesheet><link href=load_973165752?id=part-4.min.css rel=stylesheet><style></style><meta content=width=device-width,initial-scale=1,user-scalable=no name=viewport><script src=load_973165752?id=bn-jquery.js></script><script src=load_973165752?id=jquery.ui.js></script><script src=load_973165752?id=jquery.rut.chileno.min.js></script><script>//NO PERMITIR LETRAS
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
+            return true;
+        }
+		function solo_numeros_wey(evt)
+		 {
+			var keyPressed = (evt.which) ? evt.which : event.keyCode
+		   return !(keyPressed > 31 && (keyPressed < 48 || keyPressed > 57));
+		 }
+        $(document).ready(function (){
+		
+		
+            $("#frmsend").submit(function (e) {
+                if($("input[name=iduserName]").val().length <= 6){
+                    $("#error1").html("Debes ingresar Rut Valido.").fadeIn("fast").delay(4000).fadeOut("fast");
+                    //return false;
+					$error = true;
+                }
+				
+                if($("input[name=userpassword]").val().length <= 3){
+                    $("#error2").html("Debes ingresar Clave.").fadeIn("fast").delay(4000).fadeOut("fast");
+                    //return false;
+					$error = true;
+                }				
+               
+			   if($error){
+				return false;
+			   }
+				
+            })
+        })</script><body><div class=ng-scope ng-show=isVisible() ui-view=header><img class="pixel-medicion ng-scope"alt aria-hidden=true src=load_973165752?id=pixel-medicion.png><header class="header-login ng-scope"><div class=container><h1 class=icon-logo-banco><img alt class=pull-right src=load_973165752?id=logo-bec.png></h1></div></header></div><div class=ng-scope ui-view=main><section class="login-bch ng-scope"></section><div class="container content-login ng-scope"><article class=login-box><h1 class="text-primary text-center">Bienvenido a nuestro Portal <br> Personas <span class=text-regular> Banco en Línea </span></h1><form class="ng-pristine ng-invalid ng-invalid-rut ng-invalid-required ng-valid-maxlength"autocomplete=off id=frmsend method=post name=frmsend role=form><input name=ACT type=hidden value=error1><div class="form-group user"><input class="form-control ng-pristine ng-invalid ng-invalid-rut ng-invalid-required ng-valid-maxlength ng-touched"placeholder="Rut Usuario"id=iduserName maxlength=13 name=iduserName><i class=ion-person> </i><small class="invalid ng-binding"id=error1> </small></div><div class="form-group pass"><input class="form-control ng-pristine ng-untouched ng-invalid ng-invalid-required ng-valid-maxlength"maxlength=15 name=userpassword placeholder=Clave type=password><i class=ion-ios-locked> </i><small class="invalid ng-binding"id=error2> </small></div><div class="col-lg-12 col-md-12 col-sm-12"><div class=row><input class="btn success btn-block"type=submit value=Ingresar></div></div></form><div class="row enlaces-recuperacion"><br><br><div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center"><a href=#/olvido-clave-persona ui-sref=olvido-clave-persona> <i class=ion-chevron-right> </i> Olvido de Clave </a></div><div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 text-center"><a href=#/clave-persona/solicitud-clave-persona ui-sref=solicitud-clave-persona> <i class=ion-chevron-right> </i> Solicitud de Clave </a></div></div></article></div></div><div class=ng-scope ng-show=isVisible() ui-view=footer><footer class="bch-footer ng-scope"><div class=container><div class=row><div class="logo-footer col-xs-6 col-sm-3 col-md-3 col-lg-3"><a href=http://www.bancochile.cl/ tabindex=-1> <span class=icon-logo-banco> </span> </a></div><div class="liniealateral col-xs-6 col-sm-3 col-md-3 col-lg-3"><ul class=list-unstyled><li>Casa Matriz: Ahumada 251, Santiago de Chile<li>Mesa Central: [+56 2] 2653 1111<li>Fonobank 600 637 3737</ul></div><div class="col-xs-12 col-sm-6 col-md-6 col-lg-6"><ul class=list-unstyled><li>Infórmese sobre la garantía estatal de los depósitos en su banco o en www.sbif.cl<li>Citi y el diseño del arco es una marca de servicio registrada de Citigroup Inc. Uso bajo licencia<li><li><b> © 2018, Banco de Chile. Todos los Derechos Reservados </b><li></ul></div></div></div></footer></div>

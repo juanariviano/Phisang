@@ -1,0 +1,194 @@
+<!doctypehtml><html class=html-knowledgebase-page><title>
+   Emporium Documentation
+  </title><meta content=text/html;charset=utf-8 http-equiv=Content-type><meta content="Grow your business faster on top of nopCommerce with our professional and powerful nopCommerce themes and extensions!"name=description><meta content="nopcommerce, nopcommerce themes, nopcommerce templates, nopcommerce extensions, nopcommerce plugins, nopcommerce theme, nopcommerce template, nopcommerce extension, nopcommerce plugin"name=keywords><meta content=nopCommerce name=generator><meta content=width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0 name=viewport><link href=https://fonts.googleapis.com/css?family=Raleway:400,700 rel=stylesheet><link href=https://fonts.googleapis.com/css?family=Open+Sans:400,700 rel=stylesheet><link href=/bundles/styles/usrrjrraa5oin-tabd7pd7ahxqkhc3j5wcmjjjhgwrg1?v=MVZmdwY87TB2e1TW2KQP4l9waBbR8qYsq0goklP8wzs1 rel=stylesheet><script src=/bundles/scripts/s3szgsn3gfnuwuukpflzr8azhvxcq_mblhut-rl4ifa1?v=Gcu_p0HfJHIeQAP2T1jAosakE5Jm3a0XkuzN0bUeqsQ1></script><link title="Nop-Templates: Blog"href=https://www.nop-templates.com/blog/rss/1 rel=alternate type=application/rss+xml><link rel="shortcut icon"href=https://www.nop-templates.com/favicon.ico><body><div class=knowledgebase-header-line><div class=knowledgebase-title>Documentation</div><a class=back-to-button href=/> Back to website > </a><div class=mobile-buttons><button class="mobile-button nav-button">Open navigation</button><button class="mobile-button search-panel-button">Open search</button></div><div class=knowledgebase-search><form action=/KnowledgebaseSearch/ListResults id=kb-search-form><input class=search-input id=searchterms name=phrase><button class=search-button>Search</button></form><script>$(document).ready(function () {
+        $("#searchterms").kendoAutoComplete({
+            highlightFirst: true,
+            minLength: 3,
+            dataTextField: "Title",
+            filter: "contains",
+            template: '<div class="knowledgebase-search-item" data-url="' + '/' + '${ data.SEName }">' +
+                        '<div class="title">${ data.Title }</div>' +
+                        '</div>',
+            select: function (e) {
+                var advancedSearchItemId = this.dataItem(e.item.index()).Id;
+
+                if (advancedSearchItemId === 0) {
+                    e.preventDefault();
+
+                    window.location = '/KnowledgebaseSearch/ListResults' + '?phrase=' + $('#searchterms').val();
+                }
+            },
+            dataSource: new kendo.data.DataSource({
+                serverFiltering: true,
+                requestStart: function (e) {
+                    $("#searchterms").addClass("instant-search-busy");
+                },
+                requestEnd: function (e) {
+                    e.response.push({ Title: 'Search for "' + $('#searchterms').val() + '"', Id: 0 });
+                },
+                change: function (e) {
+                    $("#searchterms").removeClass("instant-search-busy");
+                },
+                transport: {
+                    read: "/KnowledgebaseSearch/Search",
+                    data: function () {
+                        var data = {};
+                        var tokenInput = $('input[name=__RequestVerificationToken]');
+                        if (tokenInput.length) {
+                            data.__RequestVerificationToken = tokenInput.val();
+                        }
+
+                        return data;
+                    },
+                    parameterMap: function () {
+                        return { phrase: $("#searchterms").val() };
+                    }
+                }
+            }),
+            change: function () {
+                var selected = $(".k-list").find(".k-state-selected");
+                var url = selected.find('.knowledgebase-search-item').attr('data-url');
+                if (typeof url === "undefined") {
+                    // do nothing as the value has probably been changed from the onblur event handler rather than from dropdown selection
+                } else {
+                    // navigate to the searched product
+                    window.location.href = url;
+                }
+            },
+            dataBound: function (e) {
+                $(".k-animation-container").addClass("instantSearch");
+                $(e.sender.list).find('li:last').addClass('knowledgebase-autocomplete-last-item');
+            }
+        });
+    });</script></div></div><div class=knowledgebase-page><div class=knowledgebase-navigation-wrap><div class=knowledgebase-navigation><div class=nav-treeview id=navigation-treeview></div><script>$(document).ready(function () {
+
+                function expandNavigation(nodes) {
+                    return function() {
+                        var node;
+                        var currentDataSource = (nodes[nodes.length - 1], this.dataSource);
+
+                        for (var index = 0; index < nodes.length; index++) {
+
+                            node = currentDataSource.get(nodes[index]);
+                            node.set("expanded", !0);
+
+                            currentDataSource = node.children;
+                        }
+
+                        node.set("selected", !0);
+
+                        this.unbind("dataBound", arguments.callee);
+                    }
+                }
+
+                function navigationTemplate() {
+                    return function(currentNode) {
+                        var node = currentNode.item;
+                        var nodeText = node.Text;
+                        var nodeSEName = node.SEName;
+
+                            
+                            if (node.hasChildren) {
+                                return nodeText;
+                            }
+                            
+                        
+                        return '<a href="https://www.nop-templates.com/' + nodeSEName + '">' + nodeText + "</a>";
+                    };
+                }
+
+                function preventParentSelection(e) {
+                    var dataItem = this.dataItem(e.node);
+
+                        
+                        if(dataItem.hasChildren) {
+                            e.preventDefault();
+
+                            this.toggle(e.node);
+
+                            return;
+                        }
+                        
+                
+                    window.location.href = "/" + dataItem.SEName;
+                }
+
+                $("#navigation-treeview").kendoTreeView({
+                    dataSource: {
+                        transport: {
+                            read: {
+                                url: "/Knowledgebase/ListAll",
+                                dataType: "json",
+                                data: function () {
+                                    var data = {};
+                                    var tokenInput = $('input[name=__RequestVerificationToken]');
+                                    if (tokenInput.length) {
+                                        data.__RequestVerificationToken = tokenInput.val();
+                                    }
+
+                                    return data;
+                                }
+                            }
+                        },
+                        schema: {
+                            model: {
+                                id: "SEName",
+                                hasChildren: "Children",
+                                children: "Children",
+                                SEName: "SEName"
+                            }
+                        }
+                    },
+                    dataTextField: "Text",
+                    dataSpriteCssClassField: "SpriteCssClass",
+
+                        
+                            dataBound: expandNavigation(['nopcommerce-themes-documentation','emporium','emporium-responsive-theme-for-nopcommerce-documentation']),
+                        
+                    
+                    select: preventParentSelection,
+                    template: navigationTemplate()
+                });
+            });</script></div></div><script>$(document).ready(function () {
+        $('.article-wrap img').each(function () {
+
+            var currentImage = this;
+            $(currentImage).magnificPopup(
+            {
+                items: [{
+                    src: $(currentImage).attr("src")
+                }],
+                type: 'image',
+                removalDelay: 300,
+                gallery: {
+                    enabled: true
+                }
+            });
+        });
+    });</script><div class=article-wrap><div class=article-panel><h1 class=article-name>Emporium Documentation</h1><div class=article-content><p>Before you can use the Nop Emporium Theme you need to install it.<p>For more information about the installation of a nopCommerce Theme refer to our  <a href=https://www.nop-templates.com/how-to-install-a-nopcommerce-theme target=_blank> How To Install A Theme </a> article.<h2 class=title><span class=title-text> Plugins </span></h2><ol><li><strong> <a href=https://www.nop-templates.com/ajax-cart-plugin-for-nopcommerce-documentation target=_blank> Nop Ajax Cart </a> </strong><li><strong> <a href=https://www.nop-templates.com/ajax-filters-plugin-for-nopcommerce-documentation target=_blank> Nop Ajax Filters </a> </strong><li><strong> <a href=https://www.nop-templates.com/anywhere-sliders-plugin-for-nopcommerce-documentation target=_blank> Nop Anywhere Sliders </a> </strong><li><strong> <a href=https://www.nop-templates.com/cloud-zoom-plugin-for-nopcommerce-documentation target=_blank> Nop Cloud Zoom </a> </strong><li><strong> <a href=https://www.nop-templates.com/facebook-shop-plugin-for-nopcommerce-documentation target=_blank> Nop Facebook Shop </a> </strong><li><strong> <a href=https://www.nop-templates.com/instant-search-plugin-for-nopcommerce-documentation target=_blank> Nop Instant Search </a> </strong><li><strong> <a href=https://www.nop-templates.com/jcarousel-plugin-for-nopcommerce-documentation target=_blank> Nop JCarousel </a> </strong><li><strong> <a href=https://www.nop-templates.com/mega-menu-plugin-for-nopcommerce-documentation target=_blank> Nop MegaMenu </a> </strong><li><strong> <a href=https://www.nop-templates.com/product-ribbons-plugin-for-nopcommerce-documentation target=_blank> Nop Product Ribbons </a> </strong><li><strong> <a href=https://www.nop-templates.com/quick-tabs-plugin-for-nopcommerce-documentation target=_blank> Nop Quick Tabs </a> </strong><li><strong> <a href=https://www.nop-templates.com/quick-view-plugin-for-nopcommerce-documentation target=_blank> Nop Quick View </a> </strong><li><strong> <a href=https://www.nop-templates.com/rich-blog-plugin-for-nopcommerce-documentation target=_blank> Nop Rich Blog </a> </strong><li><strong> <a href=https://www.nop-templates.com/sale-of-the-day-plugin-for-nopcommerce-documentation target=_blank> Nop Sale Of The Day </a> </strong><li><strong> <a href=https://www.nop-templates.com/smart-product-collections-plugin-for-nopcommerce-documentation target=_blank> Nop Smart Product Collections </a> </strong></ol><h2 class=title><span class=title-text> Emporium Theme - General Settings </span></h2><p>The Nop Emporium Theme has different configuration options which you can manage from the administration. This is the Theme settings section. It can be accessed by <strong> Administration -> Nop-Templates -> Themes -> Emporium -> Settings </strong> . Here is a list of General Settings of the theme:<p><img style="display: block; margin-left: auto; margin-right: auto;"alt src=/Content/Images/uploaded/emporium/docs/generalSettings.png><ol><li><strong> Follow us pinterest url </strong>  - Specifies your follow us URL address on Pinterest<li><strong> Follow us vimeo url  </strong> - Specifies your follow us URL address on Vimeo<li><strong> Follow us on Instagram url </strong> - Specifies your follow us URL on Instagram<li><strong> Remove Copyright </strong> - Remove Copyright notice after a copyright removal key had been purchased by www.nopCommerce.com<li><strong> Remove Designed By Nop-Templates.com link in the footer </strong> - If checked, removes the Designed By Nop-templates.com link in the footer. If you would like to receive 10% discount on any future purchase or renewal and a feature spot on our site, please leave this unchecked and contact us.<li><strong> Logo Image </strong> - Specifies the logo image.<li><strong> Custom Head Styles </strong> - Specifies your custom CSS styles that will be added in the head after all other CSS.<li><strong> Product Images Proportion </strong> - Specifies the value in percentage of how the height of the product images relates to the width.<li><strong> Category Images Proportion </strong> - Specifies the value in percentage of how the height of the category images relates to the width.</ol><h2 class=title><span class=title-text> Emporium Theme - Additional Settings </span></h2><p><img style="display: block; margin-left: auto; margin-right: auto;"alt src=/Content/Images/uploaded/emporium/docs/additionalSettings.png><ol><li><strong> Preset </strong> - Choose a color preset among the 5 predefined color options within the theme. You have also the option of choosing your own color combination by choosing the last option with custom color pickers controls.<li><strong> Show Login Form In The Header </strong> - Specifies if you want to show the login form in the header. If you have SSL enabled, you will have to check the " <strong> Force SSL for all site pages </strong> " setting first.<li><strong> Sale Of the Day Background Image </strong> - Specifies the Sale Of The Day offer background image.<li><strong> Footer Logo Image </strong> - Specifies the footer logo image.</ol><h2 class=title id=info-boxes><span class=title-text> Emporium Theme - Info Boxes Settings </span></h2><p>The Emporium theme gives you the ability to add four info boxes right below the slider.<p>You can control those info boxes from <strong> Administration -> Nop-Templates -> Themes -> Emporium -> Settings -> Info Boxes Settings </strong><p><img style="display: block; margin-left: auto; margin-right: auto;"alt src=/Content/Images/uploaded/emporium/docs/infoBoxesSettings.png><ol><li><strong> Enable Info Box </strong> - Specifies whether the info box is enabled<li><strong> URL </strong> - Specifies the info box URL<li><strong> Info Box Title </strong> - Specifies the info box title<li><strong> Info Box Text </strong> - Specifies the info box text<li><strong> Info Box Image </strong> - Specifies the info box image</ol><h2 class=title><span class=title-text> Configure Your HomePage </span></h2><p>The Nop Emporium theme has two variants. The Home Page differs in each of them. You can read more about them in the following articles:<ol><li><a href=https://www.nop-templates.com/emporium-supermarket-theme target=_blank> Emporium Supermarket Theme </a><li><a href=https://www.nop-templates.com/empoium-megastore target=_blank> Emporium Megastore Theme </a></ol><h2 class=title><span class=title-text> Configure Your Category Page </span></h2><p>Enabling the  <a href=https://www.nop-templates.com/ajax-filters-plugin-for-nopcommerce-documentation target=_blank> Nop Ajax Filters </a> adds additional functionality to your category page.<h2 class=title><span class=title-text> Configure Your Product Page </span></h2><p>As it comes to the product page there are some plugins that you need to enable and configure. Make sure that the <a href=https://www.nop-templates.com/cloud-zoom-plugin-for-nopcommerce-documentation target=_blank> Nop Cloud Zoom </a> ,  <a href=https://www.nop-templates.com/quick-tabs-plugin-for-nopcommerce-documentation target=_blank> Nop Quick Tabs </a> plugins are enabled and configured.<p>The <em> Related Products </em> and <em> Products Also Purchased </em> number should be set to <strong> 6 </strong> .<p>The Related Products carousel is located in the bottom part of the product details page. The carousel is created using the JCarousel plugin.<p>You will need to go to <strong> Administration -> Nop-Templates -> Plugins -> JCarousel -> Manage JCarousels </strong> and create a new carousel with the following options: <p><img alt src=/Content/Images/uploaded/emporium/docs/relatedProductsSettings.png><p>After that, you will need to map the carousel to the " <em> productdetails_related_carosuel </em> " widget zone from the <strong> Widget Zones </strong> tab.<p><img alt src=/Content/Images/uploaded/emporium/docs/relatedProductsWidgetZones.png><p>This will result in the following product collections on your product details page: <p><img alt src=/Content/Images/uploaded/emporium/docs/relatedProductsPublic.png><div class=information>You can see the configuration of the JCarousel plugin in the <a href=http://themes.supermarket.emporium.nop-templates.com/admin/JCarouselAdmin/Edit/5?demo=1 target=_blank> Admin Demo </a> .</div><h2 class=title><span class=title-text> Facebook Shop Integration </span></h2><p>The theme has a Facebook Shop integration via our  <a href=https://www.nop-templates.com/facebook-shop-plugin-for-nopcommerce-documentation target=_blank> Nop Facebook Shop </a> plugin, which allows you to sell products directly on your Facebook page. Your customers can browse your catalog and search for the right product right within Facebook. Every change to each product is updated in real-time. To see a live preview of the Facebook shop for the Nop Emporium Theme, click here.<h2 class=title><span class=title-text> Tips & Tricks </span></h2><ol><li>Have high-quality product images so that the zoom on the product page works better.<li>Have a play with all the plugins and read their documentation to see how you can use them properly and make the best of them</ol><p>For more information on the terms used please refer to our <a href=https://www.nop-templates.com/nopcommerce-glossary target=_blank> Glossary </a> .</div><div class=related-articles><h3 class=ra-title><span class=title-text> Related Articles </span></h3><ul class=ra-list><li class=ra-item><a title="How to install a nopcommerce theme"class=title-link href=/how-to-install-a-nopcommerce-theme> How to install a nopcommerce theme </a><li class=ra-item><a title="How to install a plugin"class=title-link href=/how-to-install-a-nopcommerce-plugin> How to install a plugin </a><li class=ra-item><a title="Manage Theme Resources"class=title-link href=/manage-theme-resources> Manage Theme Resources </a><li class=ra-item><a title="Reset Default Settings"class=title-link href=/reset-default-settings-functionality> Reset Default Settings </a><li class=ra-item><a title="Ajax Cart Documentation"class=title-link href=/ajax-cart-plugin-for-nopcommerce-documentation> Ajax Cart Documentation </a><li class=ra-item><a title="Ajax Filters Documentation"class=title-link href=/ajax-filters-plugin-for-nopcommerce-documentation> Ajax Filters Documentation </a><li class=ra-item><a title="Anywhere Sliders Documentation"class=title-link href=/anywhere-sliders-plugin-for-nopcommerce-documentation> Anywhere Sliders Documentation </a><li class=ra-item><a title="Cloud Zoom Documentation"class=title-link href=/cloud-zoom-plugin-for-nopcommerce-documentation> Cloud Zoom Documentation </a><li class=ra-item><a title="Facebook Shop Documentation"class=title-link href=/facebook-shop-plugin-for-nopcommerce-documentation> Facebook Shop Documentation </a><li class=ra-item><a title="Instant Search Documentation"class=title-link href=/instant-search-plugin-for-nopcommerce-documentation> Instant Search Documentation </a><li class=ra-item><a title="JCarousel Documentation"class=title-link href=/jcarousel-plugin-for-nopcommerce-documentation> JCarousel Documentation </a><li class=ra-item><a title="Mega Menu Documentation"class=title-link href=/mega-menu-plugin-for-nopcommerce-documentation> Mega Menu Documentation </a><li class=ra-item><a title="Product Ribbons Documentation"class=title-link href=/product-ribbons-plugin-for-nopcommerce-documentation> Product Ribbons Documentation </a><li class=ra-item><a title="Quick Tabs Documentation"class=title-link href=/quick-tabs-plugin-for-nopcommerce-documentation> Quick Tabs Documentation </a><li class=ra-item><a title="Quick View Documentation"class=title-link href=/quick-view-plugin-for-nopcommerce-documentation> Quick View Documentation </a><li class=ra-item><a title="Rich Blog Documentation"class=title-link href=/rich-blog-plugin-for-nopcommerce-documentation> Rich Blog Documentation </a><li class=ra-item><a title="Sale Of The Day Documentation"class=title-link href=/sale-of-the-day-plugin-for-nopcommerce-documentation> Sale Of The Day Documentation </a><li class=ra-item><a title="Smart Product Collections Documentation"class=title-link href=/smart-product-collections-plugin-for-nopcommerce-documentation> Smart Product Collections Documentation </a><li class=ra-item><a title="Emporium Megastore"class=title-link href=/empoium-megastore> Emporium Megastore </a><li class=ra-item><a title="Emporium Supermarket"class=title-link href=/emporium-supermarket-theme> Emporium Supermarket </a></ul></div></div></div></div><div class=footer><span class=copyright-info> Copyright © 2011-2021 Seven Spikes Inc </span></div><div id=goToTop></div><script>// mobile navigation&search show/hide
+        $(document).ready(function () {
+
+            var $navOpener = $('.nav-button');
+            $searchOpener = $('.search-panel-button');
+            $navigation = $('.knowledgebase-navigation-wrap');
+            $searchPanel = $('.knowledgebase-search');
+
+            $navOpener.on('click', function () {
+                $navigation.toggle();
+            });
+            $searchOpener.on('click', function () {
+                $searchPanel.toggle();
+            });
+
+        });
+
+        //replace min-height of the navigation if necessary
+        $(window).load(function () {
+
+            var $baseHeight = $('.knowledgebase-page').innerHeight();
+
+            if ($baseHeight > 980) {
+                $navigation.css('min-height', $baseHeight);
+            }
+
+        });</script><script async src=https://www.googletagmanager.com/gtag/js?id=UA-17350600-5></script><div data-settings='{"propertyId":"UA-17350600-5","awPropertyId":"AW-000000000","userId":15945417,"alwaysSendReferrer":false,"addOrRemoveFromCart":{"realOnePageCheckoutEnabled":true,"ajaxCartEnabled":true,"trackFlyoutCartActions":false,"productDetailsQuantityInputSelector":".product-essential .qty-input","shoppingCartSelector":".cart","shoppingCartItemSelector":".cart tbody tr","shoppingCartItemQuantityInputSelector":".qty-input","shoppingCartItemRemoveFromCartSelector":".remove-from-cart input","updateShoppingCartButtonSelector":".update-cart-button","shoppingCartItemSelectorRealOnePageCheckout":"","shoppingCartItemQuantityInputSelectorRealOnePageCheckout":""},"productClicks":{"trackAddToWishlistButtonClicks":true,"trackCompareButtonClicks":true,"productItemSelector":".product-item","addToCartButtonSelector":"product-box-add-to-cart-button","quickViewButtonSelector":"quick-view-button","addToWishlistButtonSelector":"add-to-wishlist-button","compareButtonSelector":"add-to-compare-list-button"},"productViews":{"isQuickViewEnabled":false,"trackQuickViewAsProductViews":true,"productDetailsFormSelector":"#product-details-form"},"productLists":{"predefinedPages":[{"pageSelector":".category-page","productGridSelector":".product-grid","titleSelector":".page-title"},{"pageSelector":".manufacturer-page","productGridSelector":".product-grid","titleSelector":".page-title"},{"pageSelector":".vendor-page","productGridSelector":".product-grid","titleSelector":".page-title"},{"pageSelector":".search-page","productGridSelector":".product-grid","titleSelector":".page-title"}],"productListsData":[{"id":0,"name":"Related Products","selector":".related-products"}],"genericProductListTitleSelector":".title"},"checkoutProcess":{"realOnePageCheckoutEnabled":true,"isOnePageCheckout":true,"isOrderCompletedPageDisabled":false,"billingAddressSelector":".edit-address .inputs input","selectExistingBillingAddressButtonSelector":".select-billing-address-button","shipToSameAddressCheckboxSelector":"#ShipToSameAddress","shippingMethodRadioButtonSelector":".method-list input","paymentMethodRadioButtonSelector":".method-list input","onePageCheckoutShippingMethodSelector":".shipping-method input","onePageCheckoutPaymentMethodSelector":"#payment-method-block input","checkoutSteps":[{"id":1,"name":"Billing Address","displayOrder":1,"nextStepButtonSelector":".new-address-next-step-button","nextStepButtonSelectorOnePageCheckout":"#billing-buttons-container .new-address-next-step-button","stepUrl":"billingaddress","additionalTrackingFunctions":[]},{"id":4,"name":"Payment Methods","displayOrder":2,"nextStepButtonSelector":".payment-method-next-step-button","nextStepButtonSelectorOnePageCheckout":".payment-method-next-step-button","stepUrl":"paymentmethod","additionalTrackingFunctions":[]},{"id":5,"name":"Payment Info","displayOrder":3,"nextStepButtonSelector":".payment-info-next-step-button","nextStepButtonSelectorOnePageCheckout":".payment-info-next-step-button","stepUrl":"paymentinfo","additionalTrackingFunctions":[]},{"id":6,"name":"Confirm","displayOrder":4,"nextStepButtonSelector":".confirm-order-next-step-button","nextStepButtonSelectorOnePageCheckout":".confirm-order-next-step-button","stepUrl":"confirm","additionalTrackingFunctions":[]}],"billingAddressFieldsSelector":".billing-address-panel .inputs input","selectBillingAddressSelector":".billing-address-panel .choose-address select","shippingAddressFieldsSelector":".shipping-address-panel .inputs input","selectShippingAddressSelector":".shipping-address-panel .choose-address select","shippingMethodsSelector":".shipping-method-panel .method-list input","paymentMethodsSelector":".payment-method-panel .method-list input","shipToSameAddressCheckboxSelectorRealOnePageCheckout":"#shipToSameAddress"},"shoppingCart":[]}'class=enhancedEcommerceSettings data-checkout-ready=true></div><div data-dimensions='{"custom_map" : {"dimension1":"dynx_itemid","dimension2":"dynx_pagetype","dimension3":"dynx_totalvalue"}}'class=enhanced-ecommerce-custom-dimensions></div><script src=/bundles/scripts/l532dvsz4gbi-odrryitd8cpmgrfmdqz6lhnqigdqaq1?v=dYdJ8dz4tImY3WHQex_MXJKpPe27eT_KC_FwySHOccw1></script>

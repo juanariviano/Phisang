@@ -1,0 +1,204 @@
+<!doctypehtml><html lang=en-US><title>
+   PHP - Login Example - Tutorialspoint
+  </title><meta charset=utf-8><meta content="PHP - Login Example - Php login script is used to provide the authentication for our web pages. the Script executes after submitting the user login button."name=description><meta content="C, C++, Python, Java, HTML, CSS, JavaScript, SQL, PHP, jQuery, XML, DOM, Bootstrap, Tutorials, Articles, Programming, training, learning, quiz, preferences, examples, code"name=keywords><link href=https://www.tutorialspoint.com/php/php_login_example.htm rel=canonical><link rel="shortcut icon"href=/favicon.ico type=image/x-icon><meta content=width=device-width,initial-scale=1.0,user-scalable=yes name=viewport><link href=/themes/css/style-min-v1.css?v=3.1.2.335 rel=stylesheet><script src=/themes/js/script-min-v1.js?v=3.0.2040221></script><script>function printPage() { window.print(); }
+function readCookie(name) {
+     var nameEQ = name + "=";
+     var ca = document.cookie.split(';');
+     for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+     }
+     return null;
+}</script><script async defer id=vi1 src=//services.bilsyndication.com/adv1/?q=0a8a90220201327770f6c986bea026a3></script><script id=vi2>var vitag = vitag || {};
+vitag.outStreamConfig = { enablePC:false, enableMobile:false};
+vitag.smartBannerConfig = { enablePC: false, enableMobile: false, disableHorizontalPosition: "right left middle", disableVerticalPosition: "top middle" };</script><script data-cfasync=false id=adp>(function(w, d) {var cval = readCookie('subscription_purchased');if(cval == '1'){ return; } var s = d.createElement('script'); s.src = '//delivery.adrecover.com/18107/adRecover.js'; s.type = 'text/javascript'; s.async = true; (d.getElementsByTagName('head')[0] || d.getElementsByTagName('body')[0]).appendChild(s); })(window, document);</script><style>.butnn-save a{color:#fff;} .notes_msg{color:green; margin-left:20px; margin-top:15px;}
+.right-menu .mui-btn {
+    background-color:#017572;
+}
+a.demo {
+    background:#017572;
+}
+li.heading {
+    background:#017572;
+}
+.course-box{background:#017572}
+.home-intro-sub p{color:#017572}
+pre.prettyprint.tryit {min-height:37px; background: #eee url(/php/images/try-it.jpg) top right no-repeat !important}</style><body><header id=header><div class="pop-modal overlay-pop popdiv"><div class="modal-window small"><span class=close title=close> × </span><div class=pop-content></div><span class=msg> </span></div></div><div class=wrap_loader><div class=imgLoader><img alt=Tutorialspoint height=70 src=/videotutorials/images/loader.gif width=70></div></div><input id=vu name=vu type=hidden><div class="mui-appbar mui-container-fulid top-menu"><div class=mui-container><div class="top-menu-item home"><a title="TutorialsPoint - Home"href=https://www.tutorialspoint.com/index.htm target=_blank> <i class="fal fa-home"> </i> <span> Home </span> </a></div><div class="top-menu-item qa"><a title="Job @ Tutorials Point"href=https://www.tutorialspoint.com/about/about_careers.htm target=_blank> <i class="fa fa-suitcase"> </i> <span> Jobs </span> </a></div><div class="top-menu-item tools"><a title="Tools - Online Development and Testing Tools"href=https://www.tutorialspoint.com/online_dev_tools.htm target=_blank> <i class="fal fa-cogs"> </i> <span> Tools </span> </a></div><div class="top-menu-item coding-ground"><a title="Coding Ground - Free Online IDE and Terminal"href=https://www.tutorialspoint.com/codingground.htm target=_blank> <i class="fal fa-code"> </i> <span> Coding Ground </span> </a></div><div class="top-menu-item current-affairs"><a title="Daily Current Affairs"href=https://www.tutorialspoint.com/current_affairs.htm target=_blank> <i class="fal fa-layer-plus"> </i> <span> Current Affairs </span> </a></div><div class="top-menu-item upsc-notes"><a title="UPSC IAS Exams Notes - TutorialsPoint"href=https://www.tutorialspoint.com/upsc_ias_exams.htm target=_blank> <i class="fal fa-user-tie"> </i> <span> UPSC Notes </span> </a></div><div class="top-menu-item articles"><a title="Top Online Tutors - Tutor Connect"href=https://www.tutorialspoint.com/tutor_connect/index.php target=_blank> <i class="fal fa-user"> </i> <span> Online Tutors </span> </a></div><div class="top-menu-item whiteboard"><a title="Free Online Whiteboard"href=https://www.tutorialspoint.com/whiteboard.htm target=_blank> <i class="fal fa-chalkboard"> </i> <span> Whiteboard </span> </a></div><div class="top-menu-item net-meeting"><a title="A free tool for online video conferencing"href=https://www.tutorialspoint.com/netmeeting.php target=_blank> <i class="fal fa-chalkboard-teacher"> </i> <span> Net Meeting </span> </a></div><div class="top-menu-item articles"><a title="Tutorx - The Best Learning App"href=https://www.tutorix.com rel=nofollow target=_blank> <i class="fal fa-video"> </i> <span> Tutorix </span> </a></div><div class="top-menu-item qa login"><a title="Tutorials Point - Login"href=/videotutorials/login.php target=_blank> <i class="fa fa-sign-in-alt"> </i> <span> Login </span> </a></div><div class="top-menu-item qa login"><a title="Paid Package"href=/videotutorials/subscription.php target=_blank> <i class="fa fa-book-reader"> </i> <span> Packages </span> </a></div><div class=social-menu-item><a title="tutorialspoint @ Facebook"data-placement=bottom href=https://www.facebook.com/tutorialspointindia rel=nofollow target=_blank> <i class="fab fa-facebook-f"> </i> </a><a title="tutorialspoint @ Twitter"data-placement=bottom href=https://www.twitter.com/tutorialspoint rel=nofollow target=_blank> <i class="fab fa-twitter"> </i> </a><a title="tutorialspoint @ Linkedin"data-placement=bottom href=https://www.linkedin.com/company/tutorialspoint rel=nofollow target=_blank> <i class="fab fa-linkedin-in"> </i> </a><a title="tutorialspoint YouTube"data-placement=bottom href=https://www.youtube.com/channel/UCVLbzhxVTiTLiVKeGV7WEBg rel=nofollow target=_blank> <i class="fab fa-youtube"> </i> </a></div></div></div><div class="mui-appbar mui-container-fulid mui--appbar-line-height mui--z1"id=logo-menu><div class=mui-container><div class=left-menu><a href=https://www.tutorialspoint.com/index.htm title=Tutorialspoint> <img alt=tutorialspoint class=tp-logo src=/php/images/logo.png> </a><div class=mui-dropdown><a class="mui-btn mui-btn--primary categories"data-mui-toggle=dropdown> <i class="fa fa-th-large"> </i> <span> Categories <span class=mui-caret> </span> </span> </a><ul class="mui-dropdown__menu cat-menu"><li><ul><li><a href=/academic_tutorials.htm> <i class="fa fa-caret-right"> </i> Academic Tutorials </a><li><a href=/big_data_tutorials.htm> <i class="fa fa-caret-right"> </i> Big Data & Analytics </a><li><a href=/computer_programming_tutorials.htm> <i class="fa fa-caret-right"> </i> Computer Programming </a><li><a href=/computer_science_tutorials.htm> <i class="fa fa-caret-right"> </i> Computer Science </a><li><a href=/database_tutorials.htm> <i class="fa fa-caret-right"> </i> Databases </a><li><a href=/devops_tutorials.htm> <i class="fa fa-caret-right"> </i> DevOps </a><li><a href=/digital_marketing_tutorials.htm> <i class="fa fa-caret-right"> </i> Digital Marketing </a><li><a href=/engineering_tutorials.htm> <i class="fa fa-caret-right"> </i> Engineering Tutorials </a><li><a href=/upsc_ias_exams.htm> <i class="fa fa-caret-right"> </i> Exams Syllabus </a><li><a href=/famous_monuments.htm> <i class="fa fa-caret-right"> </i> Famous Monuments </a><li><a href=/gate_exams_tutorials.htm> <i class="fa fa-caret-right"> </i> GATE Exams Tutorials </a><li><a href=/latest_technologies.htm> <i class="fa fa-caret-right"> </i> Latest Technologies </a><li><a href=/machine_learning_tutorials.htm> <i class="fa fa-caret-right"> </i> Machine Learning </a><li><a href=/mainframe_tutorials.htm> <i class="fa fa-caret-right"> </i> Mainframe Development </a><li><a href=/management_tutorials.htm> <i class="fa fa-caret-right"> </i> Management Tutorials </a><li><a href=/maths_tutorials.htm> <i class="fa fa-caret-right"> </i> Mathematics Tutorials </a><li><a href=/microsoft_technologies_tutorials.htm> <i class="fa fa-caret-right"> </i> Microsoft Technologies </a><li><a href=/misc_tutorials.htm> <i class="fa fa-caret-right"> </i> Misc tutorials </a><li><a href=/mobile_development_tutorials.htm> <i class="fa fa-caret-right"> </i> Mobile Development </a><li><a href=/java_technology_tutorials.htm> <i class="fa fa-caret-right"> </i> Java Technologies </a><li><a href=/python_technologies_tutorials.htm> <i class="fa fa-caret-right"> </i> Python Technologies </a><li><a href=/sap_tutorials.htm> <i class="fa fa-caret-right"> </i> SAP Tutorials </a><li><a href=/scripting_lnaguage_tutorials.htm> <i class="fa fa-caret-right"> </i> Programming Scripts </a><li><a href=/selected_reading.htm> <i class="fa fa-caret-right"> </i> Selected Reading </a><li><a href=/software_quality_tutorials.htm> <i class="fa fa-caret-right"> </i> Software Quality </a><li><a href=/soft_skill_tutorials.htm> <i class="fa fa-caret-right"> </i> Soft Skills </a><li><a href=/telecom_tutorials.htm> <i class="fa fa-caret-right"> </i> Telecom Tutorials </a><li><a href=/upsc_ias_exams.htm> <i class="fa fa-caret-right"> </i> UPSC IAS Exams </a><li><a href=/web_development_tutorials.htm> <i class="fa fa-caret-right"> </i> Web Development </a><li><a href=/sports_tutorials.htm> <i class="fa fa-caret-right"> </i> Sports Tutorials </a><li><a href=/xml_technologies_tutorials.htm> <i class="fa fa-caret-right"> </i> XML Technologies </a><li><a href=/multi_language_tutorials.htm> <i class="fa fa-caret-right"> </i> Multi-Language </a><li><a href=/questions_and_answers.htm> <i class="fa fa-caret-right"> </i> Interview Questions </a></ul></ul><div class=clear></div></div></div><div class=right-menu><div class=toc-toggle><a href=javascript:void(0);> <i class="fa fa-bars"> </i> </a></div><div class=mobile-search-btn><a href=https://www.tutorialspoint.com/index.htm> <i class="fal fa-search"> </i> </a></div><div class=search-box><script async src=https://cse.google.com/cse.js?cx=000263362972888060243:yfed6eu421q></script><div class=gcse-search></div></div><div class="menu-btn library-btn"><a href=https://www.tutorialspoint.com/tutorialslibrary.htm> <i class="fal fa-cubes"> </i> <span> Library </span> </a></div><div class="menu-btn videos-btn"><a href=https://www.tutorialspoint.com/videotutorials/index.php> <i class="fal fa-video"> </i> <span> Videos </span> </a></div><div class="menu-btn videos-btn"><a href=https://www.tutorialspoint.com/questions/index.php> <i class="fa fa-location-arrow"> </i> <span> Q/A </span> </a></div><div class="menu-btn ebooks-btn"><a href=https://store.tutorialspoint.com> <i class="fal fa-book"> </i> <span> eBooks </span> </a></div><div class=mui-dropdown><button class="mui-btn mui-btn--primary mobile-menu"data-mui-toggle=dropdown><span class=mui-caret> </span></button><ul class=mui-dropdown__menu><li class=login><a href=https://www.tutorialspoint.com/videotutorials/login.php> <i class="fal fa-sign-in-alt"> </i> <span> Login </span> </a><li><a href=https://www.tutorialspoint.com/tutorialslibrary.htm> <i class="fal fa-cubes"> </i> <span> Library </span> </a><li><a href=https://www.tutorialspoint.com/videotutorials/index.php> <i class="fal fa-video"> </i> <span> Videos </span> </a><li><a href=https://store.tutorialspoint.com> <i class="fal fa-book"> </i> <span> eBooks </span> </a></ul></div></div></div></div></header><div class="mui-container-fluid content"><div class=mui-container><div class="mui-col-md-3 tutorial-toc"><div class=mini-logo><img alt="PHP Tutorial"src=/php/images/php-mini-logo.jpg></div><ul class="toc chapters"><li><a class=videolink href=/php_online_training/index.asp target=_blank> <img alt="PHP Video Tutorials"src=/php/images/php-video-tutorials.jpg> </a></ul><ul class="toc chapters"><li class=heading>PHP Tutorial<li><a href=/php/index.htm> PHP - Home </a><li><a href=/php/php_introduction.htm> PHP - Introduction </a><li><a href=/php/php_environment.htm> PHP - Environment Setup </a><li><a href=/php/php_syntax_overview.htm> PHP - Syntax Overview </a><li><a href=/php/php_variable_types.htm> PHP - Variable Types </a><li><a href=/php/php_constants.htm> PHP - Constants </a><li><a href=/php/php_operator_types.htm> PHP - Operator Types </a><li><a href=/php/php_decision_making.htm> PHP - Decision Making </a><li><a href=/php/php_loop_types.htm> PHP - Loop Types </a><li><a href=/php/php_arrays.htm> PHP - Arrays </a><li><a href=/php/php_strings.htm> PHP - Strings </a><li><a href=/php/php_web_concepts.htm> PHP - Web Concepts </a><li><a href=/php/php_get_post.htm> PHP - GET & POST </a><li><a href=/php/php_file_inclusion.htm> PHP - File Inclusion </a><li><a href=/php/php_files.htm> PHP - Files & I/O </a><li><a href=/php/php_functions.htm> PHP - Functions </a><li><a href=/php/php_cookies.htm> PHP - Cookies </a><li><a href=/php/php_sessions.htm> PHP - Sessions </a><li><a href=/php/php_sending_emails.htm> PHP - Sending Emails </a><li><a href=/php/php_file_uploading.htm> PHP - File Uploading </a><li><a href=/php/php_coding_standard.htm> PHP - Coding Standard </a></ul><ul class="toc chapters"><li class=heading>Advanced PHP<li><a href=/php/php_predefined_variables.htm> PHP - Predefined Variables </a><li><a href=/php/php_regular_expression.htm> PHP - Regular Expression </a><li><a href=/php/php_error_handling.htm> PHP - Error Handling </a><li><a href=/php/php_bugs_debugging.htm> PHP - Bugs Debugging </a><li><a href=/php/php_date_and_time.htm> PHP - Date & Time </a><li><a href=/php/php_and_mysql.htm> PHP & MySQL </a><li><a href=/php/php_and_ajax.htm> PHP & AJAX </a><li><a href=/php/php_and_xml.htm> PHP & XML </a><li><a href=/php/php_object_oriented.htm> PHP - Object Oriented </a><li><a href=/php/php_for_c_developers.htm> PHP - For C Developers </a><li><a href=/php/php_for_perl_developers.htm> PHP - For PERL Developers </a></ul><ul class="toc chapters"><li class=heading>PHP Form Examples<li><a href=/php/php_form_introduction.htm> PHP - Form Introduction </a><li><a href=/php/php_validation_example.htm> PHP - Validation Example </a><li><a href=/php/php_complete_form.htm> PHP - Complete Form </a></ul><ul class="toc chapters"><li class=heading>PHP login Examples<li><a href=/php/php_login_example.htm> PHP - Login Example </a><li><a href=/php/php_facebook_login.htm> PHP - Facebook Login </a><li><a href=/php/php_paypal_integration.htm> PHP - Paypal Integration </a><li><a href=/php/php_mysql_login.htm> PHP - MySQL Login </a></ul><ul class="toc chapters"><li class=heading>PHP AJAX Examples<li><a href=/php/php_ajax_search.htm> PHP - AJAX Search </a><li><a href=/php/php_ajax_xml_parser.htm> PHP - AJAX XML Parser </a><li><a href=/php/php_ajax_autocomplete_search.htm> PHP - AJAX Auto Complete Search </a><li><a href=/php/ajax_rss_feed_example.htm> PHP - AJAX RSS Feed Example </a></ul><ul class="toc chapters"><li class=heading>PHP XML Example<li><a href=/php/php_xml_introduction.htm> PHP - XML Introduction </a><li><a href=/php/php_simple_xml.htm> PHP - Simple XML </a><li><a href=/php/php_simple_xml_get.htm> PHP - Simple XML GET </a><li><a href=/php/php_sax_parser_example.htm> PHP - SAX Parser Example </a><li><a href=/php/php_dom_parser_example.htm> PHP - DOM Parser Example </a></ul><ul class="toc chapters"><li class=heading>PHP Frame Works<li><a href=/php/php_frame_works.htm> PHP - Frame Works </a><li><a href=/php/php_core_vs_frameworks.htm> PHP - Core PHP vs Frame Works </a></ul><ul class="toc chapters"><li class=heading>PHP Design Patterns<li><a href=/php/php_design_patterns.htm> PHP - Design Patterns </a></ul><ul class="toc chapters"><li class=heading>PHP Function Reference<li><a href=/php/php_function_reference.htm> PHP - Built-In Functions </a></ul><ul class="toc chapters"><li class=heading>PHP Useful Resources<li><a href=/php/php_questions_answers.htm> PHP - Questions & Answers </a><li><a href=/php/php_useful_resources.htm> PHP - Useful Resources </a><li><a href=/php/php_discussion.htm> PHP - Discussion </a></ul><ul class="toc reading"><li class=sreading>Selected Reading<li><a href=/upsc_ias_exams.htm target=_top> UPSC IAS Exams Notes </a><li><a href=/developers_best_practices/index.htm target=_top> Developer's Best Practices </a><li><a href=/questions_and_answers.htm target=_top> Questions and Answers </a><li><a href=/effective_resume_writing.htm target=_top> Effective Resume Writing </a><li><a href=/hr_interview_questions/index.htm target=_top> HR Interview Questions </a><li><a href=/computer_glossary.htm target=_top> Computer Glossary </a><li><a href=/computer_whoiswho.htm target=_top> Who is Who </a></ul><div id=stickyparent><div id=sticky-ad style=height:250px;width:300px;><div class=adsbyvli data-ad-slot=vi_9012177></div><script>(vitag.Init = window.vitag.Init || []).push(function(){viAPItag.display("vi_9012177")})</script></div></div></div><div class="mui-col-md-6 tutorial-content"><h1>PHP - Login Example</h1><hr><div id=google-top-ads><div class=top-ad-heading>Advertisements</div><div class=google-top-ads style=text-align:center><div id=vi_top_ads style=text-align:center!important;min-height:90px!important></div><script>(function() {
+     var adPos = document.getElementById('vi_top_ads');
+     var ad_id_728 = "vi_9012178";
+     var ad_id_650 = "vi_9014435";
+     var ad_id_300 = "vi_9017967";
+     var width = window.innerWidth;
+     var ad_id = ad_id_728;
+     if( width <= 768 ){
+        ad_id =  ad_id_300;
+     }else if( width <= 1435 ){
+        ad_id =  ad_id_650;
+     }
+     adPos.innerHTML = '<div class="adsbyvli" data-ad-slot="' + ad_id + '"></div>';
+     (vitag.displayInit = window.vitag.displayInit || []).push(function () {
+         viAPItag.display(ad_id);
+     });
+     }())</script></div></div><br><div class="mui-container-fluid button-borders"><div class=pre-btn><a href=/php/php_complete_form.htm> <i class="fal fa-chevron-circle-left"> </i> Previous Page </a></div><div class=nxt-btn><a href=/php/php_facebook_login.htm> Next Page <i class="fal fa-chevron-circle-right"> </i>   </a></div></div><div class=clearer></div><h2>PHP login with session</h2><p>Php login script is used to provide the authentication for our web pages. the Script executes after submitting the user login button.<h2>Login Page</h2><p>Login page should be as follows and works based on session. If the user close the session, it will erase the session data.<div class=demo-view><a class=demo href=http://tpcg.io/R2EAf4 rel=nofollow target=_blank> <i class=fa-external-link> </i> Live Demo </a></div><pre class="prettyprint notranslate">&LT?php
+   ob_start();
+   session_start();
+?>
+
+&LT?
+   // error_reporting(E_ALL);
+   // ini_set("display_errors", 1);
+?>
+
+&LThtml lang = "en">
+   
+   &LThead>
+      &LTtitle>Tutorialspoint.com&LT/title>
+      &LTlink href = "css/bootstrap.min.css" rel = "stylesheet">
+      
+      &LTstyle>
+         body {
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #ADABAB;
+         }
+         
+         .form-signin {
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+            color: #017572;
+         }
+         
+         .form-signin .form-signin-heading,
+         .form-signin .checkbox {
+            margin-bottom: 10px;
+         }
+         
+         .form-signin .checkbox {
+            font-weight: normal;
+         }
+         
+         .form-signin .form-control {
+            position: relative;
+            height: auto;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            padding: 10px;
+            font-size: 16px;
+         }
+         
+         .form-signin .form-control:focus {
+            z-index: 2;
+         }
+         
+         .form-signin input[type="email"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+            border-color:#017572;
+         }
+         
+         .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-color:#017572;
+         }
+         
+         h2{
+            text-align: center;
+            color: #017572;
+         }
+      &LT/style>
+      
+   &LT/head>
+	
+   &LTbody>
+      
+      &LTh2>Enter Username and Password&LT/h2> 
+      &LTdiv class = "container form-signin">
+         
+         &LT?php
+            $msg = '';
+            
+            if (isset($_POST['login']) && !empty($_POST['username']) 
+               && !empty($_POST['password'])) {
+				
+               if ($_POST['username'] == 'tutorialspoint' && 
+                  $_POST['password'] == '1234') {
+                  $_SESSION['valid'] = true;
+                  $_SESSION['timeout'] = time();
+                  $_SESSION['username'] = 'tutorialspoint';
+                  
+                  echo 'You have entered valid use name and password';
+               }else {
+                  $msg = 'Wrong username or password';
+               }
+            }
+         ?>
+      &LT/div> &LT!-- /container -->
+      
+      &LTdiv class = "container">
+      
+         &LTform class = "form-signin" role = "form" 
+            action = "&LT?php echo htmlspecialchars($_SERVER['PHP_SELF']); 
+            ?>" method = "post">
+            &LTh4 class = "form-signin-heading">&LT?php echo $msg; ?>&LT/h4>
+            &LTinput type = "text" class = "form-control" 
+               name = "username" placeholder = "username = tutorialspoint" 
+               required autofocus>&LT/br>
+            &LTinput type = "password" class = "form-control"
+               name = "password" placeholder = "password = 1234" required>
+            &LTbutton class = "btn btn-lg btn-primary btn-block" type = "submit" 
+               name = "login">Login&LT/button>
+         &LT/form>
+			
+         Click here to clean &LTa href = "logout.php" tite = "Logout">Session.
+         
+      &LT/div> 
+      
+   &LT/body>
+&LT/html>
+</pre><h2>Logout.php</h2><p>It will erase the session data.<pre class="prettyprint notranslate">&LT?php
+   session_start();
+   unset($_SESSION["username"]);
+   unset($_SESSION["password"]);
+   
+   echo 'You have cleaned session';
+   header('Refresh: 2; URL = login.php');
+?>
+</pre><p>It will produce the following result −</p><img alt="Login Example"src=/php/images/login_example.jpg><div class="mui-container-fluid button-borders show"id=bottom_navigation><div class=pre-btn><a href=/php/php_complete_form.htm> <i class="fal fa-chevron-circle-left"> </i> Previous Page </a><a class=hide-on-mobile href=javascript:printPage();> <i class="fa fa-print"> </i> Print Page </a></div><div class=nxt-btn><a href=/php/php_facebook_login.htm> Next Page <i class="fal fa-chevron-circle-right"> </i>   </a></div></div><div class=space-bottom style=margin-bottom:20px;></div><div class=google-bottom-ads id=google-bottom-ads><div>Advertisements</div><div><div id=vi_bottom_ads></div><script>(function() {
+     var adPos = document.getElementById('vi_bottom_ads');
+     var mobile_ad_id = "vi_9017967";
+     var desktop_ad_id = "vi_9013190";
+     var ad_id = window.innerWidth <= 768 ? mobile_ad_id : desktop_ad_id;
+     adPos.innerHTML = '<div class="adsbyvli" data-ad-slot="' + ad_id + '"></div>';
+     (vitag.displayInit = window.vitag.displayInit || []).push(function () {
+         viAPItag.display(ad_id);
+     });
+     }())</script></div><div class=space-bottom></div></div></div><div class="mui-col-md-2 google-right-ads"style="display: none;"id=chapter-menu><input id=vu name=vu type=hidden><div class=space-top></div><div class=mui-panel><ul class=paid-menu id=div-right-menu><li><a title="Print this page"class=hide-on-mobile href=javascript:printPage();> <i class="fa fa-print"> </i> Print </a><li><a title="Add Custom Notes"class=add_notes href=javascript:void(0) onclick=add_notes();> <i class="fa fa-edit"> </i>  Add Notes </a><li><a class="clsPage text-bookmark"title="Add Bookmark"href=javascript:void(0) id=text-bookmark onclick=text_bookmark()> <i class="fal fa-bookmark"> </i>  Bookmark this page </a><li><a title="Report Error"href=javascript:void(0); id=report_error_popup onclick=report_error_popup();> <i class="fal fa-bell"> </i>  Report Error </a><li><a title="Give Suggestions"href=javascript:void(0); id=suggestion_popup onclick=suggestion_popup();> <i class="fal fa-badge-check"> </i>  Suggestions </a></ul><div class=profile-my-notes id=text_notes_div style=display:none;><textarea placeholder="Enter your custom notes..."class=text_notes id=text_notes name=text_notes rows=10></textarea><br><a class=butn-save href=javascript:void(0); id=submit_text_notes onclick=submit_text_notes();> Save </a><a class="pop-no butn-cancel"href=javascript:void(0); onclick=notesClose();> Close </a><p class=notes_msg></div><div class=bottom-menu><button class=tp-btn><i class="fal fa-box-up"> </i> <a href=/videotutorials/dashboard.php> Dashboard </a></button><button class=tp-btn><i class="fal fa-sign-out-alt"> </i> <a href=/videotutorials/userlogout.php> Logout </a></button></div></div></div><div class="mui-col-md-2 google-right-ads"id=google-right-ads><div class=space-top></div><div style="margin: 0px auto !important;margin-top:5px;min-height:250px!important"class=google-right-ad><div class=adsbyvli data-ad-slot=vi_9017966></div><script>(vitag.Init = window.vitag.Init || []).push(function(){viAPItag.display("vi_9017966")})</script></div><div class=google-right-ad style=margin-top:16px;min-height:250px!important><div class=adsbyvli data-ad-slot=vi_9017967></div><script>(vitag.Init = window.vitag.Init || []).push(function(){viAPItag.display("vi_9017967")})</script></div><div class=google-right-ad style=margin-top:16px;margin-bottom:15px;min-height:600px!important><div class=adsbyvli data-ad-slot=vi_9013289></div><script>(vitag.Init = window.vitag.Init || []).push(function(){viAPItag.display("vi_9013289")})</script></div><div class=space-bottom style=margin-bottom:15px;></div></div></div></div><div class=clear></div><footer id=footer><div class=mui--text-center><div class="mui--text-caption mui--text-light"><a class=logo href=/index.htm> <img alt="Tutorials Point"title="Tutorials Point"class=img-responsive src=/images/logo-black.png> </a></div><ul class="mui-list--inline mui--text-body2 mui--text-light"><li><a href=/about/index.htm> <i class="fal fa-globe"> </i> About us </a><li><a href=/about/return_refund_policy.htm> <i class="fal fa-asterisk"> </i> Refund Policy </a><li><a href=/about/about_terms_of_use.htm> <i class="fal fa-asterisk"> </i> Terms of use </a><li><a href=/about/about_privacy.htm> <i class="fal fa-shield-check"> </i> Privacy Policy </a><li><a href=/about/faq.htm> <i class="fal fa-question-circle"> </i> FAQ's </a><li><a href=/about/contact_us.htm> <i class="fal fa-map-marker-alt"> </i> Contact </a></ul><div class="mui--text-caption mui--text-light bottom-copyright-text">© Copyright 2020. All Rights Reserved.</div></div><script async src=https://www.googletagmanager.com/gtag/js?id=UA-232293-17></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-232293-6');</script><script src=/themes/js/jquery.colorbox-min.js></script><script>var tryit = new $.TryIt('/php/try_php.php');
+   tryit.compile();</script><script src=https://www.tutorialspoint.com/videotutorials/js/text_menu.js?v=1></script><script>$(document).ready(function (){
+    var cval = readCookie('subscription_purchased');
+    if(cval == '1'){
+          // logged in and purchased subscription.
+          $('#google-right-ads').remove();
+          $('#vi1').remove();
+          $('#vi2').remove();
+          $('#adp').remove();
+          $('#stickyparent').remove();
+          $('#google-top-ads').remove();
+          $('#google-bottom-ads').remove();
+          $('.tutorial-content hr').remove();
+          $('.login').remove();
+          $('#chapter-menu').show();
+          $('.content h1').css("border-bottom", "none");
+          $('.google-right-ads').css("padding-right", "0px");
+          $('.tutorial-content').css("border-radius", "10px");
+          $('#chapter-menu .mui-panel').css("border-radius", "10px");
+     }
+});</script></footer>

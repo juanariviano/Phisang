@@ -1,0 +1,269 @@
+<!doctypehtml PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns=http://www.w3.org/1999/xhtml><meta content=width=device-width,initial-scale=1,maximum-scale=1 name=viewport><title>
+  </title><link href=Content/bootstrap.min.css rel=stylesheet><link href=Content/bootstrap-theme.css rel=stylesheet><link href=Content/StyleSheet.css rel=stylesheet><link href=css/animate.css rel=stylesheet><link href=css/lobibox.css rel=stylesheet><link crossorigin href=https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css integrity=sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN rel=stylesheet><style>div..navMenu_4
+        {
+            border-right: 20px solid red;
+        }
+        navMenu td
+        {
+            border-right: 1px solid gray;
+        }
+        .navMenu_4
+        {
+            border-right: 1px solid gray;
+        }
+        .menu
+        {
+            display: block;
+        }
+        .navbar-brand
+        {
+            float: left;
+            height: 50px;
+            padding: 15px 15px;
+            font-size: 15px;
+            line-height: 20px;
+        }</style><style>#navcontainer ul
+        {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            text-align: center;
+        }
+        
+        #navcontainer ul li
+        {
+            display: inline;
+        }
+        
+        #navcontainer ul li a
+        {
+            text-decoration: none;
+            padding: .4em 1em;
+            color: gray;
+            background-color: white;
+            border-right: 1px solid rgba(0,0,0,0.24);
+            border-left: 1px solid rgba(0,0,0,0.24);
+            font-family: verdana, arial, helvetica, sans-serif;
+            font-size: 10pt;
+            font-weight: bold;
+        }
+        
+        #navcontainer ul li a:hover
+        {
+            color: #fff;
+            background-color: gray;
+        }</style><style>#Div1 ul
+        {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+            text-align: center;
+        }
+        
+        #Div1 ul li
+        {
+            display: inline;
+        }
+        
+        #Div1 ul li a
+        {
+            text-decoration: none;
+            padding: .2em 1em;
+            color: gray;
+            background-color: white;
+            border-left: 1px solid rgba(0,0,0,0.24);
+            border-right: 1px solid rgba(0,0,0,0.24);
+            font-weight: bold;
+        }
+        
+        #Div1 ul li a:hover
+        {
+            color: gray;
+            background-color: #BEEAE7;
+        }</style><style>body
+        {
+        }
+        #pagewrap
+        {
+            width: 600px;
+            padding-left: 150px;
+            position: relative;
+        }
+        /*Back to top button*/
+        #back-top
+        {
+            position: fixed;
+            bottom: 30px;
+            margin-left: -190px;
+        }
+        #back-top a
+        {
+            width: 108px;
+            display: block;
+            text-align: center;
+            font: 11px/100% Arial, Helvetica, sans-serif;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #bbb; /* background color transition */
+            -webkit-transition: 1s;
+            -moz-transition: 1s;
+            transition: 1s;
+        }
+        #back-top a:hover
+        {
+            color: #000;
+        }
+        /* arrow icon (span tag) */
+        #back-top span
+        {
+            width: 46px;
+            height: 46px;
+            display: block;
+            margin-bottom: 7px;
+            background: #ddd url(Image/Header%20Image/top.png) no-repeat center center; /* rounded corners */
+            -webkit-border-radius: 15px;
+            -moz-border-radius: 15px;
+            border-radius: 15px; /* background color transition */
+            -webkit-transition: 1s;
+            -moz-transition: 1s;
+            transition: 1s;
+        }
+        #back-top a:hover span
+        {
+            background-color: #777;
+        }</style><style>/* Note: Try to remove the following lines to see the effect of CSS positioning */
+        .affix
+        {
+            top: 0;
+            width: 100%;
+        }
+        
+        .affix + .container-fluid
+        {
+            padding-top: 70px;
+        }</style><script>var slideimages = new Array() // create new array to preload images<img src="" />
+        slideimages[0] = new Image() // create new instance of image object
+        slideimages[0].src = "Image/Header%20Image/Store1.jpg" // set image src property to image path, preloading image in the process
+        slideimages[1] = new Image()
+        slideimages[1].src = "Image/Header%20Image/Sliderimage1.jpg"
+        slideimages[2] = new Image()
+        slideimages[2].src = "Image/Header%20Image/Sliderimage2.jpg"
+        slideimages[3] = new Image()
+        slideimages[3].src = "Image/Header%20Image/Sliderimage3.jpg"
+        slideimages[4] = new Image()
+        slideimages[4].src = "Image/Header%20Image/sliderimage4.jpg"</script><script>$(document).ready(function () {
+
+            // hide #back-top first
+            $("#back-top").hide();
+
+            // fade in #back-top
+            $(function () {
+                $(window).scroll(function () {
+                    if ($(this).scrollTop() > 100) {
+                        $('#back-top').fadeIn();
+                    } else {
+                        $('#back-top').fadeOut();
+                    }
+                });
+                // scroll body to 0px on click
+                $('#back-top a').click(function () {
+                    $('body,html').animate({
+                        scrollTop: 0
+                    }, 800);
+                    return false;
+                });
+            });
+
+        });</script><script>function popupSuccess(msg) {
+
+
+            //            var element = $("div.alert-success");
+            //            element.show();
+            //            element.html(msg);
+            //            element.fadeIn(300).delay(2500).fadeOut(400);
+            //  window.navigator = window.navigator || {};
+            //  navigator.vibrate(100);
+            debugger
+            Lobibox.notify('success', {
+                title: '',
+                position: 'top right',
+                msg: msg,
+                delay: 1500
+            });
+        };
+
+        function popupfailed(msg) {
+            //            var element = $("div.alert-danger");
+            //            element.show();
+            //            element.html(msg);
+            //            element.fadeIn(300).delay(2500).fadeOut(400);
+
+
+            Lobibox.notify('error', {
+                title: '',
+                position: 'top right',
+                msg: msg,
+                delay: 1500
+            });
+        };</script><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js></script><script src=Scripts/bootstrap.min.js></script><link href=/WebResource.axd?d=1coURwiUateCNq6yJsDQNTHaBUZr-b1zDXb4eTMeDRV1tC1WTTcYRLcncGXsi1fhNhMDIY0JPuusHgUsb_YwO96j7PcWJyR3Ww5LiDk4IAkRXpcGOzysavKzZAyqN4MzQYOFqAiPksMSJrmkXGk9Vsd8UScVaX_40oIOvOwf5WY1&t=635640019180000000 rel=stylesheet><body class=container id=top><form action=./ id=form1 method=post><input id=__VIEWSTATE name=__VIEWSTATE type=hidden value=/wEPDwUKLTUwNzk3NjQwNQ9kFgJmD2QWAgIDD2QWBAIPDw8WAh4EVGV4dAUMVmlldyBDYXJ0KDApZGQCEQ9kFgQCAw8WAh4HVmlzaWJsZWdkAggPFgIeBXN0eWxlBQhkaXNwYWx5OhYCAgEPFgIeA3NyYwUZfi9iYW5uZXJpbWFnZS9CYW5uZXIxLmpwZ2QYAQUeX19Db250cm9sc1JlcXVpcmVQb3N0QmFja0tleV9fFgMFImN0bDAwJENvbnRlbnRQbGFjZUhvbGRlcjEkYnRubG9naW4FJmN0bDAwJENvbnRlbnRQbGFjZUhvbGRlcjEkSW1hZ2VCdXR0b24xBS1jdGwwMCRDb250ZW50UGxhY2VIb2xkZXIxJGxua2ZvcmFjdGl2YXRlZHVzZXJRnUfGL5G18na+Mc8ibxJCVjLuIZ2SiGGRrB9dVGSoQQ==><script src=/ScriptResource.axd?d=3lpYbmjeBzkHWwKoiDZvV0rxxDzACPeaGsBM1off5SRSl1nco_019L7BwAy_z-6pFXNq6ujnnfPqjJ4R19aUA5wLzeUzX-FYnYETHa6TvYMgG-28NdYJxWOCyrtLbSuUQYPZf_5m44sXjLzY281TQy061b7it5y-d8LGc1ux3YDVBQLLEab6BqNt4Yk9SpA20&t=2b48f70a></script><script>//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]></script><script src=/ScriptResource.axd?d=ifUvt5o3RJsgrZDpZMHW1PVnE_aiAVzNkaLvDwXiwQcT2N0OI-mbYcE7847DZtGzlNUB0y3be2UIx4pg4-LDeWYJZ8D5lji7fhGDxpc-hm_w_l5z_kLBwfu_EMmD4iTrqfUzEU8NhCSQCpcXjh_YBQ2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=RgrCrU2IPLZJr0pyNvaGE9QRolhRoy7lCBKF0EwWanNh4Ehd6PTKtIen9org9LWPW_6_L3iXP2oLmcsYfrqyQ9aDuyx_EPr_k2BQikpcPi8mx24JQFPJuELlFdJDHe1tIpRitbHMgMK4nhKLIBwV4w2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=HbfIwXnCWD1G1a7G6BsrRSZxfyNXP0W__SL7vxw9cxelckaWg7ELbdyVJYW1ZTByIwqMJPpdWir8SkNH7LGj40XZgLYlh5SOlNDJzksu1H5Culi8Avr-V_8xzMiEla1a0&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=nPLUElUKqWbawDiZHha2HUqqzvuq9jdyNmn6hselzEPgzfccW4Ltznh5vwuoZv7H9-Qgg370qRmV-LUD4Q7-3HFnmlkF-XzHKqMGnCHTNgUUqsIQB4xWB2v9mCh2GoHHuLl_w3jKBmIWx0dqjyNRvQ2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=upx5X_pVBAeBtO7bH2YA5zCYxkuXnZmDOVCR1UtIzJlHntrKzB6mCthkY8v6Ntb15gXCplTLonEBUzdDG-kwvOKg_2wLNkgukvP8ThBlRPSfN_TQKuX6aZtGD1ekvMIOjqlrNjzg0x0LADOpRmv7Jg2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=9im_BDWBIYv2l8VMPOmmMvTK542KvBzaZPAIALYV35co3YhvITiLAeBPehlvpFrGt9VKCqC37OD9TeJ7CEU_tI1aw4K8fa9YsIUegvyaG7RgED19Dezy1rGi_ndwZgiq2wbSTjZofjRfjGbUQ_8twQ2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=OVhf3c6U2eGGX5hmwwUNrjjQQ9MrHJ4EDtQAKk7etJ3CYV0qmkHSyV5xZbP9zVBO3h_kszYCqn7tcjRQiB-KegrLZQJEXFPhlJqoN0BVguovxL1ivdQK9BDhFTjTv_KJ0&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=AFte4JwQ36XZ5K2VwG50uH9r8PTdX7EzcTH6EYimLdOV-cY7OIWonMyC1PwKxdqVzIYUAafUZ1oCH7Z1I1TJaKeT767JnKHy6EuY1lM1gfm3ImxbZoqyj3hjxE8b0v4QmGZPvG6tCKRDMLZ0Jq4JEg2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=gCik1poBCkexXzK4aL171d4z6ScdV25JCz1_18Ngh4xcfJzyqD66WCmDdco_PxW25QBMxJZNTfPwnpoBwVmCgwEhsd2xe2vYtYPd8V5H2LyVHqQkDukIsBPdHHCbBXMHo9CmoaSNJwIA7tR1v4C6nw2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=_EVoVIP-ltyCrPXuNAt04O9W1yR83zRhjuivUtamOYVQnFUkU81GvBwoAwbhC83oCCipU4ExglRFf2ZrEGJPgXwBsjY3GyYbtw5hkE7Xmzu1EbL-QogmE-xn9zd15bttRsYcTYDnuD485wR3S4LoKg2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=XaIgfLwMi1sx73QiABAY8ThhxyQHaxrJz5UY_djurTS5XaOp1JiN1F0jjeJPteUM8DtqvCNvu2O3Lzfi-TaXvASQZPzdUE5Ynx8x_FSDX0kKPTGOuXWj6qlmwXr0rVux4U6A01WcU1mpIg2rMFE7Gw2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=gnbvDxEoFI9LpefwgNyqfX8lnmMGlEY34UdOVBxdpt6KaweZsIdlmZ3E4ZoVp9TSMeaMtqDQzyBA4QuMWHXsa-B0et5mN0r4HxQda9flGVrWl8YapHMJhu2oolG9rugImJGRIeSOjuU4KsTDUygp6A2&t=fffffffff65665cf></script><script src=/ScriptResource.axd?d=N7RSS9StS5arZO6qI0ahJ64VSJQcDiAUQz1JcIHdJYWpEQR2arg8DcycbvNK6FAaHev9h7mgCqNQA0dIzLvH-sqxe2I_3aYSmy_iDnWTf7iLV5e68Qro_gQnrHFwDoCSuQLeGicPdWIpSGqCjTlASw2&t=fffffffff65665cf></script><input id=__VIEWSTATEGENERATOR name=__VIEWSTATEGENERATOR type=hidden value=8D0E13E6><input id=__EVENTVALIDATION name=__EVENTVALIDATION type=hidden value=/wEdAArUEc2Z9nNct6/OpSa58/YiwFNx2CC2+rMw5psAHzATzYwP+/qM021JjfJx0+wZEhZoLsc8uMQixqXwbu74YKrRG4n3bo0omzg89pRzfkR8+gRjV/6OhcAmk5AQTJHvewHjyhPQZt65nJEwdtkpU0WQQgUSav/Kzu+WnhEdNIGCwgQgVHk9nwQ8/BiXeIzbLr4i9DvrXistybHsHqaGMWQPqmNu8hq9FBYTrm+3fD2MhrsSuYdajfoOQwQDShT52Yg=><div style="z-index: 1; background: #6490DF;"class=container-fluid><div class=container><div class=col-lg-2><a href=Home.aspx> <img style="padding-bottom: 0px"height=60px; src=Image/Header%20Image/booker1.png> </a></div><div class="navbar-brand col-lg-4"id=title><span id=Label2> <b> <font color=White size=5> Booker India Online Shopping </font> </b> </span></div><div class="navbar-brand col-lg-3"id=delivery><a> <img alt height=20px src=Image/Header%20Image/freedelivery.jpg> </a><span id=lbldeliverynote> <font color=White face=verdana,arial,helvetica,sans-serif size=1> Min. Delivery Rs.5000 & above </font> </span></div><div class=col-lg-3 id=titlelogin><span class=navbar-brand> </span></div></div></div><div class="navbar navbar-default"data-offset-top=150 data-spy=affix-top id=navcontainer><div class="container-fluid col-lg-12"><div class=navbar-header><button class=navbar-toggle data-target=#myNavbar data-toggle=collapse type=button><span class=icon-bar> </span> <span class=icon-bar> </span> <span class=icon-bar> </span></button></div><div class="collapse navbar-collapse"id=myNavbar><div id=ulforheader><div class="col-lg-2 col-xs-12"><a class=navbar-brand href=Home.aspx> Home </a></div><div class="col-lg-2 col-xs-12"><a class=navbar-brand href=AboutUs.aspx> About Booker </a></div><div class="col-lg-2 col-xs-12"></div><div class="col-lg-2 col-xs-12"></div><div class="col-lg-2 col-xs-12"></div><div class="col-lg-2 col-xs-12"></div></div></div></div></div><div class=container-fluid><link href=engine/style.css rel=stylesheet><link href=styles.css rel=stylesheet><link href=engine/style.css rel=stylesheet><script>(function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+  m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-90315812-1', 'auto');
+        ga('send', 'pageview');</script><style>a#vlb
+        {
+            display: none;
+        }</style><script src=engine/jquery.js></script><script src=engine/wowslider.js></script><script src=js/ticker00.js></script><script>$(document).ready(function () {
+            $('#fade').list_ticker({
+                speed: 10000,
+                effect: 'fade'
+            });
+            $('#slide').list_ticker({
+                speed: 10000,
+                effect: 'slide'
+            });
+        })</script><script src=js/crawler.js></script><script src=highslide/highslide-with-html.js></script><link href=highslide/highslide.css rel=stylesheet><script>// Apply the Highslide settings
+        hs.graphicsDir = 'highslide/graphics/';
+        hs.outlineType = 'rounded-white';
+        hs.outlineWhileAnimating = true;</script><script src=https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js></script><script src=jquery.bxslider.min.js></script><link href=jquery.bxslider.css rel=stylesheet><script>$(document).ready(function () {
+            //                 $('.bxslider').append('Stop');
+            $('.bxslider').bxSlider();
+        });</script><style>.modalBackground
+        {
+            background-color: Gray;
+            filter: alpha(opacity=80);
+            opacity: 0.8;
+            z-index: 10000;
+        }</style><a href=javascript:__doPostBack('ctl00$ContentPlaceHolder1$lnkFake','') id=ContentPlaceHolder1_lnkFake> </a><div class="col-lg-12 col-xs-12"style="box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);"><div class="col-lg-6 col-xs-12"><div style="margin-top: 16px; background-color: lemonchiffon;
+                border-bottom: 1px solid rgba(0,0,0,0.15); border-right: 1px solid rgba(0,0,0,0.15);
+                border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15);"class=col-xs-12><br><div class="col-lg-12 col-xs-12"style="margin-top: 60px; padding: 0;"id=ContentPlaceHolder1_tbllogin><div class=row><div class="col-lg-6 col-xs-12"><span id=ContentPlaceHolder1_lblUserName> <font color=#006090 face=verdana,arial,helvetica,sans-serif size=2> Booker Customer ID: </font> </span></div><div class="col-lg-6 col-xs-12"><input placeholder="Enter User Id"class=form-control id=ContentPlaceHolder1_txtusername name=ctl00$ContentPlaceHolder1$txtusername></div></div><br><div class=row><div class="col-lg-6 col-xs-12"><span id=ContentPlaceHolder1_lblpassword> <font color=#006090 face=verdana,arial,helvetica,sans-serif size=2> Password: </font> </span></div><div class="col-lg-6 col-xs-12"><input placeholder="Enter Password"class=form-control id=ContentPlaceHolder1_txtpassword name=ctl00$ContentPlaceHolder1$txtpassword type=password></div></div><br><div class=row><div class="col-lg-6 col-xs-12"><span id=ContentPlaceHolder1_lblmsg> <font color=Red> </font> </span></div><div class="col-lg-6 col-xs-12"align=right><a href=javascript:__doPostBack('ctl00$ContentPlaceHolder1$LinkButton1','') id=ContentPlaceHolder1_LinkButton1> <font color=#006090 face=verdana,arial,helvetica,sans-serif size=1> Forgot Password? </font> </a></div></div><div align=center class=row><input id=ContentPlaceHolder1_btnlogin name=ctl00$ContentPlaceHolder1$btnlogin src=Image/Header%20Image/login1.jpg type=image></div></div><table class="table table-responsive"align=center><tbody><tr><td id=ContentPlaceHolder1_loginmsg><span style="color: #006090; font-family: verdana, arial, helvetica, sans-serif;
+                                font-size: 7pt;"> By clicking 'Login' I agree that the customer number entered above is registered to my business and I am authorised to use it. </span></table></div><div style="margin-top: 12px; height: 250px; background-color: lemonchiffon;
+                border-bottom: 1px solid rgba(0,0,0,0.15); border-right: 1px solid rgba(0,0,0,0.15);
+                border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15);"class=col-xs-12><br><div class="col-lg-12 col-xs-12"style="padding: 0;"><div class="col-lg-12 col-xs-12"style="padding: 0;"id=ContentPlaceHolder1_newcustomer><span style="color: #006090; font-family: verdana, arial, helvetica, sans-serif;
+                            font-size: 14pt; text-transform: uppercase;"> Don't have a customer number? </span><br><br><center> <input id=ContentPlaceHolder1_ImageButton1 name=ctl00$ContentPlaceHolder1$ImageButton1 src=Image/Header%20Image/join%20Now.jpg type=image> </center></div><br><div class="col-lg-12 col-xs-12"style="padding: 0;"><div style="padding: 0;"class=col-lg-8><span style="font-size: 10pt; font-weight: normal; font-family: verdana, arial, helvetica, sans-serif;
+                                color: #006090;"> <p>For more detail on Booker India, kindly visit: <a style="font-size: 10pt;"href=http://www.bookerindia.net/ target=_blank> <span style="font-family: verdana, arial, helvetica, sans-serif;"> www.bookerindia.net </span> </a></p> </span></div></div></div></div><div style="margin-top: 12px; height: 220px; background-color: lemonchiffon;
+                border-bottom: 1px solid rgba(0,0,0,0.15); border-right: 1px solid rgba(0,0,0,0.15);
+                border-top: 1px solid rgba(0,0,0,0.15); border-left: 1px solid rgba(0,0,0,0.15);"class=col-xs-12><br><br><div class="col-lg-12 col-xs-12"><div class=row id=ContentPlaceHolder1_Activteduser><center> <span style="color: #006090; font-family: verdana, arial, helvetica, sans-serif;
+                                font-size: 14pt;"> ACTIVATE ONLINE ACCOUNT <br> <br> </span> </center><center> <input id=ContentPlaceHolder1_lnkforactivateduser name=ctl00$ContentPlaceHolder1$lnkforactivateduser src=Image/Header%20Image/Continue.png type=image> </center><br><span style="color: #006090; font-family: verdana, arial, helvetica, sans-serif;
+                            font-size: 7pt;"> (If You are already a Booker Store Member) </span></div></div></div></div><div class="col-lg-6 col-xs-12"id=ContentPlaceHolder1_DivImages style=dispaly:><div style="width: Auto;"><div style="padding-top: 16px; height: 435px;"id=wowslider-container1><div style="width: 100%"class=ws_images><img id=ContentPlaceHolder1_imageforbanner src=bannerimage/Banner1.jpg></div></div><div style="width: 480px; height: 190px;"><img style="margin-top: 20px;"id=ContentPlaceHolder1_imageforbanner2 src=Image/Header%20Image/COD1.png></div></div></div><div class=col-lg-4><script>marqueeInit({
+                    uniqueid: 'ContentPlaceHolder1_mycrawler2',
+                    style: {							
+                    'height': '130px',
+                    'width' : '100%',		
+                    },			
+                    inc: 3, //speed - pixel increment for each iteration of this marquee's movement
+                    mouse: 'cursor driven', //mouseover behavior ('pause' 'cursor driven' or false)
+                    moveatleast: 1,
+                    neutral: 150,
+                    savedirection: true
+                                });</script></div></div></div><div class=row><center> <div class="col-lg-12 col-xs-12"id=divfooter><span> <a style="font-size: 8pt;
+                    color: #006090; font-family: verdana,arial,helvetica,sans-serif;"href=TernAndCondition.aspx id=FC_hypTermsAndConditions> Terms & Conditions </a> </span><span> | </span><span> <a style="font-size: 8pt; color: #006090; font-family: verdana,arial,helvetica,sans-serif;"href=PrivacyPolicy.aspx id=FC_hypPrivacyStatement> Privacy & Cookies </a> </span><span> | </span><span> <a style="font-size: 8pt; color: #006090; font-family: verdana,arial,helvetica,sans-serif;"href=CancellationPolicy.aspx id=FC_hypContactUs> Cancellation Policy </a> </span><span id=FC_SiteMapLink> <span> | </span> <span> <a style="font-size: 8pt; color: #006090; font-family: verdana,arial,helvetica,sans-serif;"href=ShippingAndReturnsPolicy.aspx id=FC_hypSiteMap> Shipping And Returns Policy </a> </span> </span></div> </center></div><div class=row><center> <span style="font-size: 8pt; color: #006090; font-family: verdana,arial,helvetica,sans-serif;"class=footer> Â© Booker India 2015 </span> </center></div><div id=pagewrap><p id=back-top><a href=#top> <i class="fa fa-arrow-circle-up fa-4x"aria-hidden=true> </i> </a></p><input id=secondsIdle name=ctl00$secondsIdle type=hidden><input id=seconds name=ctl00$seconds type=hidden></div><script src=js/lobibox.js></script><script src=css/demo.js></script><script>//<![CDATA[
+Sys.Application.add_init(function() {
+    $create(Sys.Extended.UI.ModalPopupBehavior, {"BackgroundCssClass":"modalBackground","CancelControlID":"btnclose","PopupControlID":"Panel3","dynamicServicePath":"/home.aspx","id":"mpeTimeout"}, null, null, $get("ContentPlaceHolder1_lnkFake"));
+});
+//]]></script></form>

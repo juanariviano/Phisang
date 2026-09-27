@@ -1,0 +1,178 @@
+<!doctypehtml><script>function getCookie(name) {
+        var value = '; ' + document.cookie
+        var parts = value.split('; ' + name + '=')
+        if (parts.length == 2)
+          return parts
+            .pop()
+            .split(';')
+            .shift()
+      }</script><script src=/assets/js/janrain-common.js></script><script src=/node_modules/js-cookie/src/js.cookie.js></script><script src=/assets/js/janrain-init.js></script><script></script><script>function httpGetHeaders() {
+        var req = new XMLHttpRequest()
+        req.open('GET', document.location, false)
+        req.send(null)
+        var headers = req.getAllResponseHeaders()
+        // convert string headers to object
+        var objHeaders = headers.split(/\n|\r|\r\n/g).reduce(function(a, b) {
+          if (b.length) {
+            var res = b.split(': ')
+            if (res.length > 1) {
+              a[res[0]] = res[1]
+            }
+          }
+          return a
+        }, {})
+        return objHeaders
+      }
+      var httpHeaders = httpGetHeaders()
+      ;(function() {
+        var s = document.createElement('script')
+        s.type = 'text/javascript'
+        s.async = !0
+        s.src = httpHeaders.adobelaunchscripturl
+        var d = document.getElementsByTagName('script')[0]
+        d.parentNode.insertBefore(s, d)
+      })()</script><script>;(function(w, d, s, l) {
+        w[l] = w[l] || []
+        w[l].push({
+          'gtm.start': new Date().getTime(),
+          event: 'gtm.js',
+        })
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : ''
+        j.async = true
+        j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' +
+          httpHeaders.tagmanagerid +
+          dl +
+          '&gtm_auth=' +
+          httpHeaders.gtmauth +
+          '&gtm_preview=' +
+          httpHeaders.gtmpreview +
+          '&gtm_cookies_win=x'
+        f.parentNode.insertBefore(j, f)
+      })(window, document, 'script', 'dataLayer')</script><noscript></noscript><body class=janrainBody><iframe height=0 src=https://www.googletagmanager.com/ns.html?id=GTM-W7TJHGB style=display:none;visibility:hidden width=0></iframe><script>;(function() {
+        var s = document.createElement('script')
+        s.type = 'text/javascript'
+        s.id = 'jra2kjsid'
+        s.setAttribute('data-debug', true)
+        s.setAttribute('data-appid', janrain.settings.capture.appId)
+        s.src = 'https://d3pgytnf8hmy9s.cloudfront.net/jra2k-v1.2.0.js'
+        var d = document.getElementsByTagName('script')[0]
+        d.parentNode.insertBefore(s, d)
+      })()</script><script>function OnLoadFunction() {
+        var siteName = getCookie('siteName')
+
+        if (!siteName) {
+          console.error(
+            'Cookie/Caching Error! Sitename does not exist. Please contact torstar admin with this error.'
+          )
+        } else {
+          var topLogos = [].slice.call(
+            document.querySelectorAll(
+              '[src="/assets/svg/logo-thestar.svg"]:not([data-image="origin"])'
+            )
+          )
+          var needHelpEmailLinks = [].slice.call(
+            document.querySelectorAll('[href="mailto:starsupport@torstar.ca"]')
+          )
+
+          topLogos &&
+            topLogos.forEach(function(logo) {
+              logo.src = '/assets/svg/logo-' + siteName + '.svg'
+              logo.alt = siteName + '.com Logo'
+            })
+
+          var emailLinks = {
+            thestar: 'mailto:starsupport@torstar.ca',
+            thespec: 'mailto:circ@thespec.com',
+            therecord: 'mailto:circulation@therecord.com',
+            thepeterboroughexaminer: 'mailto:circulation@peterboroughdaily.com',
+            stcatharinesstandard: 'mailto:StandardCirc@niagaradailies.com',
+            niagarafallsreview: 'mailto:ReviewCirc@niagaradailies.com',
+            wellandtribune: 'mailto:tribunecirc@niagaradailies.com',
+          }
+
+          needHelpEmailLinks &&
+            needHelpEmailLinks.forEach(function(link) {
+              var href = emailLinks[siteName]
+              link.setAttribute('href', href)
+            })
+
+          var backToTheStarLabels = {
+            thestar: 'Back to The Star',
+            thespec: 'Back to The Hamilton Spectator',
+            therecord: 'Back to The Waterloo Record',
+            thepeterboroughexaminer: 'Back to The Peterborough Examiner',
+            stcatharinesstandard: 'Back to St. Catharines Standard',
+            niagarafallsreview: 'Back to Niagara Falls Review',
+            wellandtribune: 'Back to Welland Tribune',
+          }
+          var backToTheStarLink = document.querySelector('#backToTheStarLink')
+
+          backToTheStarLink.innerText =
+            backToTheStarLabels[siteName] || backToTheStarLabels.thestar
+        }
+      }
+      document.addEventListener('DOMContentLoaded', OnLoadFunction, false)</script><title>
+   Sign in to your Torstar account | The Star
+  </title><meta content="A Torstar account gives you access to 30+ websites, including The Star (thestar.com), Save.ca, and community news websites across Ontario."name=description><meta content=width=device-width name=viewport><meta content=https://www.thestar.com/sign-in name=parsely-link><meta content=sectionpage name=parsely-type><script>var _vis_opt_account_id = 354908
+      var _vis_opt_protocol =
+        'https:' == document.location.protocol ? 'https://' : 'http://'
+      document.write(
+        '<s' +
+          'cript src="' +
+          _vis_opt_protocol +
+          'dev.visualwebsiteoptimizer.com/deploy/js_visitor_settings.php?v=1&a=' +
+          _vis_opt_account_id +
+          '&url=' +
+          encodeURIComponent(document.URL) +
+          '&random=' +
+          Math.random() +
+          '" type="text/javascript">' +
+          '<\/s' +
+          'cript>'
+      )</script><script>if (typeof _vis_opt_settings_loaded == 'boolean') {
+        document.write(
+          '<s' +
+            'cript src="' +
+            _vis_opt_protocol +
+            'd5phz18u4wuww.cloudfront.net/vis_opt.js" type="text/javascript">' +
+            '<\/s' +
+            'cript>'
+        )
+      }
+      /* if your site already has jQuery 1.4.2, replace vis_opt.js with vis_opt_no_jquery.js above */</script><script>if (
+        typeof _vis_opt_settings_loaded == 'boolean' &&
+        typeof _vis_opt_top_initialize == 'function'
+      ) {
+        _vis_opt_top_initialize()
+        vwo_$(document).ready(function() {
+          _vis_opt_bottom_initialize()
+        })
+      }</script><style>@import url('https://fonts.googleapis.com/css?family=Roboto');</style><div data-lpos=signIn id=signIn style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Sign in with your torstar account <div class=tooltip><span class=loginQuestion> <img height=20 src=/assets/icons/question.svg width=20> </span><div class=tooltiptext><span> Your Torstar account gives you access to 30+ websites, including The Star (thestar.com), Save.ca, and community news websites across Ontario. </span><a class=xButton href=#> × </a></div></div></h2><div class="capture_signin left"><div class=custom-login-error-msg style=display:none;><div class=capture_form_error>An error has occurred please try again later. Please refresh page to try again.</div></div> {* #signInForm *}  {* signInEmailAddress *}  {* currentPassword *} <div class=forgot_password><a data-capturescreen=forgotPassword href=#> Forgot password? </a></div><div class=capture_rightText><button class="capture_btn capture_primary"id=sign-in-btn>Sign in</button></div> {* /signInForm *}</div><div class="capture_signin right"><div class=capture_centerText><span> Don't have an account? </span></div><div class=social_login>{* loginWidget *}</div><div class=capture_rightText><a class="capture_secondary capture_createAccountButton capture_btn capture_primary"data-capturescreen=traditionalRegistration href=# id=capture_signIn_createAccountButton> Create account </a></div></div><div class=footerJanrain><br><p>By creating an account or signing in, you are agreeing to our <a href=https://www.thestar.com/about/terms.html target=_blank> Terms of Use </a> and <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy. </a></p><br></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca id=needHelpEmailLink> Need Help? </a></div></div><div class=layout-1 data-lpos=returnSocial id=returnSocial style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Sign in with your torstar account <div class=tooltip><span class=loginQuestion> <img height=20 src=/assets/icons/question.svg width=20> </span><div class=tooltiptext><span> Your Torstar account gives you access to 30+ websites, including The Star (thestar.com), Save.ca, and community news websites across ontario. </span><a class=xButton href=#> × </a></div></div></h2><div><p class=msg><br> <span id=socialWelcomeName> Welcome back </span><div style="display:none;text-align: center;"class=custom-login-error-msg><div class=capture_form_error>An error has occurred please try again later. Please refresh page to try again</div></div> {* loginWidget *} <div class="capture_centerText switchLink">Not you ? <a data-cancelcapturereturnexperience=true href=#> Sign in with another account </a></div></div><div class=footerJanrain><br><p>By creating an account or signing in, you are agreeing to our <a href=https://www.thestar.com/about/terms.html target=_blank> Terms of Use </a> and <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy. </a></p><br></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div class=layout-1 data-lpos=returnTraditional id=returnTraditional style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Sign in with your torstar account <div class=tooltip><span class=loginQuestion> <img height=20 src=/assets/icons/question.svg width=20> </span><div class=tooltiptext><span> Your Torstar account gives you access to 30+ websites, including The Star (thestar.com), Save.ca, and community news websites across Ontario. </span><a class=xButton href=#> × </a></div></div></h2><div class=paragraph><p><span id=traditionalWelcomeName> Welcome back </span><div style="display:none;text-align: center;"class=custom-login-error-msg><div class=capture_form_error>An error has occurred please try again later. Please refresh page to try again</div></div> {* #signInForm *} <div class=clearall><div class=block50>{* signInEmailAddress *}</div><div class=block50>{* currentPassword *}</div><div class=forgot_password><a data-capturescreen=forgotPassword href=#> Forgot password? </a></div></div><div class="capture_footer emailVerificationRequired"><button class="capture_btn capture_primary">Sign in</button></div> {* /signInForm *} <div class=capture_centerText><br> Not you? <a data-cancelcapturereturnexperience=true href=#> Sign in with another account </a></div><div class=footerJanrain><br><p>By creating an account or signing in, you are agreeing to our <a href=https://www.thestar.com/about/terms.html target=_blank> Terms of Use </a> and <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy. </a></p><br></div></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=accountDeactivated id=accountDeactivated style=display:none;><div class=capture_header data-lpos=header><h1>Account deactivated</h1></div><div class=content_wrapper><p>Your account has been deactivated.</div></div><div data-lpos=reactivateAccount id=reactivateAccount style=display:none;><h2>Account deactivation failed</h2><p>Sorry, we could not verify that email address.</div><div style="display: none;"data-lpos=reactivateAccountSuccess id=reactivateAccountSuccess><h2>Account activated</h2><p>Your account has been reactivated.<div class=capture_footer><a class="capture_btn capture_primary"href=/sign-in> Sign in </a></div></div><div data-lpos=emailVerificationRequired id=emailVerificationRequired style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/sign-in> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Verify your email address</h2><div class=paragraph><p id=emailVerificationRequiredText><p><strong> Please click the link in your verification email to complete your Torstar account registration. </strong><p>If you did not receive a verification email, please check your junk folder or use the button below to resend the email.</div> {* #resendVerificationForm *} <div class="capture_footer emailVerificationRequired"onclick=trackResendEmailEvent()><button class="capture_btn capture_primary capture_resend">Resend verification email</button></div><div style=display:none>{* signInEmailAddress *}</div> {* /resendVerificationForm *}</div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=socialRegistration id=socialRegistration style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=section><div class="header-top section-create"><span> <a data-capturescreen=signIn href=#> <img height=25 src=/assets/icons/angle-left.svg width=25> </a> </span><h1>Complete your registration</h1></div><div class="content usr-form"><p>Your social media account has now been successfully linked to a Torstar account.<p>To complete your registration, please verify and complete your personal information below:</p> {* #socialRegistrationForm *}  {* firstName *}  {* lastName *}  {* emailAddress *}  {* addressPostalCode *} <div class=clearall><div class="capture_footer emailVerificationRequired"><div class=capture_right><button class="capture_btn capture_primary">Create account</button><p><a data-capturescreen=signIn href=# id=capture_traditionalRegistration_navSignIn> Already have an account? Sign In. </a></div><div><p class=disclaimer>Your information will be treated in accordance with our <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy </a> , including to better tailor the communications and offers we deliver. By creating an account or signing in, you are agreeing to our <a href=https://www.thestar.com/about/terms.html target=_blank> Terms of Use </a> and <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy </a> . If you are a print subscriber, we will validate eligibility for complimentary digital access upon account creation.</div></div></div></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div> {* /socialRegistrationForm *}</div><div data-lpos=traditionalRegistration id=traditionalRegistration style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=section><div class=header-top><span> <a data-capturescreen=signIn href=#> <img height=25 src=/assets/icons/angle-left.svg width=25> </a> </span><h1>Create a Torstar Account</h1><a href=index.html id=captureSignInLink style=display:none> Sign In / Sign Up </a><a href=# id=captureSignOutLink onclick=janrain.capture.ui.endCaptureSession() style=display:none> Sign Out </a></div><div class="content usr-form"><div class=inner-container><p>With your Torstar account, you can log in to 30+ websites, including The Star (thestar.com), Save.ca, and community news websites across Ontario.<p>To get started, please fill in your information below:</p> {* #registrationForm *} <div class=clearall><div class=block-0> {* firstName *}  {* lastName *}  {* emailAddress *}</div><div class="block-0 block-1"> {* addressPostalCode *}  {* newPassword *}  {* newPasswordConfirm *}</div></div><div class=clearall><div class="capture_footer emailVerificationRequired"><div class=capture_right><button class="capture_btn capture_primary">Create account</button><p class=account-exist><a data-capturescreen=signIn href=# id=capture_traditionalRegistration_navSignIn> Already have an account? Sign In. </a></div><div><p class=disclaimer>Your information will be treated in accordance with our <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy </a> , including to better tailor the communications and offers we deliver. By creating an account or signing in, you are agreeing to our <a href=https://www.thestar.com/about/terms.html target=_blank> Terms of Use </a> and <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy </a> . If you are a print subscriber, we will validate eligibility for complimentary digital access upon account creation.</div></div></div></div></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div> {* /registrationForm *}</div><div data-lpos=emailVerificationNotification id=emailVerificationNotification style=display:none;><div class=janrain_header><h1>Thank You for registering</h1></div><p>We have sent a confirmation email to {* emailAddressData *}. Please check your email and click on the link to verify your email address.<div class="capture_footer emailVerificationRequired"><a class="capture_btn capture_primary"href=# onclick=janrain.capture.ui.modal.close()> Close </a></div></div><div data-lpos=forgotPassword id=forgotPassword style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=section><div class=header-top><span> <a data-capturescreen=signIn href=#> <img height=25 src=/assets/icons/angle-left.svg width=25> </a> </span><h1>Reset your password</h1><a href=index.html id=captureSignInLink style=display:none> Sign In / Sign Up </a><a href=# id=captureSignOutLink onclick=janrain.capture.ui.endCaptureSession() style=display:none> Sign Out </a></div><div class=paragraph><p>Please enter your email address associated with your Torstar account. We'll send you a link to reset your password.</div> {* #forgotPasswordForm *}  {* signInEmailAddress *} <div class="capture_footer emailVerificationRequired"><button class="capture_btn capture_primary">Submit</button></div> {* /forgotPasswordForm *}</div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=forgotPasswordSuccess id=forgotPasswordSuccess style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Reset your password</h2><div class=paragraph><p>Thank you. We will send an email with instructions to reset your password.<p>If you do not receive an email, please check your junk folder or resend another by clicking below.</div> {* #forgotPasswordForm *} <div style=display:none>{* signInEmailAddress *}</div><div class="capture_footer emailVerificationRequired"><button class="capture_btn capture_primary">Resend email</button></div> {* /forgotPasswordForm *}</div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=forgotPasswordSocialSuccess id=forgotPasswordSocialSuccess style=display:none;><div class=capture_header data-lpos=header><h1>Create new password</h1></div><p>This email address was registered with a social account. We've sent an email with instructions to create a new password, which can be used in addition to your linked social providers.<div class=capture_footer><a class="capture_btn capture_primary"href=# onclick=janrain.capture.ui.modal.close()> Close </a></div></div><div data-lpos=mergeAccounts id=mergeAccounts style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=section><div class=header-top><span> <a data-capturescreen=signIn href=#> <img height=25 src=/assets/icons/angle-left.svg width=25> </a> </span><h1>Link social accounts</h1></div><div class=content>{* mergeAccounts {"custom": true} *} <div class=capture_mergeAccounts_mergeOptionsContainer id=capture_mergeAccounts_mergeAccounts_mergeOptionsContainer><div class=capture_header data-lpos=header><p>The email address associated with your social account {| current_emailAddress |} is already in use by an existing Torstar account.</div><div __class=capture_dashed><div class="capture_mergeCol capture_mergeExisting_col capture_right"><div class=capture_border>{| rendered_existing_provider_photo |} <div class=capture_displayName_col>{| existing_displayName |} <br> {| existing_provider_emailAddress |}</div><div class=capture_smallText>Created {| existing_createdDate |}</div></div></div></div><p>You may link your {| current_provider |} to Torstar account by signing in below.You will then be able to sign into your Torstar account using {| current_provider |}.<div class=capture_footer>{| connect_button |} {| create_button |}</div><div class=capture_photoManager><p class=options><small> We use the information you provide to better tailor the communications, offers, and materials we deliver. </small> <br> <br> <small> By creating an account or signing in, you are agreeing to our <a href=https://www.thestar.com/about/terms.html target=_blank> Terms of Use </a> and <a href=http://notices.torstar.com/privacy-policy/index.html target=_blank> Privacy Policy. </a> </small></div></div></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=traditionalAuthenticateMerge id=traditionalAuthenticateMerge style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=section><div class=header-top><span> <a data-capturescreen=signIn href=#> <img height=25 src=/assets/icons/angle-left.svg width=25> </a> </span><h1>Link social accounts</h1></div><div class=capture_signin> {* #signInForm *}  {* signInEmailAddress *}  {* currentPassword *} <div class=forgot_password><a data-capturescreen=forgotPassword href=#> Forgot password? </a></div><div class=capture_rightText><button class="capture_btn capture_primary">Sign in</button></div> {* /signInForm *}</div><div class=backToStar><a href=/> Back to thestar.com </a></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=verifyEmail id=verifyEmail style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Verification failed</h2> {* #resendVerificationForm *} <p>Sorry, this verification link has expired. Please fill out the form below to receive a new verification email.</p> {* signInEmailAddress *} <div class="capture_footer emailVerificationRequired"onclick=trackResendEmailEvent()><button class="capture_btn capture_primary capture_resend">Resend verification email</button></div> {* /resendVerificationForm *}</div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=resendVerificationSuccess id=resendVerificationSuccess style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/sign-in> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Verify your email address</h2><div class=paragraph><p id=emailVerificationRequiredText2><p><strong> Please click the link in your verification email to complete your Torstar account registration. </strong><p>If you did not receive a verification email, please check your junk folder or use the button below to resend the email.</div> {* #resendVerificationForm *} <div class="capture_footer emailVerificationRequired"onclick=trackResendEmailEvent()><button class="capture_btn capture_primary capture_resend">Resend verification email</button></div><div style=display:none>{* signInEmailAddress *}</div> {* /resendVerificationForm *}</div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=verifyEmailSuccess id=verifyEmailSuccess style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Success! Welcome to your torstar account.</h2><div class=info_package><p>Thank you for verifying your email address. You are now signed into your account across a variety of websites, including The Star (thestar.com), Save.ca, and 30+ community websites.</div><div class="capture_footer emailVerificationRequired"><button class="capture_btn capture_primary"onclick=checkIsEmailVerified()>Continue</button></div></div><div class=help data-lpos=footer><h2 class=janrain_subheader_edge>Explore your torstar account</h2><div class=info_package><p class=edge>Now that your registration is complete, you’ve gained access to a host of great websites in the Torstar family, including Save.ca and our 30+ community news websites.</div></div><div class=janrain_body><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"data-image=origin height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=info_package><p>Stay connected to your city, your country and your world. Enjoy limited time access to The Star using your Torstar account. These are the stories that change lives for the better. Star stories.<p>Focus your Star experience by signing up for the newsletters that satisfy your curiosity. From breaking news to book & movie reviews. From food & spice to helpful advice. Star Newsletters are free & conveniently delivered right to your inbox. <a href=/newsletters> Sign up today. </a></p><img src=/assets/img/welcome_cta.png></div><div class=newsletters_groups><div class=group1><ul><li><a href=https://www.thestar.com/newsletters?utm_source=thestar&utm_medium=site&utm_campaign=registration&utm_campaign_id=ty_breaking_news> Breaking News </a><li><a href=https://www.thestar.com/newsletters?utm_source=thestar&utm_medium=site&utm_campaign=registration&utm_campaign_id=ty_sports> Sports </a><li><a href=https://www.thestar.com/newsletters?utm_source=thestar&utm_medium=site&utm_campaign=registration&utm_campaign_id=ty_headlines> Headlines </a><li><a href=https://www.thestar.com/newsletters?utm_source=thestar&utm_medium=site&utm_campaign=registration&utm_campaign_id=ty_travel> Travel </a></ul></div><div class=group2><ul><li><a href=https://www.thestar.com/newsletters?utm_source=thestar&utm_medium=site&utm_campaign=registration&utm_campaign_id=ty_movies> Movies </a><li><a href=https://www.thestar.com/newsletters?utm_source=thestar&utm_medium=site&utm_campaign=registration&utm_campaign_id=ty_books> Books </a><li><a href=https://www.thestar.com/newsletters?utm_source=thestar&utm_medium=site&utm_campaign=registration&utm_campaign_id=ty_advice> Advice </a></ul></div></div></div><div class=janrain_body><div class=capture_header data-lpos=header><a class=primary-header__savelogo href=/> <img alt=Save.ca height=30 src=/assets/img/saveca.svg tabindex=2> </a></div><div class=info_package><p>Save.ca gives thousands of Canadians premium access to digital flyers and exclusive coupons for their favourite stores – every week. Sign in to download coupons, create your smart shopping list, and get email alerts for hot deals. Start saving today!</p><a href=https://www.save.ca> Visit Save.ca </a></div></div><div class=janrain_body><h2 class=janrain_header>Local News & Events</h2><div class=info_package><p>With your Torstar account, you can login to one of our 30+ community websites to access breaking local news and events, sign up for newsletters, and share what matters to you. Explore one of our community websites, which include:</p><a href=https://www.durhamregion.com/> DurhamRegion.com </a><br><a href=https://www.thespec.com/> Hamilton Spectator </a><br><a href=https://www.mississauga.com/> Mississauga.com </a><br><a href=https://www.thepeterboroughexaminer.com/> Peterborough Examiner </a><br><a href=https://www.stcatharinesstandard.ca/> St. Catharines Standard </a><br><a href=https://www.toronto.com/> Toronto.com </a><br><a href=https://www.therecord.com/> Waterloo Region Record </a><br></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=resetPasswordMessage id=resetPasswordMessage style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Your password must be updated</h2><div class=paragraph><p id=passwordUpdate><p>As a security measure, you must reset your password to complete the update. You will then be able to sign in thestar.com using your new password.<div class="capture_footer emailVerificationRequired"><a class="capture_btn capture_primary"data-capturescreen=forgotPassword href=/ id=captureBtn> Reset password </a></div></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=resetPassword id=resetPassword style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Reset your password</h2><div class=paragraph><p>Please enter your preferred new password below.</div> {* #changePasswordFormNoAuth *}  {* newPassword *}  {* newPasswordConfirm *} <div class="capture_footer emailVerificationRequired"><button class="capture_btn capture_primary">Submit</button></div> {* /changePasswordFormNoAuth *}</div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=resetPasswordSuccess id=resetPasswordSuccess style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Your password has been changed</h2><div class=paragraph><p>Success! Your password has been successfully changed.<p id=noFormParagraph>You can now use this password to access a variety of websites, including The Star (thestar.com), Save.ca, and our 30+ community websites.</div><div class="capture_footer emailVerificationRequired"><a class="capture_btn capture_btn--no-transformation capture_primary back_to_thestar_btn"href=/ id=backToTheStarLink> Back to the star </a></div></div><div class=help data-lpos=footer><a href=mailto:starsupport@torstar.ca> Need Help? </a></div></div><div data-lpos=resetPasswordRequestCode id=resetPasswordRequestCode style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Reset your password</h2><div class=paragraph><p>Sorry, this password reset link is over 24 hours old and has expired. Please enter your email address below to receive a new link to reset your password.</div> {* #resetPasswordForm *}  {* signInEmailAddress *} <div class="capture_footer emailVerificationRequired"><button class="capture_btn capture_primary">Submit</button></div> {* /resetPasswordForm *}</div></div><div data-lpos=resetPasswordRequestCodeSuccess id=resetPasswordRequestCodeSuccess style=display:none;><div class=capture_header data-lpos=header><a class=primary-header__starlogo href=/> <img alt="thestar.com National Logo"height=60 src=/assets/svg/logo-thestar.svg tabindex=2> </a></div><div class=janrain_body><h2 class=janrain_header>Reset your password</h2><div class=paragraph><p id=resetPasswordSuccessText><p>If you do not receive an email, please check your junk folder or resend another by clicking below.</div> {* #resetPasswordForm *} <div style=display:none>{* signInEmailAddress *}</div><div class="capture_footer emailVerificationRequired"><button class="capture_btn capture_primary">Reset password</button></div> {* /resetPasswordForm *}</div></div><div id=flow-version style=display:none></div><div style="display: none"id=parsely-root><span data-parsely-site=thestar.com id=parsely-cfg> </span></div><script>;(function(s, p, d) {
+        var h = d.location.protocol,
+          i = p + '-' + s,
+          e = d.getElementById(i),
+          r = d.getElementById(p + '-root'),
+          u =
+            h === 'https:'
+              ? 'd1z2jf7jlzjs58.cloudfront.net'
+              : 'static.' + p + '.com'
+        if (e) return
+        e = d.createElement(s)
+        e.id = i
+        e.async = true
+        e.src = h + '//' + u + '/p.js'
+        r.appendChild(e)
+      })('script', 'parsely', document)</script><script>;(function() {
+        var siteName = getCookie('siteName')
+        if (!siteName || siteName !== 'thestar') return
+
+        var s = document.createElement('script')
+        s.type = 'text/javascript'
+        s.async = !0
+        s.src = '//cdn.viafoura.net/vf-v2.js'
+        var d = document.getElementsByTagName('script')[0]
+        d.parentNode.insertBefore(s, d)
+      })()</script>

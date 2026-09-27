@@ -1,0 +1,268 @@
+<!doctypehtml><html lang=en-US><meta charset=utf-8><meta content=ie=edge http-equiv=x-ua-compatible><meta content=width=device-width,initial-scale=1,shrink-to-fit=no name=viewport><meta content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"name=robots><title>
+   BGP, Border Gateway Protocol | LivingInternet
+  </title><meta content="BGP, Border Gateway Protocol"name=description><link href=https://www.livinginternet.com/i/iw_route_egp_bgp.htm rel=canonical><meta content=en_US property=og:locale><meta content=article property=og:type><meta content="BGP, Border Gateway Protocol | LivingInternet"property=og:title><meta content="BGP, Border Gateway Protocol"property=og:description><meta content=https://www.livinginternet.com/i/iw_route_egp_bgp.htm property=og:url><meta content=LivingInternet property=og:site_name><meta content=summary_large_image name=twitter:card><meta content="Est. reading time"name=twitter:label1><meta content="6 minutes"name=twitter:data1><script class=yoast-schema-graph type=application/ld+json>
+   {"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.livinginternet.com/#website","url":"https://www.livinginternet.com/","name":"LivingInternet","description":"Internet history, World Wide Web, Email, IRC, MUD, Design, Work, Invented, Security, Help.","inLanguage":"en-US"},{"@type":"WebPage","@id":"https://www.livinginternet.com/i/iw_route_egp_bgp.htm#webpage","url":"https://www.livinginternet.com/i/iw_route_egp_bgp.htm","name":"BGP, Border Gateway Protocol | LivingInternet","isPartOf":{"@id":"https://www.livinginternet.com/#website"},"datePublished":"2020-11-24T22:27:01+00:00","dateModified":"2020-11-24T22:27:01+00:00","description":"BGP, Border Gateway Protocol","breadcrumb":{"@id":"https://www.livinginternet.com/i/iw_route_egp_bgp.htm#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://www.livinginternet.com/i/iw_route_egp_bgp.htm"]}]},{"@type":"BreadcrumbList","@id":"https://www.livinginternet.com/i/iw_route_egp_bgp.htm#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"WebPage","@id":"https://www.livinginternet.com/","url":"https://www.livinginternet.com/","name":"Home"}},{"@type":"ListItem","position":2,"item":{"@type":"WebPage","@id":"https://www.livinginternet.com/i/iw_route_egp_bgp.htm","url":"https://www.livinginternet.com/i/iw_route_egp_bgp.htm","name":"BGP, Border Gateway Protocol"}}]}]}
+  </script><link href=//www.livinginternet.com rel=dns-prefetch><link href=//s.w.org rel=dns-prefetch><script>window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.0.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.0.1\/svg\/","svgExt":".svg","source":{"wpemoji":"https:\/\/www.livinginternet.com\/wp\/wp-includes\/js\/wp-emoji.js?ver=5.7.1","twemoji":"https:\/\/www.livinginternet.com\/wp\/wp-includes\/js\/twemoji.js?ver=5.7.1"}};
+			/**
+ * @output wp-includes/js/wp-emoji-loader.js
+ */
+
+( function( window, document, settings ) {
+	var src, ready, ii, tests;
+
+	// Create a canvas element for testing native browser support of emoji.
+	var canvas = document.createElement( 'canvas' );
+	var context = canvas.getContext && canvas.getContext( '2d' );
+
+	/**
+	 * Checks if two sets of Emoji characters render the same visually.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @private
+	 *
+	 * @param {number[]} set1 Set of Emoji character codes.
+	 * @param {number[]} set2 Set of Emoji character codes.
+	 *
+	 * @return {boolean} True if the two sets render the same.
+	 */
+	function emojiSetsRenderIdentically( set1, set2 ) {
+		var stringFromCharCode = String.fromCharCode;
+
+		// Cleanup from previous test.
+		context.clearRect( 0, 0, canvas.width, canvas.height );
+		context.fillText( stringFromCharCode.apply( this, set1 ), 0, 0 );
+		var rendered1 = canvas.toDataURL();
+
+		// Cleanup from previous test.
+		context.clearRect( 0, 0, canvas.width, canvas.height );
+		context.fillText( stringFromCharCode.apply( this, set2 ), 0, 0 );
+		var rendered2 = canvas.toDataURL();
+
+		return rendered1 === rendered2;
+	}
+
+	/**
+	 * Detects if the browser supports rendering emoji or flag emoji.
+	 *
+	 * Flag emoji are a single glyph made of two characters, so some browsers
+	 * (notably, Firefox OS X) don't support them.
+	 *
+	 * @since 4.2.0
+	 *
+	 * @private
+	 *
+	 * @param {string} type Whether to test for support of "flag" or "emoji".
+	 *
+	 * @return {boolean} True if the browser can render emoji, false if it cannot.
+	 */
+	function browserSupportsEmoji( type ) {
+		var isIdentical;
+
+		if ( ! context || ! context.fillText ) {
+			return false;
+		}
+
+		/*
+		 * Chrome on OS X added native emoji rendering in M41. Unfortunately,
+		 * it doesn't work when the font is bolder than 500 weight. So, we
+		 * check for bold rendering support to avoid invisible emoji in Chrome.
+		 */
+		context.textBaseline = 'top';
+		context.font = '600 32px Arial';
+
+		switch ( type ) {
+			case 'flag':
+				/*
+				 * Test for Transgender flag compatibility. This flag is shortlisted for the Emoji 13 spec,
+				 * but has landed in Twemoji early, so we can add support for it, too.
+				 *
+				 * To test for support, we try to render it, and compare the rendering to how it would look if
+				 * the browser doesn't render it correctly (white flag emoji + transgender symbol).
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[ 0x1F3F3, 0xFE0F, 0x200D, 0x26A7, 0xFE0F ],
+					[ 0x1F3F3, 0xFE0F, 0x200B, 0x26A7, 0xFE0F ]
+				);
+
+				if ( isIdentical ) {
+					return false;
+				}
+
+				/*
+				 * Test for UN flag compatibility. This is the least supported of the letter locale flags,
+				 * so gives us an easy test for full support.
+				 *
+				 * To test for support, we try to render it, and compare the rendering to how it would look if
+				 * the browser doesn't render it correctly ([U] + [N]).
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[ 0xD83C, 0xDDFA, 0xD83C, 0xDDF3 ],
+					[ 0xD83C, 0xDDFA, 0x200B, 0xD83C, 0xDDF3 ]
+				);
+
+				if ( isIdentical ) {
+					return false;
+				}
+
+				/*
+				 * Test for English flag compatibility. England is a country in the United Kingdom, it
+				 * does not have a two letter locale code but rather an five letter sub-division code.
+				 *
+				 * To test for support, we try to render it, and compare the rendering to how it would look if
+				 * the browser doesn't render it correctly (black flag emoji + [G] + [B] + [E] + [N] + [G]).
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[ 0xD83C, 0xDFF4, 0xDB40, 0xDC67, 0xDB40, 0xDC62, 0xDB40, 0xDC65, 0xDB40, 0xDC6E, 0xDB40, 0xDC67, 0xDB40, 0xDC7F ],
+					[ 0xD83C, 0xDFF4, 0x200B, 0xDB40, 0xDC67, 0x200B, 0xDB40, 0xDC62, 0x200B, 0xDB40, 0xDC65, 0x200B, 0xDB40, 0xDC6E, 0x200B, 0xDB40, 0xDC67, 0x200B, 0xDB40, 0xDC7F ]
+				);
+
+				return ! isIdentical;
+			case 'emoji':
+				/*
+				 * So easy, even a baby could do it!
+				 *
+				 *  To test for Emoji 13 support, try to render a new emoji: Man Feeding Baby.
+				 *
+				 * The Man Feeding Baby emoji is a ZWJ sequence combining 👨 Man, a Zero Width Joiner and 🍼 Baby Bottle.
+				 *
+				 * 0xD83D, 0xDC68 == Man emoji.
+				 * 0x200D == Zero-Width Joiner (ZWJ) that links the two code points for the new emoji or
+				 * 0x200B == Zero-Width Space (ZWS) that is rendered for clients not supporting the new emoji.
+				 * 0xD83C, 0xDF7C == Baby Bottle.
+				 *
+				 * When updating this test for future Emoji releases, ensure that individual emoji that make up the
+				 * sequence come from older emoji standards.
+				 */
+				isIdentical = emojiSetsRenderIdentically(
+					[0xD83D, 0xDC68, 0x200D, 0xD83C, 0xDF7C],
+					[0xD83D, 0xDC68, 0x200B, 0xD83C, 0xDF7C]
+				);
+
+				return ! isIdentical;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Adds a script to the head of the document.
+	 *
+	 * @ignore
+	 *
+	 * @since 4.2.0
+	 *
+	 * @param {Object} src The url where the script is located.
+	 * @return {void}
+	 */
+	function addScript( src ) {
+		var script = document.createElement( 'script' );
+
+		script.src = src;
+		script.defer = script.type = 'text/javascript';
+		document.getElementsByTagName( 'head' )[0].appendChild( script );
+	}
+
+	tests = Array( 'flag', 'emoji' );
+
+	settings.supports = {
+		everything: true,
+		everythingExceptFlag: true
+	};
+
+	/*
+	 * Tests the browser support for flag emojis and other emojis, and adjusts the
+	 * support settings accordingly.
+	 */
+	for( ii = 0; ii < tests.length; ii++ ) {
+		settings.supports[ tests[ ii ] ] = browserSupportsEmoji( tests[ ii ] );
+
+		settings.supports.everything = settings.supports.everything && settings.supports[ tests[ ii ] ];
+
+		if ( 'flag' !== tests[ ii ] ) {
+			settings.supports.everythingExceptFlag = settings.supports.everythingExceptFlag && settings.supports[ tests[ ii ] ];
+		}
+	}
+
+	settings.supports.everythingExceptFlag = settings.supports.everythingExceptFlag && ! settings.supports.flag;
+
+	// Sets DOMReady to false and assigns a ready function to settings.
+	settings.DOMReady = false;
+	settings.readyCallback = function() {
+		settings.DOMReady = true;
+	};
+
+	// When the browser can not render everything we need to load a polyfill.
+	if ( ! settings.supports.everything ) {
+		ready = function() {
+			settings.readyCallback();
+		};
+
+		/*
+		 * Cross-browser version of adding a dom ready event.
+		 */
+		if ( document.addEventListener ) {
+			document.addEventListener( 'DOMContentLoaded', ready, false );
+			window.addEventListener( 'load', ready, false );
+		} else {
+			window.attachEvent( 'onload', ready );
+			document.attachEvent( 'onreadystatechange', function() {
+				if ( 'complete' === document.readyState ) {
+					settings.readyCallback();
+				}
+			} );
+		}
+
+		src = settings.source || {};
+
+		if ( src.concatemoji ) {
+			addScript( src.concatemoji );
+		} else if ( src.wpemoji && src.twemoji ) {
+			addScript( src.twemoji );
+			addScript( src.wpemoji );
+		}
+	}
+
+} )( window, document, window._wpemojiSettings );</script><style>img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}</style><link href=https://www.livinginternet.com/app/themes/livinginternet/dist/styles/templateInternet.css?ver=1.0 id=sage/templateInternet.css-css media=all rel=stylesheet><script id=jquery-js src=https://www.livinginternet.com/app/themes/livinginternet/resources/assets/scripts/jquery/jquery-3.5.1.min.js?ver=3.5.1></script><script id=jquery-migrate-js src=https://www.livinginternet.com/app/themes/livinginternet/resources/assets/scripts/jquery/jquery-migrate-3.3.2.min.js?ver=3.3.2></script><link href=https://www.livinginternet.com/wp-json/ rel=https://api.w.org/><link href=https://www.livinginternet.com/wp/xmlrpc.php?rsd rel=EditURI title=RSD type=application/rsd+xml><link href=https://www.livinginternet.com/wp/wp-includes/wlwmanifest.xml rel=wlwmanifest type=application/wlwmanifest+xml><meta content="WordPress 5.7.1"name=generator><link href=https://www.livinginternet.com/?p=13528 rel=shortlink><link href=https://www.livinginternet.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.livinginternet.com%2Fi%2Fiw_route_egp_bgp.htm rel=alternate type=application/json+oembed><link href=https://www.livinginternet.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.livinginternet.com%2Fi%2Fiw_route_egp_bgp.htm&format=xml rel=alternate type=text/xml+oembed><style>.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style><script>dataLayer = [];
+
+    dataLayer.push({"page-type": "internetpost"});
+  
+    dataLayer.push({"monetized": "false"});</script><script async src=https://www.googletagmanager.com/gtag/js?id=UA-47167224-4></script><script>window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-47167224-4');</script><link crossorigin href=https://fonts.gstatic.com rel=preconnect><link as=style href=https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700 rel=preload><link href=https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700 media=print onload=this.media='all' rel=stylesheet><noscript><link href=https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700 rel=stylesheet></noscript><link href=/favicon/favicon.ico rel=icon sizes=16x16 type=image/ico><body class="bbn_internet_pages-template-default single single-bbn_internet_pages postid-13528 iw_route_egp_bgp.htm app-data index-data singular-data single-data single-bbn_internet_pages-data single-bbn_internet_pages-i-iw_route_egp_bgp-htm-data"data-toggler=.active-mobile id=body><div class=app><div style="display: none;"class=pre-search-container><div class=pre-search-background><div class=search-container><div class=grid-container><span id=search-close-trigger> <svg viewbox="0 0 44 44"height=44 width=44 xmlns=http://www.w3.org/2000/svg><path d="M42.5 1.5l-41 41M1.5 1.5l41 41"fill=none stroke=#000 stroke-linecap=round stroke-linejoin=round stroke-width=3></path></svg> </span><div class=search-body-wrap><form style="display: none;"action=https://www.livinginternet.com/ class=search-form role=search><label><span class=screen-reader-text> Search for: </span> <input placeholder="I'm looking for …"class=search-field name=s type=search></label><input class=search-submit type=submit value=Search></form></div></div></div></div></div><header class=site-header><div class=banner-nav><div class="banner-container grid-container"><a class=brand href=https://www.livinginternet.com/> <svg viewbox="0 0 255 24"height=24 width=249 xmlns=http://www.w3.org/2000/svg><g id=logo><text font-family="OpenSans, Open Sans"transform="translate(0 19)"fill=#666 font-size=22 id=LIVINGINTERNET><tspan x=0 y=0> LIVINGINTERNET.COM </tspan></text></g></svg> </a></div></div></header><div class=wrap role=document><div class=main><div class=page-header-component><div class=grid-container><h1>BorderGateway Protocol (BGP)</h1></div></div><div class=grid-container><ul class=breadcrumbs-revisited itemtype=http://schema.org/BreadcrumbList><li itemprop=itemListElement itemtype=http://schema.org/ListItem><a itemprop="item seconddd"href=https://www.livinginternet.com itemscope> <span itemprop=name> Living Internet </span> </a> <meta content=1 itemprop=position><li itemprop=itemListElement itemtype=http://schema.org/ListItem><div class=separator></div> <a itemprop="item seconddd"href=https://www.livinginternet.com/i/iw_route_egp_bgp.htm itemscope> <span itemprop=name> BGP, Border Gateway Protocol </span> </a> <meta content=2 itemprop=position></ul><script type=application/ld+json>
+       {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+              {
+          "@type": "ListItem",
+          "position": 1,
+          "item": {
+            "@id": "https://www.livinginternet.com",
+            "name": "Living Internet"
+          }
+        },
+              {
+          "@type": "ListItem",
+          "position": 2,
+          "item": {
+            "@id": "https://www.livinginternet.com/i/iw_route_egp_bgp.htm",
+            "name": "BGP, Border Gateway Protocol"
+          }
+        }
+          ]
+  }
+      </script><div class=page-content><p><div align=justify><p>The most common Exterior Gateway Protocol protocol in use on the <em> Internet </em> is the Border Gateway Protocol (BGP), ensuring that packets get to their destination network regardless of current network conditions.<p>Like <a href=https://www.livinginternet.com/i/iw_route_igp_rip.htm> <em> RIP </em> </a> , the BGP algorithm provides great network stability, guaranteeing that if one Internet network line goes down, BGP <a href=https://www.livinginternet.com/i/iw_route.htm> <em> routers </em> </a> can quickly adapt to send packets through another connection. The following subsections provide information on <i> <a href=#how> how BGP was invented </a> , </i> <a href=#works> <i> how BGP works </i> </a> , <a href=#algorithm> <i> the BGP algorithm </i> </a> , and <a href=#more> <i> more BGP information </i> </a><p><b> <a href=# name=how> </a> How BGP was invented </b> . BGP was initially created in three different implementations. Then, in a standard Internet approach, they were used together to show that separate implementations of the protocol could interoperate without problems.<ul><li>Kirk Lougheed of Cisco systems developed a proprietary version of BGP for Cisco router equipment.</ul><ul><li>Jeff Honig from Cornell University and Dennis Ferguson from the University of Toronto developed a BGP version called “gated” to run on Unix computers, enabling Unix machines to become BGP routers, and then put the code in the public domain for others to use.</ul><ul><li>Yakov Rekhter from the IBM Thomas J. Watson Research Center wrote a BGP version for the NSFNET backbone.</ul><p><b> <a href=# name=works> </a> How BGP works </b> . When a BGP router first comes up on the Internet, either for the first time or after being turned off, it establishes connections with the other BGP routers with which it directly communicates. The first thing it does is download the entire routing table of each neighboring router. After that it only exchanges much shorter update messages with other routers.<p>BGP routers send and receive update messages to indicate a change in the preferred path to reach a computer with a given <a href=https://www.livinginternet.com/i/iw_ip.htm> <i> IP address </i> </a> . If the router decides to update its own routing tables because this new path is better, then it will subsequently propagate this information to all of the other neighboring BGP routers to which it is connected, and they will in turn decide whether to update their own tables and propagate the information further.<p>BGP uses the <a href=https://www.livinginternet.com/i/ii_tcpip.htm> <i> TCP/IP </i> </a> protocol on port 179 to establish connections. It has strong security features, including the incorporation of a digital signature in all communications between BGP routers.<p>Each BGP router contains a Routing Information Base (RIB) that contains the routing information maintained by that router. The RIB contains three types of information:<ul><li><u> Adj-RIBs-In </u> . The unedited routing information sent by neighboring routers.</ul><ul><li><u> Loc-RIB </u> . The actual routing information the router uses, developed from Adj-RIBs-In.</ul><ul><li><u> Adj-RIBs-Out </u> . The information the router chooses to send to neighboring routers.</ul><p>BGP routers exchange information using four types of messages:<ul><li><u> Open </u> . Used to open an initial connection with a neighboring router.</ul><ul><li><u> Update </u> . These messages do most of the work, exchanging routing information between neighboring routers, and contain one of the following pieces of information. <ul><li>Withdrawn routes. The IP addresses of computers that the router no longer can route messages to.<li>Paths. A new preferred route for an IP address. This path consists of two pieces of information — the IP address, and the address of the next router in the path that is used to route messages destined for that address.</ul><li><u> Notification </u> . Used to indicate errors, such as an incorrect or unreadable message received, and are followed by an immediate close of the connection with the neighboring router.</ul><ul><li><u> Keepalive </u> . Each BGP router sends a 19 byte Keepalive message to each neighboring router to let them know that it is still operational about every 30 seconds, and no more often than every three seconds. If any router does not receive a Keepalive message from a neighboring router within a set amount of time, it closes its connection with that router, and removes it from its Routing Information Base, repairing what it perceives as damage to the network.</ul><p>Routing messages are the highest precedence traffic on the Internet, and each BGP router gives them first priority over all other traffic. This makes sense — if routing information can’t make it through, then nothing else will.<p><b> <a href=# name=algorithm> </a> The BGP algorithm </b> . The BGP algorithm is run after a BGP router receives an update message from a neighboring router, and consists of the following three steps performed for each IP address sent from the neighbor:<ul><li><u> Update </u> . If the path information for an IP address in the update message is different from the information previously received from that router, then the Adj-RIBs-In database is updated with the newest information.</ul><ul><li><u> Decision </u> . If it was new information, then a decision process is run that determines which BGP router, of all those presently recorded in the Adj-RIBs-In database, has the best routing path for the IP address in the update message. The algorithm is not mandated, and BGP administrators can set local policy criteria for the decision process such as how long it takes to communicate with each neighboring router, and how long each neighboring router takes to communicate with the next router in the path. If the best path chosen as a result of this decision process is different from the one currently recorded in the Loc-RIB database, then the database is updated.</ul><ul><li><u> Propagation </u> . If the decision process found a better path, then the Adj-RIBs-Out database is updated as well, and the router sends out update messages to all of its neighboring BGP routers to tell them about the better path. Each neighboring router then runs their own BGP algorithm in turn, decides whether or not to update their routing databases, and then propagates any new and improved paths to neighboring routers in turn.</ul><p>One of the other important functions performed by the BGP algorithm is to eliminate loops from routing information. For example, a routing loop would occur when router A thinks that router B has the best path to send messages for some computer and B thinks the best path is through C, but C thinks the best path is back through A. If these sort of routing loops were allowed to happen, then any message to that computer that passed through routers A, B, or C would circulate among them forever, failing to deliver the message and using up increasing amounts of network resources. The BGP algorithm traps and stops any such loops.<p>The BGP protocol has been periodically revised, and is now at version 4. Each version can support all earlier versions. Different BGP routers may run different versions of BGP, so the protocol includes the following clever method for ensuring that different versions can communicate. When one BGP router tries to communicate for the first time with a second BGP router, it sends it an Open message including the highest version of BGP that it supports. If the second router cannot support that version, it sends back a Notification message with the highest version that <i> it </i> can support. The first router then opens a connection using that lower version, so that the two routers can then communicate at the highest version of BGP they both support.<p><b> <a href=# name=more> </a> More information </b> . Request For Comment documentation on BGP can be found below:<ul><li><a rel="noopener noreferrer"href=http://www.rfc-editor.org/rfc/rfc1265.txt target=_blank> RFC 1265 </a> ; Rekhter, Y.; <em> BGP Protocol Analysis </em> , October 1991.</ul><ul><li><a rel="noopener noreferrer"href=http://www.rfc-editor.org/rfc/rfc1266.txt target=_blank> RFC 1266 </a> ; Rekhter, Y.; <em> Experience with the BGP Protocol </em> ; October 1991.</ul><ul><li><a rel="noopener noreferrer"href=http://www.rfc-editor.org/rfc/rfc1771.txt target=_blank> RFC 1771 </a> ; Rekhter, Y.; Li, T.; <em> A Border Gateway Protocol 4 (BGP-4) </em> , March 1995.</ul><ul><li><a rel="noopener noreferrer"href=http://www.rfc-editor.org/rfc/rfc1772.txt target=_blank> RFC 1772 </a> ; Gross, P.; Rekhter, Y.; <em> Application of the Border Gateway Protocol in the Internet </em> , March 1995.</ul></div><p></div></div></div></div><footer class="footer site-footer footer-v2"><div class="footer__bottom grid-container"></div></footer><script id=sage/templateInternet.js-js src=https://www.livinginternet.com/app/themes/livinginternet/dist/scripts/templateInternet_b6800f94.js?ver=1.0></script><script id=wp-embed-js src=https://www.livinginternet.com/wp/wp-includes/js/wp-embed.js?ver=5.7.1></script></div>

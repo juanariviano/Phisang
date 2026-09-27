@@ -1,0 +1,190 @@
+<!doctypehtml><html class=no-js lang=en-AU><meta charset=utf-8><meta content=IE=edge,chrome=1 http-equiv=X-UA-Compatible><title>
+   Mesh networking on a Raspberry Pi | Project Wolverine
+  </title><link href=http://gmpg.org/xfn/11 rel=profile><link href=http://www.projectwolverine.com/xmlrpc.php rel=pingback><script src=http://www.projectwolverine.com/wp-content/themes/spectacular/scripts/modernizr-1.6.min.js></script><script src=http://www.projectwolverine.com/wp-content/themes/spectacular/scripts/plugins.js?v=1></script><link title="Project Wolverine » Feed"href=http://www.projectwolverine.com/?feed=rss2 rel=alternate type=application/rss+xml><link title="Project Wolverine » Comments Feed"href=http://www.projectwolverine.com/?feed=comments-rss2 rel=alternate type=application/rss+xml><script>window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"http:\/\/www.projectwolverine.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.5.24"}};
+			!function(e,o,t){var a,n,r;function i(e){var t=o.createElement("script");t.src=e,t.type="text/javascript",o.getElementsByTagName("head")[0].appendChild(t)}for(r=Array("simple","flag","unicode8","diversity"),t.supports={everything:!0,everythingExceptFlag:!0},n=0;n<r.length;n++)t.supports[r[n]]=function(e){var t,a,n=o.createElement("canvas"),r=n.getContext&&n.getContext("2d"),i=String.fromCharCode;if(!r||!r.fillText)return!1;switch(r.textBaseline="top",r.font="600 32px Arial",e){case"flag":return r.fillText(i(55356,56806,55356,56826),0,0),3e3<n.toDataURL().length;case"diversity":return r.fillText(i(55356,57221),0,0),a=(t=r.getImageData(16,16,1,1).data)[0]+","+t[1]+","+t[2]+","+t[3],r.fillText(i(55356,57221,55356,57343),0,0),a!=(t=r.getImageData(16,16,1,1).data)[0]+","+t[1]+","+t[2]+","+t[3];case"simple":return r.fillText(i(55357,56835),0,0),0!==r.getImageData(16,16,1,1).data[0];case"unicode8":return r.fillText(i(55356,57135),0,0),0!==r.getImageData(16,16,1,1).data[0]}return!1}(r[n]),t.supports.everything=t.supports.everything&&t.supports[r[n]],"flag"!==r[n]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[r[n]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(a=function(){t.readyCallback()},o.addEventListener?(o.addEventListener("DOMContentLoaded",a,!1),e.addEventListener("load",a,!1)):(e.attachEvent("onload",a),o.attachEvent("onreadystatechange",function(){"complete"===o.readyState&&t.readyCallback()})),(a=t.source||{}).concatemoji?i(a.concatemoji):a.wpemoji&&a.twemoji&&(i(a.twemoji),i(a.wpemoji)))}(window,document,window._wpemojiSettings);</script><style>img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}</style><link href=http://www.projectwolverine.com/?rest_route=/ rel=https://api.w.org/><link href=http://www.projectwolverine.com/xmlrpc.php?rsd rel=EditURI title=RSD type=application/rsd+xml><link href=http://www.projectwolverine.com/wp-includes/wlwmanifest.xml rel=wlwmanifest type=application/wlwmanifest+xml><link title="Retina-ready Websites"href=http://www.projectwolverine.com/?p=970 rel=prev><link href=http://www.projectwolverine.com/?p=973 rel=canonical><link href=http://www.projectwolverine.com/?p=973 rel=shortlink><link href=http://www.projectwolverine.com/?rest_route=%2Foembed%2F1.0%2Fembed&url=http%3A%2F%2Fwww.projectwolverine.com%2F%3Fp%3D973 rel=alternate type=application/json+oembed><link href=http://www.projectwolverine.com/?rest_route=%2Foembed%2F1.0%2Fembed&url=http%3A%2F%2Fwww.projectwolverine.com%2F%3Fp%3D973&format=xml rel=alternate type=text/xml+oembed><link href=http://www.projectwolverine.com/wp-content/themes/spectacular/style.css media=all rel=stylesheet><body><header><section><div id=site-name><a title="Project Wolverine"href=http://www.projectwolverine.com/ rel=home> Project Wolverine </a><span> Broadcasting LIVE from the orbiting command centre </span></div><nav><ul><li><a href=http://www.projectwolverine.com/ rel=home> Home </a><li><a href=http://www.projectwolverine.com/?page_id=294> About Project Wolverine </a><li><a href=http://www.projectwolverine.com/?page_id=34> Projects </a><li><a href=http://www.projectwolverine.com/?page_id=2> Sample Page </a></ul></nav></section></header><div id=container><section id=main><article class=module600><div class=paginate><div></div><div><a href=http://www.projectwolverine.com/?p=970 rel=prev> prev </a></div></div><div class=entry-meta><time> 10-12-2015 </time><h1>Mesh networking on a Raspberry Pi</h1></div><div class=entry-content><p>I’ve had a world of pain trying to get any kind of mesh networking up and running on the Raspberry Pi.<p>What I wanted: 3 Raspberry Pies (Pi’s?), with no DHCP server and no LAN or Internet connectivity, to be able to connect to each other over WiFi. I also want each RPi to act as an access point so I can log in via SSH without needing an ethernet connection.<p>Why: I wanted to set up a replicated database (CouchDB in this case).<p>The equipment:<ul><li>3 x Raspberry Pi Model B+ (Running Weezy or Jessie, it doesn’t matter)<li>3 x Edimax EW-7811un (like this: <a href=http://www.pbtech.co.nz/index.php?z=p&p=NETEDI7811> PB Tech </a> , or <a href=http://www.amazon.com/gp/product/B003MTTJOY?keywords=ew-7811&qid=1444679377&ref_=sr_1_1&sr=8-1> Amazon </a> )<li>3 x TP-Link TL-WN723N version 3 (like this: <a href=http://www.pbtech.co.nz/index.php?z=p&p=NETTPL0723&name=TP-LINK-TL-WN723N-150Mbps-Mini-Wireless-N-USB-Adap> PB Tech </a> , or <a href=http://www.amazon.com/gp/product/B004UBU5S2?keywords=tl-wn723n&qid=1444679527&ref_=sr_1_1&sr=8-1> Amazon </a> )</ul><p>Chipsets: The Edimax adaptor is running rt8192cu chipset, and the TP-Link adaptor is running the rt8188cu.<p>The rt8188cu chipset WILL NOT WORK in ad-hoc mode, but it makes a fine access point, which is why I kept it. It has good range, especially compared to the Edimax, which is shit (a tiny adaptor obviously has a tiny antenna).<p>The rt8192cu chipset does support ad-hoc mode, and the Edimax adaptor works perfectly except the range is quite short.<p>The reason I have two different adaptors is because I bought quite a few different types in order to find one that worked. If I was starting from scratch, I might have just bought 6 Edimax adaptors 🙂<p>So, here are the steps you need to take, to get ad-hoc connectivity working, along with access points on each RPi. wlan0 will be reserved for the Edimax and the ad-hoc network, wlan1 will be for the access point.<p>Note: These steps are taken from https://www.maketecheasier.com/set-up-raspberry-pi-as-wireless-access-point/ . I’ve reproduced them here in case this link fails.<p>First, specify the wlan locations. Because we’ve got two WiFi adaptors with different chipsets, we need to be sure that they are assigned to the same USB port each time the RPi is booted.<p>Step 1: Assign the wlan devices<p>edit /lib/udev/rules.d/75-persistent-net-generator.rules<p><code>
+        sudo nano /lib/udev/rules.d/75-persistent-net-generator.rules
+       </code><p>Change this line:<p><code>
+        # device name whitelist
+        <br>
+        KERNEL!="ath*|msh*|ra*|sta*|ctc*|lcs*|hsi*", \
+        <br>
+        GOTO="persistent_net_generator_end"
+       </code><p>To: <br> <code>
+        # device name whitelist
+        <br>
+        KERNEL!="ath*|wlan*[0-9]|msh*|ra*|sta*|ctc*|lcs*|hsi*", \
+        <br>
+        GOTO="persistent_net_generator_end"
+       </code><p>Now ( <strong> VERY IMPORTANT </strong> ), remove the TP-Link adaptor, and leave just the Edimax adaptor. We want this to be permanently assigned to wlan0. With this plugged in, reboot the RPi.<p>When it’s loaded, check that /etc/udev/rules/70-persistent-net.rules has an entry for wlan0 with this adaptor listed.<p><code>
+        nano /etc/udev/rules/70-persistent-net.rules
+       </code><p>Now plug the TP-Link adaptor into another USB port, leaving the Edimax adaptor where it is. Reboot the Pi.<p>Again, check the persistent net rules file – there should be two entries. If you don’t rearrange the adaptors, then they will always be assigned to the same wlan0 and wlan1 roles.<h2>Step 2: Create the access point on wlan1:</h2><p>Edit “/etc/network/interfaces” and add the static IP address information for wlan1.<p><code>
+        sudo nano /etc/network/interfaces
+       </code><p>I like to comment out the existing interface configuration in case you need to revert back or to compare your changes, so place a ‘#’ sign in front of all the existing wlan0 and wlan1 entries, and make sure your interfaces file now looks like this:<p><code>
+        allow-hotplug wlan1
+        <br>
+        iface wlan1 inet static
+        <br>
+        address 192.168.3.10
+        <br>
+        netmask 255.255.255.0
+        <br>
+        gateway 192.168.3.1
+       </code><p>We’ll be assigning IP addresses starting from 192.168.3.10 – I’ve reserved the first 10 numbers for the gateway, but you can change these values to be anything you want as long as you remember to be consistent.<p>Lastly, definitely make sure that there are no mentions of wpa_supplication.conf files.<p>Reboot your machine (sudo reboot).<h2>Step 3: Install and configure a DHCP server</h2><p>Install and configure the DHCP server:<p><code>
+        sudo apt-get install isc-dhcp-server
+       </code><p>Ignore any error messages about not being able to start the DHCP server, but I think Jessie suppresses these.<p>Now edit the configuration file:<p><code>
+        sudo nano /etc/dhcp/dhcpd.conf
+       </code><p>Add a ‘#’ character in front of the ‘option domain-name’ lines, like this:<p><code>
+        #option domain-name "example.org";
+        <br>
+        #option domain-name-servers ns1.example.org, ns2.example.org;
+       </code><p>Remove the ‘#’ sign in front of the ‘authoritative;’ statement, like this:<p><code>
+        # If this DHCP server is the official DHCP server for the local
+        <br>
+        # network, the authoritative directive should be uncommented.
+        <br>
+        authoritative;
+       </code><p>At the bottom of the file, add the following lines:<p><code>
+        subnet 192.168.3.0 netmask 255.255.255.0 {
+        <br>
+        range 192.168.3.10 192.168.3.210;
+        <br>
+        option broadcast-address 192.168.3.255;
+        <br>
+        option routers 192.168.3.1;
+        <br>
+        default-lease-time 600;
+        <br>
+        max-lease-time 7200;
+        <br>
+        option domain-name "local";
+        <br>
+        option domain-name-servers 8.8.8.8, 8.8.4.4;
+        <br>
+        }
+       </code><p>Exit from nano with ‘Ctrl+X’.<p>Make the wireless adapter the default for the DHCP request:<p><code>
+        sudo nano /etc/defualt/isc-dhcp-server
+       </code><p>Change ‘ <code>
+        INTERFACES=""
+       </code> ‘ to ‘ <code>
+        INTERFACES="wlan1"
+       </code> ‘<p>Exit from nano with “Ctrl+X”<p>Restart the DHCP server:<p><code>
+        sudo service isc-dhcp-server restart
+       </code><p>If you get errors at this point, check the configuration changes we’ve made – a small error will prevent the DHCP server from starting.<h2>Step 4: Install and configure the access point daemon</h2><p>Install hostapd:<p><code>
+        sudo apt-get install hostapd
+       </code><p>Edit the hostapd configuration file and create a wireless network:<p><code>
+        sudo nano /etc/hostapd/hostapd.conf
+       </code><p>Add the following lines (this file will be empty to start with) – change ‘MyPi’ to your preferred access point name, and change the password.<p>Because we’ll be creating 3 access points, I’d recommend making the ssid to be something unique each time.<p><code>
+        interface=wlan1
+        <br>
+        driver=rtl871xdrv
+        <br>
+        ssid=MyPi
+        <br>
+        hw_mode=g
+        <br>
+        channel=6
+        <br>
+        macaddr_acl=0
+        <br>
+        auth_algs=1
+        <br>
+        ignore_broadcast_ssid=0
+        <br>
+        wpa=2
+        <br>
+        wpa_passphrase=raspberry
+        <br>
+        wpa_key_mgmt=WPA-PSK
+        <br>
+        wpa_pairwise=TKIP
+        <br>
+        rsn_pairwise=CCMP
+        <br>
+        This will create a password protected network called 'MyPi' on channel 6 with the password 'raspberry'.
+       </code><p>Tell hostapd where to find its configuration file by setting the default location:<p><code>
+        sudo nano /etc/default/hostapd
+       </code><p>Remove the ‘#’ in front of ‘DAEMON_CONF’ and alter the line to read:<p><code>
+        DAEMON_CONF="/etc/hostapd/hostapd.conf"
+       </code><h2>Step 5: Configure IP routing between the wireless adaptor and ethernet</h2><p>This is not technically part of my basic requirements, but we’ll do it anyway.<p>Edit ‘ <code>
+        /etc/sysctl.conf
+       </code> ‘ to enable IP forwarding:<p><code>
+        sudo nano /etc/sysctl.conf
+       </code><p>Find the line which reads “ <code>
+        Uncomment the next line to enable packet forwarding for IPv4
+       </code> ” and uncomment the next line like this:<p># Uncomment the next line to enable packet forwarding for IPv4 <br> net.ipv4.ip_forward=1<p>Run the following command to activate forwarding now:<p><code>
+        sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+       </code><p>Now turn the Pi into a router with the follow commands:<p><code>
+        sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+        <br>
+        sudo iptables -A FORWARD -i eth0 -o wlan1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+        <br>
+        sudo iptables -A FORWARD -i wlan1 -o eth0 -j ACCEPT
+       </code><p>And save the routing tables into the file ‘ <code>
+        /etc/iptables.ipv4.nat
+       </code> ‘<p><code>
+        sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+       </code><p>Edit ‘ <code>
+        /etc/network/interfaces
+       </code> ‘:<p><code>
+        sudo nano /etc/network/interfaces
+       </code><p>And add the following line to the end of the file. This line will restore the routing table whenever the Pi is booted: <br> <code>
+        pre-up iptables-restore < /etc/iptables.ipv4.nat
+       </code><h2>Step 6: Update the drivers.</h2><p>This is very important. This chipset will not work without changing the drivers for the adaptor. We’ve already indicated in the hostapd.conf file that we want to use rtl871.xdrv, so now we need to go and get it.<p>Adafruit has a pre-compiled version of hostapd for the rtl871xdrv driver. To install it use the following commands (use this link if the adafruit location fails: <a href=http://www.projectwolverine.com/wp-content/uploads/2015/10/adafruit_hostapd.zip> http://www.projectwolverine.com/wp-content/uploads/2015/10/adafruit_hostapd.zip </a> ):<p><code>
+        wget http://www.adafruit.com/downloads/adafruit_hostapd.zip
+        <br>
+        unzip adafruit_hostapd.zip
+        <br>
+        sudo mv /usr/sbin/hostapd /usr/sbin/hostapd.ORIG
+        <br>
+        sudo mv hostapd /usr/sbin
+        <br>
+        sudo chmod 755 /usr/sbin/hostapd
+       </code><p>Now reboot the Pi. Using a different machine, you should see this appear as an access point, and you should be able to connect with the password you specified.<h2>Step 7: Getting ad-hoc connectivity going</h2><p>For the ad-hoc network, we’ll be adding nodes on the 192.168.4.x range. I recommend numbering your nodes and assigning an IP address which matches this number, like this: MeshNode1 -> 192.168.4.1, MeshNode2 -> 192.168.4.2 etc<p>Edit the interfaces file again:<p><code>
+        sudo nano /etc/network/interfaces
+       </code><p>Add these lines, for wlan0:<p><code>
+        auto wlan0
+        <br>
+        allow-hotplug wlan0
+        <br>
+        iface wlan0 inet static
+        <br>
+        wireless-essid MeshNode1
+        <br>
+        wireless-channel 3
+        <br>
+        wireless-mode ad-hoc
+        <br>
+        wireless-ap 02:12:34:56:78:90
+        <br>
+        address 192.168.4.1
+        <br>
+        netmask 255.255.255.0
+       </code><p>Now run ifconfig and write down the IP and MAC address for this node. The MAC address is found under the HWaddr value for each wlan section.<p>Repeat these steps for each node you want to add to the ad-hoc network, and write down the IP and MAC address for each machine.<p>Once you’ve got all the details, you need to add each of these to the arp tables on each RPi.<p>On each RPi, run this command:<p><code>
+        sudo arp -s IP_ADDRESS MAC_ADDRESS
+       </code><p>So, if you have three RPis, it would look like this (replacing the mac addresses with your own):<h3>MeshNode1 (192.168.4.1)</h3><p><code>
+        sudo arp -s 192.168.4.2 80:1f:02:f4:4b:de
+        <br>
+        sudo arp -s 192.168.4.3 80:1f:02:f4:4b:df
+        <br>
+       </code><h3>MeshNode2 (192.168.4.2)</h3><p><code>
+        sudo arp -s 192.168.4.1 80:1f:02:f4:4b:e3
+        <br>
+        sudo arp -s 192.168.4.3 80:1f:02:f4:4b:df
+        <br>
+       </code><h3>MeshNode3 (192.168.4.3)</h3><p><code>
+        sudo arp -s 192.168.4.1 80:1f:02:f4:4b:e3
+        <br>
+        sudo arp -s 192.168.4.2 80:1f:02:f4:4b:de
+        <br>
+       </code><p>Doing this will make each RPi aware of each other, and you can now ping them individually.<p>Note: every time you reboot an RPi, you’ll need to add these values back so I recommend making a startup script to do this.<p>If you’ve completed all of these steps, then you now have 3 Raspberry Pies with no ethernet connectivity, able to ping and ssh into each other, and available as separate access points.</div><div class=entry-utility>This entry was posted in <a href=http://www.projectwolverine.com/?cat=6 rel=category> Cool stuff </a> . Bookmark the <a title="Permalink to Mesh networking on a Raspberry Pi"href=http://www.projectwolverine.com/?p=973 rel=bookmark> permalink </a> .</div><div class=paginate><div></div><div><a href=http://www.projectwolverine.com/?p=970 rel=prev> prev </a></div></div><div id=comments><p class=nocomments>Comments are closed.</div></article><aside class=module320><ul><li id=widget_search><form action=http://www.projectwolverine.com/ class=searchform id=searchform role=search><div><label class=screen-reader-text for=s>Search for:</label><input id=s name=s><input id=searchsubmit type=submit value=Search></div></form><li id=widget_recent_entries><h3>Recent Posts</h3> <ul><li><a href=http://www.projectwolverine.com/?p=973> Mesh networking on a Raspberry Pi </a><li><a href=http://www.projectwolverine.com/?p=970> Retina-ready Websites </a><li><a href=http://www.projectwolverine.com/?p=967> A Reminder About Alt Text </a><li><a href=http://www.projectwolverine.com/?p=965> In Search of the Perfect Radius </a><li><a href=http://www.projectwolverine.com/?p=962> Letterpress </a></ul><li id=widget_recent_comments><h3>Recent Comments</h3> <ul id=recentcomments></ul><li id=widget_archive><h3>Archives</h3> <ul><li><a href=http://www.projectwolverine.com/?m=201510> October 2015 </a><li><a href=http://www.projectwolverine.com/?m=201303> March 2013 </a><li><a href=http://www.projectwolverine.com/?m=201302> February 2013 </a><li><a href=http://www.projectwolverine.com/?m=201212> December 2012 </a><li><a href=http://www.projectwolverine.com/?m=201211> November 2012 </a><li><a href=http://www.projectwolverine.com/?m=201210> October 2012 </a><li><a href=http://www.projectwolverine.com/?m=201208> August 2012 </a><li><a href=http://www.projectwolverine.com/?m=201207> July 2012 </a><li><a href=http://www.projectwolverine.com/?m=201206> June 2012 </a><li><a href=http://www.projectwolverine.com/?m=201205> May 2012 </a><li><a href=http://www.projectwolverine.com/?m=201204> April 2012 </a><li><a href=http://www.projectwolverine.com/?m=201203> March 2012 </a><li><a href=http://www.projectwolverine.com/?m=201202> February 2012 </a><li><a href=http://www.projectwolverine.com/?m=201201> January 2012 </a><li><a href=http://www.projectwolverine.com/?m=201112> December 2011 </a><li><a href=http://www.projectwolverine.com/?m=201111> November 2011 </a><li><a href=http://www.projectwolverine.com/?m=201110> October 2011 </a><li><a href=http://www.projectwolverine.com/?m=201109> September 2011 </a><li><a href=http://www.projectwolverine.com/?m=201108> August 2011 </a><li><a href=http://www.projectwolverine.com/?m=201107> July 2011 </a><li><a href=http://www.projectwolverine.com/?m=201106> June 2011 </a><li><a href=http://www.projectwolverine.com/?m=201105> May 2011 </a><li><a href=http://www.projectwolverine.com/?m=201104> April 2011 </a><li><a href=http://www.projectwolverine.com/?m=201103> March 2011 </a><li><a href=http://www.projectwolverine.com/?m=201102> February 2011 </a><li><a href=http://www.projectwolverine.com/?m=201101> January 2011 </a><li><a href=http://www.projectwolverine.com/?m=201012> December 2010 </a><li><a href=http://www.projectwolverine.com/?m=201011> November 2010 </a><li><a href=http://www.projectwolverine.com/?m=201005> May 2010 </a><li><a href=http://www.projectwolverine.com/?m=201004> April 2010 </a><li><a href=http://www.projectwolverine.com/?m=201001> January 2010 </a><li><a href=http://www.projectwolverine.com/?m=200907> July 2009 </a><li><a href=http://www.projectwolverine.com/?m=200906> June 2009 </a><li><a href=http://www.projectwolverine.com/?m=200905> May 2009 </a><li><a href=http://www.projectwolverine.com/?m=200904> April 2009 </a><li><a href=http://www.projectwolverine.com/?m=200903> March 2009 </a><li><a href=http://www.projectwolverine.com/?m=200902> February 2009 </a><li><a href=http://www.projectwolverine.com/?m=200901> January 2009 </a><li><a href=http://www.projectwolverine.com/?m=200812> December 2008 </a><li><a href=http://www.projectwolverine.com/?m=200811> November 2008 </a><li><a href=http://www.projectwolverine.com/?m=200810> October 2008 </a><li><a href=http://www.projectwolverine.com/?m=200809> September 2008 </a></ul><li id=widget_categories><h3>Categories</h3> <ul><li><a href=http://www.projectwolverine.com/?cat=2> Accessiblity </a><li><a href=http://www.projectwolverine.com/?cat=3> Accessware </a><li><a href=http://www.projectwolverine.com/?cat=4> Agile methodology </a><li><a href=http://www.projectwolverine.com/?cat=5> Cooking </a><li><a href=http://www.projectwolverine.com/?cat=6> Cool stuff </a><li><a href=http://www.projectwolverine.com/?cat=7> Customer relationships </a><li><a href=http://www.projectwolverine.com/?cat=8> Customer service </a><li><a href=http://www.projectwolverine.com/?cat=9> Digital Content Strategy </a><li><a href=http://www.projectwolverine.com/?cat=10> E-commerce </a><li><a title="Featured categories"href=http://www.projectwolverine.com/?cat=11> Featured </a><li><a href=http://www.projectwolverine.com/?cat=12> Free our data </a><li><a href=http://www.projectwolverine.com/?cat=13> Innovation </a><li><a href=http://www.projectwolverine.com/?cat=14> Movies </a><li><a href=http://www.projectwolverine.com/?cat=15> Project management </a><li><a href=http://www.projectwolverine.com/?cat=16> Project Wolverine </a><li><a href=http://www.projectwolverine.com/?cat=17> Sales </a><li><a href=http://www.projectwolverine.com/?cat=18> Uncategorized </a><li><a href=http://www.projectwolverine.com/?cat=19> Waterfall methodology </a><li><a href=http://www.projectwolverine.com/?cat=20> Web 2.0 </a><li><a href=http://www.projectwolverine.com/?cat=21> Web design </a><li><a href=http://www.projectwolverine.com/?cat=22> Web development </a><li><a href=http://www.projectwolverine.com/?cat=23> Web standards </a></ul><li id=widget_meta><h3>Meta</h3> <ul><li><a href=http://www.projectwolverine.com/wp-login.php> Log in </a><li><a href=http://www.projectwolverine.com/?feed=rss2> Entries <abbr title="Really Simple Syndication"> RSS </abbr> </a><li><a href=http://www.projectwolverine.com/?feed=comments-rss2> Comments <abbr title="Really Simple Syndication"> RSS </abbr> </a><li><a title="Powered by WordPress, state-of-the-art semantic personal publishing platform."href=https://wordpress.org/> WordPress.org </a></ul></ul></aside></section></div><section id=sub><section><h3 id=cat-heading>Browse by Topic</h3><ul class="cat module600"><li><a href=http://www.projectwolverine.com/?cat=2> Accessiblity </a><li><a href=http://www.projectwolverine.com/?cat=3> Accessware </a><li><a href=http://www.projectwolverine.com/?cat=4> Agile methodology </a><li><a href=http://www.projectwolverine.com/?cat=5> Cooking </a><li><a href=http://www.projectwolverine.com/?cat=6> Cool stuff </a><li><a href=http://www.projectwolverine.com/?cat=7> Customer relationships </a><li><a href=http://www.projectwolverine.com/?cat=8> Customer service </a><li><a href=http://www.projectwolverine.com/?cat=9> Digital Content Strategy </a><li><a href=http://www.projectwolverine.com/?cat=10> E-commerce </a><li><a title="Featured categories"href=http://www.projectwolverine.com/?cat=11> Featured </a><li><a href=http://www.projectwolverine.com/?cat=12> Free our data </a><li><a href=http://www.projectwolverine.com/?cat=13> Innovation </a><li><a href=http://www.projectwolverine.com/?cat=14> Movies </a><li><a href=http://www.projectwolverine.com/?cat=15> Project management </a><li><a href=http://www.projectwolverine.com/?cat=16> Project Wolverine </a><li><a href=http://www.projectwolverine.com/?cat=17> Sales </a><li><a href=http://www.projectwolverine.com/?cat=18> Uncategorized </a><li><a href=http://www.projectwolverine.com/?cat=19> Waterfall methodology </a><li><a href=http://www.projectwolverine.com/?cat=20> Web 2.0 </a><li><a href=http://www.projectwolverine.com/?cat=21> Web design </a><li><a href=http://www.projectwolverine.com/?cat=22> Web development </a><li><a href=http://www.projectwolverine.com/?cat=23> Web standards </a></ul><div class=module300 id=quick-contact></div></section></section><footer><section><nav><ul><li><a title="Project Wolverine"href=http://www.projectwolverine.com/ rel=home> Home </a><li><a href=http://www.projectwolverine.com/?page_id=294> About Project Wolverine </a><li><a href=http://www.projectwolverine.com/?page_id=34> Projects </a><li><a href=http://www.projectwolverine.com/?page_id=2> Sample Page </a><li class=rss><a href=http://www.projectwolverine.com/?feed=rss2> Subscribe to RSS 2.0 feed </a></ul></nav><small> The <em> Spectacular Theme was created by <a title="Rockatee Design, Unique WordPress Themes"href=http://rockatee.com/> rockatee </a> </em> for <a title="The renowned online magazine for web designers and developers"href=http://smashingmagazine.com/> Smashing Magazine </a> & <a title="Semantic Personal Publishing Platform"href=http://wordpress.org/ rel=generator> Proudly powered by WordPress. </a> </small></section></footer><script src=http://www.projectwolverine.com/wp-includes/js/comment-reply.min.js?ver=4.5.24></script><script src=http://www.projectwolverine.com/wp-includes/js/wp-embed.min.js?ver=4.5.24></script>

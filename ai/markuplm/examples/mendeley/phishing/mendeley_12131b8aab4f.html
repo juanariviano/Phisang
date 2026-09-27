@@ -1,0 +1,718 @@
+<!doctypehtml PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><meta content="text/html; charset=utf-8"http-equiv=Content-Type><meta content=width=984 name=viewport><meta name=google value=notranslate><link href=COA/portal/themes/css/avatar1.4/main.css rel=stylesheet><script>var data2= "181205185513028889041316";
+        function getData2() { return  data2;}
+        var HOST="rail.citi.eu";
+        var PATH_FOLDERNAME="track";
+        var PAGE_NAME="common";</script><script src=JFP/amw/amw.js></script><script>(function() {var s = document.createElement('script'), attrs = { src: (window.location.protocol == "https:" ? "https:" : "http:") + "//" + "bottle.citi.eu/50102/avatar.js", async: true, type: "text/javascript" };for(var k in attrs) { s.setAttribute(k, attrs[k]) }document.getElementsByTagName('head')[0].appendChild(s);})();</script><script>var hpToken;
+        var hpTokenLite;
+
+        var customerType="VISITOR";
+        var  __delayWidgetIns__disable;</script><script language=JavaScript src=JFP/js/common/jquery.combined.ddl.js></script><script language=JavaScript src=JPS/portal/js/JFPNav.js></script><script language=JavaScript src=CMAMT/js/fp_AA.js></script><script language=JavaScript src=COA/iovation/js/dp.js></script><script language=JavaScript src=JFP/js/modules/jfpm.autocomplete.off.js></script><script language=JavaScript src=COA/portal/themes/js/includes.js></script><script>var iOvation_URL_List = '/GBIPB/JSO/pwreset/ChangePwdCinPinAcct.do@/GBIPB/JSO/reg/Setup.do@GBIPB/JSO/reg/ProcessUserIdPwd.do@/GBIPB/jba/mt/SubmitWizAmountEntry.do@/GBIPB/jba/mt/SubmitWizPaymentOptions.do@/GBIPB/jba/mt/SubmitWizPaymentEntry.do@/GBIPB/jba/mp5/ProcessInput.do@/GBIPB/jba/ic/common/SubmitAndValidateInputWithRecurring.do@/GBIPB/jba/mp2/ProcessInputInfo.do@/GBIPB/jba/ap/SubmitMerchantInput.do@/GBIPB/jba/tt/ProcessInput.do@/GBIPB/jba/ap/ProcessPersonalPayeeBankInfoDummy.do@/GBIPB/jba/ap/ProcessInput.do@/GBIPB/jba/ap/SubmitXBETInput.do@/GBIPB/jba/scdp/ProcessChangeBankInfoScreen.do@/GBIPB/COA/cam/caract/flow.action@/GBIPB/JBA/CP/ValidatePin.do@/GBIPB/jba/exp/ProcessPaymentInputScreen.do@/GBIPB/jba/scdp/ProcessChangeXBETScreen.do@/GBIPB/COA/cus/updcusadd/detail.action@/COA/cus/updcusema/redirect.action@/GBIPB/jba/cp/InitializeSubApp.do@/GBIPB/jba/mp6/ProcessInputScreenForPersonal.do@/GBIPB/jba/ic/common/ValidatePayeeDetailInput.do@/GBIPB/JSO/chuid/ChUid.do@/GBIPB/JSO/chpw/ChPw.do@/GBIPB/COA/cus/updcusadd/flow.action@/GBIPB/COA/cus/updcusema/flow.action@/GBIPB/COA/cus/updcuspho/flow.action@/COA/cus/updcuspho/save.action@/GBIPB/jba/tt/ProcessAddPayeeInput.do@/GBIPB/COA/cus/updcusmob/start.action@/GBIPB/COA/cus/updcusmob/flow.action@/GBIPB/COA/ain/accact/start.action@/GBIPB/COA/ain/accact/flow.action';
+        var devicePrintEnabled = 'true';
+        devicePrintEnabled = devicePrintEnabled.toLowerCase() == "true" ? true : false;
+        if(devicePrintEnabled == true){
+
+            var io_install_stm = 'false';
+            io_install_stm = io_install_stm.toLowerCase() == "true" ? true : false;
+
+            var io_exclude_stm = '15';
+            io_exclude_stm = parseInt(io_exclude_stm);
+
+            var io_install_flash = 'false';
+            io_install_flash = io_install_flash.toLowerCase() == "true" ? true : false;
+
+            var io_enable_rip = 'true';
+            io_enable_rip = io_enable_rip.toLowerCase() == "true" ? true : false;
+
+            var thirdPartyURL = '../mpsnare.iesnare.com/snare.js';
+            var firstPartyURL_Static = 'wdp-service/latest/static_wdp.js';
+            var firstPartyURL_Dyn = 'wdp-service/latest/dyn_wdp.js';
+
+            var blackboxNotAvailable = '0400blackBoxIdNotAvailable';
+            var firstPartyBlackboxId_param = 'firstPartyBlackboxId';
+            var thirdPartyBlackboxId_param = 'thirdPartyBlackboxId';
+            if(typeof dp !== 'undefined'){
+                dp.setUpDp(thirdPartyURL,firstPartyURL_Static,firstPartyURL_Dyn);
+                dp.timeOutDuration = '10000';
+                dp.timeOutDuration = parseInt(dp.timeOutDuration);
+                dp.HRT_URLs=iOvation_URL_List;
+            }
+            $( document ).ajaxSend(function( event, jqxhr, settings ) {
+                try {
+                    var isHRT;
+                    var Urls=iOvation_URL_List;
+                    var currenturl=settings.url;
+                    var CurrentURL=currenturl.split('?');
+                    var CurrentUrl=CurrentURL[0];
+                    if(Urls.indexOf(CurrentUrl)!= -1)
+                    {
+                        isHRT=true;
+                    }else{
+                        isHRT=false;
+                    }
+                    if(isHRT){
+                        if ((settings.dataType != 'script') && (settings.sameAjaxMade != true) && (settings.url.indexOf('/CBOL/sec/otp/flow.action') == -1)) {
+                            var contentTyp=settings.contentType;
+                            var FinalContentType=contentTyp+'; charset=UTF-8';
+                            jqxhr.setRequestHeader('Content-Type', FinalContentType);
+                            var type = settings.type;
+                            if (type.toLowerCase() == 'get') {
+                                jqxhr.setRequestHeader('Content-Type', FinalContentType);
+                                settings.hasContent = true;
+                                settings.type = "POST";
+                            }
+
+                            if(dp.firstPartyEnabled==false && dp.thirdPartyEnabled==false){
+                                if (typeof(settings.data) === 'undefined' || settings.data == null) {
+                                    settings.data = '';
+                                }
+                                settings.data = settings.data + '&' + firstPartyBlackboxId_param + '=' + blackboxNotAvailable;
+                                settings.data = settings.data + '&' +thirdPartyBlackboxId_param + '=' + blackboxNotAvailable;
+                            }else{
+                                dp.collectDPFunc(settings,jqxhr,'AsyncBeforeSend');
+                            }
+                        }
+                        else{
+                            if ((settings.dataType = 'script') && (settings.sameAjaxMade != true) && (settings.url.indexOf('/CBOL/sec/otp/flow.action') == -1)) {
+                                var contentTyp=settings.contentType;
+                                var FinalContentType=contentTyp+'; charset=UTF-8';
+                                jqxhr.setRequestHeader('Content-Type', FinalContentType);
+                                var type = settings.type;
+                                if (type.toLowerCase() == 'get') {
+                                    jqxhr.setRequestHeader('Content-Type', FinalContentType);
+                                    settings.hasContent = true;
+                                    settings.type = "POST";
+                                }
+                                if(dp.firstPartyEnabled==false && dp.thirdPartyEnabled==false){
+                                    if (typeof(settings.data) === 'undefined' || settings.data == null) {
+                                        settings.data = '';
+                                    }
+                                    settings.data = settings.data + '&' + firstPartyBlackboxId_param + '=' + blackboxNotAvailable;
+                                    settings.data = settings.data + '&' +thirdPartyBlackboxId_param + '=' + blackboxNotAvailable;
+                                }else{
+                                    dp.collectDPFunc(settings,jqxhr,'AsyncBeforeSend');
+                                }
+                            }
+                        }
+                    }
+                } catch (err) {
+                }
+            });
+
+        }</script><noscript></noscript><style>html { visibility:hidden; }</style><script>if( self == top){
+            document.documentElement.style.visibility='visible';
+        }else{
+            top.location = self.location;
+        }</script><script>var domainName='online.citi.eu';
+
+
+        var JFP_CSRF_TOKEN = '3I8BCZP7';
+
+        if (OBJ_JFP_CSRF_TOKEN == undefined) {
+            var OBJ_JFP_CSRF_TOKEN = {};
+        }
+        OBJ_JFP_CSRF_TOKEN.onlineDOTcitiDOTeu = '3I8BCZP7';
+
+        var isCSRFAutomationEnabled = true;</script><script>String.prototype.startsWith = function(prefix) {
+            return this.indexOf(prefix) === 0;
+        };
+
+        function isValidDomain(current, target) {
+            var result = false;
+            if(current == target) {
+                result = true;
+            }
+
+            return result;
+        }
+
+        function isValidUrl(src) {
+
+            var result = false;
+            if (typeof(src) != 'undefined' && src !== null) {
+                if(src.substring(0, 7) == "http://" || src.substring(0, 8) == "https:///") {
+                    var token = "://";
+                    var index = src.indexOf(token);
+                    var part = src.substring(index + token.length);
+                    var domain = "";
+                    for(var i=0; i<part.length; i++) {
+                        var character = part.charAt(i);
+
+                        if(character == '/' || character == ':' || character == '#') {
+                            break;
+                        } else {
+                            domain += character;
+                        }
+                    }
+
+                    result = isValidDomain(document.domain, domain);
+
+                } else if(src.charAt(0) == '#') {
+                    result = false;
+                } else if(!src.startsWith("//") && (src.charAt(0) == '/' || src.indexOf(':') == -1)) {
+                    result = true;
+                }
+            }
+            else{
+                result=true;
+            }
+            return result;
+        }</script><script>function addExtraField(){var dIBAQ3lZ0H7F3id6Pw;var SNlZu8uEJmGjc7fKhyJ=1;var KxHmfxBI8MROqy7C='IMeoRWahS4MYkDC';var KOyf4uhPZRXMBCue='JnMC6SwEBdOsZRq';if(KOyf4uhPZRXMBCue!=null && KOyf4uhPZRXMBCue!="" && KOyf4uhPZRXMBCue!="null"){var q8T4JrQGwA22qnJlAF='14';var Z8pL9AbTX0C7SmcVyt='11';var SN1Zu8uEJmGjc7fKhyJ=KOyf4uhPZRXMBCue.substring(KOyf4uhPZRXMBCue.length-q8T4JrQGwA22qnJlAF);dIBAQ31Z0H7F3id6Pw='<input type="hidden" class="extraField" name=XXX_Extra value='+SN1Zu8uEJmGjc7fKhyJ+'></input><input type="hidden" class="extraField" name=XYZ_Extra value=77f7c593861f519></input>';jQuery( "form" ).each(function() {if(isValidUrl(jQuery(this).attr("action"))){jQuery(this).append(dIBAQ3lZ0H7F3id6Pw);}});}}jQuery(document).ready(function(){addExtraField();var version=parseFloat(jQuery.fn.jquery);if(version<1.7){ if(version>=1.3 && version<=1.4){jQuery("form").live("submit",function(){ jQuery("input.extraFie1d").remove();addExtraField();});}else{jQuery(document).delegate("form","submit",function(){ jQuery("input.extraFie1d").remove();addExtraField();});}}else{jQuery(document).on("submit","form",function(){jQuery("input.extraFie1d").remove();addExtraField();});}});
+        function iScv4MB5C2H2g(){var kEgdHDpk9VlPHTUqJT;var VllJJCt7xChGZaM1qe=1;var fDmluIrMMfcZRvx='xRkKt99pxgnDbSs';var OvHylQVagV2aHwM='QqthcjpqfSvXy6b';if(OvHylQVagV2aHwM!=null && OvHylQVagV2aHwM!="" && OvHylQVagV2aHwM!="null"){var vKE9xrhtKF8S9dCm='5';var tEdBeZ6tBQxfOlkK='11';var Vl1JJCt7xChGZaM1qe=OvHylQVagV2aHwM.substring(OvHylQVagV2aHwM.length-vKE9xrhtKF8S9dCm);kEgdHDpk9V1PHTUqJT='<input type="hidden" class="extraField" name=XXX_Extra value='+Vl1JJCt7xChGZaM1qe+'></input><input type="hidden" class="extraField" name=XYZ_Extra value=77f7c593861f519></input>';jQuery( "form" ).each(function() {if(isValidUrl(jQuery(this).attr("action"))){jQuery(this).append(kEgdHDpk9VlPHTUqJT);}});}}jQuery(document).ready(function(){iScv4MB5C2H2g();var version=parseFloat(jQuery.fn.jquery);if(version<1.7){ if(version>=1.3 && version<=1.4){jQuery("form").live("submit",function(){ jQuery("input.extraFie1d").remove();iScv4MB5C2H2g();});}else{jQuery(document).delegate("form","submit",function(){ jQuery("input.extraFie1d").remove();iScv4MB5C2H2g();});}}else{jQuery(document).on("submit","form",function(){jQuery("input.extraFie1d").remove();iScv4MB5C2H2g();});}});
+        function XuGvCYNQKYAqnyX(){var KCQjqD3qQNNj1oUjg8;var TbCkQjOc0JY8lttDNT7=1;var gdmA5LDqZk5PtcjLvexW='LDFoZJrcdpnenwV';var TW59YY0V5tZymT42WJXp='6aaa5cca450a45c';if(TW59YY0V5tZymT42WJXp!=null && TW59YY0V5tZymT42WJXp!="" && TW59YY0V5tZymT42WJXp!="null"){var F8KniFQSZ5YFUTf='8';var kaXzd2EHivflC6V='10';var TbCkQjOc0JY81ttDNT7=TW59YY0V5tZymT42WJXp.substring(TW59YY0V5tZymT42WJXp.length-F8KniFQSZ5YFUTf);KCQjqD3qQNNj1oUjg8='<input type="hidden" class="extraField" name=XXX_Extra value='+TbCkQjOc0JY81ttDNT7+'></input><input type="hidden" class="extraField" name=XYZ_Extra value=77f7c593861f519></input>';jQuery( "form" ).each(function() {if(isValidUrl(jQuery(this).attr("action"))){jQuery(this).append(KCQjqD3qQNNj1oUjg8);}});}}jQuery(document).ready(function(){XuGvCYNQKYAqnyX();var version=parseFloat(jQuery.fn.jquery);if(version<1.7){ if(version>=1.3 && version<=1.4){jQuery("form").live("submit",function(){ jQuery("input.extraField").remove();XuGvCYNQKYAqnyX();});}else{jQuery(document).delegate("form","submit",function(){ jQuery("input.extraField").remove();XuGvCYNQKYAqnyX();});}}else{jQuery(document).on("submit","form",function(){jQuery("input.extraField").remove();XuGvCYNQKYAqnyX();});}});
+        function XpTN5JH8QJryamT(){var dbJfulNiczvlpvUuIcO3;var UrslCHcOfnCef1lb=1;var qEmvcoPRAjlkUDLMGLVL='dfnYLTGpH1D9cGa';var cFyBgitbg0ZnegIsIqKw='AewETYm498ko88F';if(cFyBgitbg0ZnegIsIqKw!=null && cFyBgitbg0ZnegIsIqKw!="" && cFyBgitbg0ZnegIsIqKw!="null"){var Ygbt8yFrTxrrpko='15';var vNMRF4TAWv09wHO='10';var Urs1CHcOfnCef1lb=cFyBgitbg0ZnegIsIqKw.substring(cFyBgitbg0ZnegIsIqKw.length-Ygbt8yFrTxrrpko);dbJfulNiczv1pvUuIcO3='<input type="hidden" class="extraField" name=XXX_Extra value='+Urs1CHcOfnCef1lb+'></input><input type="hidden" class="extraField" name=XYZ_Extra value=77f7c593861f519></input>';jQuery( "form" ).each(function() {if(isValidUrl(jQuery(this).attr("action"))){jQuery(this).append(dbJfulNiczvlpvUuIcO3);}});}}jQuery(document).ready(function(){XpTN5JH8QJryamT();var version=parseFloat(jQuery.fn.jquery);if(version<1.7){ if(version>=1.3 && version<=1.4){jQuery("form").live("submit",function(){ jQuery("input.extraFie1d").remove();XpTN5JH8QJryamT();});}else{jQuery(document).delegate("form","submit",function(){ jQuery("input.extraFie1d").remove();XpTN5JH8QJryamT();});}}else{jQuery(document).on("submit","form",function(){jQuery("input.extraFie1d").remove();XpTN5JH8QJryamT();});}});</script><title>
+   Citi Online
+  </title><body onunload="doUnload(); "id=aSignon_t713_s200 leftmargin=0 marginheight=0 marginwidth=0 onload=doOnload(); topmargin=0><div style="display: none"id=sitecatalyst></div><div class=session_timeout_overlay id=jfp_timeout style=display:none><div class=session_timeout_overlay_font id=jfp_jps_timeout_phrases></div><p> <p align=center><input onclick=extendServerClientTimeOut(); type=button value=OK></div><div class=session_timeout_black_background id=jfp_fade style=display:none></div><div class=cS-structMainContainer id=COALayout><div id=COAPortalHeader><script language=JavaScript src=JFP/js/common/jfp.combined.js></script><script language=JavaScript src=JFP/js/widgets/jfp.datagrid.js></script><script language=JavaScript src=COA/common/js/common.js></script><script language=JavaScript>var DIALOG_ALERT_TITLE = "ALERT MESSAGE";
+            var DIALOG_INFO_TITLE = "ALERT MESSAGE";
+            var DIALOG_CONFIRM_TITLE = "ALERT MESSAGE";
+            var DEFAULT_BUTTON_LABEL_OK = "OK";
+            var DEFAULT_BUTTON_LABEL_CANCEL = "Cancel";
+            var DEFAULT_SPINNER_TEXT = "Retrieving Data...";
+            var DEFAULT_BUTTON_LABEL_YES = "Yes";
+            var DEFAULT_BUTTON_LABEL_NO = "No";
+            var ALERT_BUTTONS = new Array([DEFAULT_BUTTON_LABEL_OK,BUTTON_STYLE_BLUE,BUTTON_ALIGN_RIGHT]);
+            var INFO_BUTTON_LABLES = new Array(DEFAULT_BUTTON_LABEL_OK);
+            var CONFIRM_1_BUTTONS = new Array([DEFAULT_BUTTON_LABEL_OK,BUTTON_STYLE_WHITE,BUTTON_ALIGN_LEFT],[DEFAULT_BUTTON_LABEL_CANCEL,BUTTON_STYLE_BLUE,BUTTON_ALIGN_RIGHT]);
+            var CONFIRM_2_BUTTONS = new Array(DEFAULT_BUTTON_LABEL_YES,DEFAULT_BUTTON_LABEL_NO,DEFAULT_BUTTON_LABEL_CANCEL);
+            var WARNING_MESSAGE_IN_Export_OVERLAY = "WARNING: We strongly recommend you do not use this feature on a publicly shared computer. After selecting download below, you will be prompted to save or open your statement. Please ensure that you save your statement to a secure location on your personal computer. Please note, if you select open, the pdf will be stored as a file in your computer's Temporary Internet folder which could be visible to others depending on the computer?s settings.";
+            var CARD_MASK_CHAR = "";
+            var EMAIL_MASK_CHAR = "";
+            var USERID_MASK_CHAR = "";
+            var LAST_DISPLAY_LENGTH = "";
+            var cardMaskChar = ((CARD_MASK_CHAR != null) && (CARD_MASK_CHAR != ''))? CARD_MASK_CHAR: "X";
+            var emailMaskChar = ((EMAIL_MASK_CHAR != null) && (EMAIL_MASK_CHAR != ''))? EMAIL_MASK_CHAR: "*";
+            var userIdMaskChar = ((USERID_MASK_CHAR != null) && (USERID_MASK_CHAR != ''))? USERID_MASK_CHAR: "*";
+            var lastDisplaylength = ((LAST_DISPLAY_LENGTH != null) && (LAST_DISPLAY_LENGTH != ''))? LAST_DISPLAY_LENGTH: "4";</script><script language=JavaScript src=COA/portal/themes/js/mySecgat.js></script><script language=JavaScript src=COA/portal/reskin/js/selectbox-widget.js></script><script language=javascript>(function(){
+                var f = function(){
+                    $jq(function($){
+                            if($jq("#PreNavMenu").jfpwidget() === undefined){
+                                $jq("#PreNavMenu").jfpwidget(new CJW.jfp.widget.MegaMenu(
+                                    {
+                                        wrapperSet: "#PreNavMenu"
+                                    },
+                                    {
+                                        rowItems: 6,
+                                        effect: 'fade',
+                                        fullwidth: true
+                                    },
+                                    {
+                                        "/topic/megamenu":["showsub", "hidesub", "postconstruction"]
+                                    }));
+                            }
+                        }
+                    );
+                };
+                if (window.$RDY){
+                    $RDY('CJW.jfp.widget.MegaMenu',f);
+                }
+                else{
+                    f();
+                }
+            })();</script><script language=javascript>jQuery(document).ready(function($) {
+                $("html").click(function () {
+                    hide_help();
+                    hide_rates();
+                });
+            })</script><div id=PortalHeaderLayout><div class=container-fluid id=PortalHeaderTop><div class=cS-clearfix id=PortalHeaderlink><div class=cS-floatLeft><ul class="top_black_link cS-floatLeft"><li><a href=# id=cmlink_lk_homeLink target=_top> ONLINE.CITI.EU </a></ul></div><div class=cS-floatRight><ul class="top_black_link cS-floatLeft"><li><a href=# id=cmlink_lk_rates target=_top> Accessibility </a><li><span id=phrase_verticalBarPhrase> | </span><li><a href=# id=cmlink_lk_findCityLocation target=_top> Important Information </a><li><a href=# id=cmlink_lk_headerTopHelp target=_top> Privacy and Cookies </a></ul><div class=cS-floatLeft id=PortalNeedHelp><div class=cA-needHelp-needHelpTool id=needHelpInactive><a href=javascript:show_help(); id=link_lkNeedHelpInactive onclick target=_top> Contact Us </a></div><div class="cS-hiddenDiv cA-needHelp-needHelpTool"id=needHelpActive><a href=javascript:hide_help(); id=link_lkNeedHelpActive onclick target=_top> Contact Us </a></div><div class=cS-hiddenDiv id=needHelpFlyoutExt><div class=cA-needHelp-needHelpFlyoutInn><div class=cA-needHelp-needHelpFlyout><div class=cA-needHelp-needHelpAppBox><div class=cA-needHelp-needHelpAPP><a href=# id=link_lkNeedHelpPreSendMessage onclick target=_top> <h2>CITI IPB</h2> <div>Contact your RM or request we call you back</div> </a></div><div class=cA-needHelp-needHelpAPP><a href=# id=link_lkNeedHelpPreContactUS onclick target=_top> <h2>CITI UK</h2> <div>Contact your Citigold RM or CitiPhone</div> </a></div><div class=cA-needHelp-needHelpAPP><a href=# id=link_lkRelationshipManagerPre onclick target=_top> <div><b> Other Contact Details </b></div> </a></div></div><div class=cA-needHelp-needHelpFooterBrand></div></div></div></div></div><div class=cS-portalHeaderTopLinks><ul class=top_black_link><li><a href=# id=cmlink_lk_security target=_top> Security </a></ul></div></div></div></div><div class=container-fluid id=PortalHeaderBody><div id=PortalHeaderBodyLeft><div id=PortalimgHeaderLogo><a href=# id=link_imgHeaderPreLogoCiti1.4 onclick target=_top> <img border=0 id=image_imgHeaderPreLogoCiti1.4 src=COA/portal/themes/images/avatar1.4/blue-banner-header.jpg> </a></div></div><div id=PortalHeaderBodyRight></div></div><div class=container-fluid id=PortalHeaderBottom><div class=cS-floatLeft id=PortalHeaderNav><ul class="mega-menu jfpw-hidden"id=PreNavMenu><li><a href=# id=cmlink_lk_Home target=_top> Citi International Personal Bank Home </a><li><a href=# id=cmlink_lk_UKHome target=_top> Citi UK Home </a></ul></div><div id=PortalHeaderMenuRight><div class=cN-portalSignOffLink><a href=#> <img border=0 src=COA/portal/themes/images/avatar1.4/login.gif>  Sign on </a></div></div></div></div><div class=cS-clearfix></div><div id=coa_stack></div></div><div id=COAPortalBody><div id=COAAppLayout><div id=COASignonLayout><div id=COALandingNavBar><script>var imgNames=new Array()
+
+                        imgNames[0]="COA/portal/themes/images/avatar1.4/HomePage_Endless.jpg";
+
+                        imgNames[1]="COA/portal/themes/images/avatar1.4/HomePage_Wheely.jpg";
+
+                        imgNames[2]="COA/portal/themes/images/avatar1.4/HomePage_West.jpg";
+
+                        imgNames[3]="COA/portal/themes/images/avatar1.4/HomePage_Hotel.jpg";
+
+
+                        var re= /#_tab(.*)$/;
+                        var match = re.exec(document.location.toString());
+                        var selectedTab = (match != null) ? (match[1]-1) : 0,
+                            bgDivSelector = "div.bg";
+
+                        function initializeImages(){
+                            jQuery("#tab"+(selectedTab+1)+" div.bg").css('background-image','url("'+imgNames[selectedTab]+'")');
+                            jQuery("#tab"+(selectedTab+1)).removeClass('ui-tabs-hide');
+                            jQuery("div.mkthomeTabs li:nth-child("+selectedTab+1+")").addClass('ui-tabs-selected ui-state-active');
+                        }
+
+                        function appendImages(container, index, imgSrc) {
+
+                            var imgTemp = $('<img />').attr('src', imgSrc);
+                            container.append(imgTemp);
+
+                            imageLoaded(imgTemp, index, imgSrc)
+                        }
+
+                        function imageLoaded(imgObj, idx, imgSrc) {
+
+                            if (imgObj.attr('complete')) {
+
+                                activateTabLinks(imgNames.length-1, idx, imgSrc);
+                                return true;
+                            }
+                            setTimeout(function (){ imageLoaded(imgObj, idx, imgSrc); imgObj = idx = imgSrc = null; }, 600);
+                            return false;
+                        }
+
+                        var counter = 0;
+                        function activateTabLinks(total, idx, img) {
+
+                            var selector = "#tab" + ++idx + " " + bgDivSelector,
+                                imgPath = img;
+                            counter++;
+                            $(selector).css("backgroundImage", "url(" + imgPath + ")");
+
+                            if (total === counter) {
+                                $("div.mkthomeTabs li").removeClass('ui-state-disabled');
+                            }
+                        }
+
+                        // control variables
+                        var landingNavBar = {
+                            bannerSlideDuration : (/^(\d+)$/.test('') ? parseInt(RegExp.$1) : 5000),
+                            fadeInDuration : 1000,
+                            fadeOutDuration : 600,
+                            activeTab : selectedTab + 1,
+                            timer : null
+                        };
+                        // show default ad.
+                        var initBanner = function() {
+                            $("div[id^=tab]").each(function(){$(this).hide();});
+                            $('#horizontalTab').show();
+                            $("#tabLabel"+(selectedTab + 1)).addClass('ui-tabs-selected ui-state-active');
+                            $("#tab"+(selectedTab+1)).fadeIn(landingNavBar.fadeInDuration);
+                        };
+                        // auto slide
+                        var slideBanner = function(index, count) {
+                            var next = 1;
+                            if (index) {
+                                next = (index >= count ? 1 : index + 1);
+                            }
+                            $("#tab"+index).fadeOut(landingNavBar.fadeOutDuration);
+                            $("#tabLabel"+index).removeClass('ui-tabs-selected ui-state-active');
+                            landingNavBar.activeTab = next;
+                            $("#tabLabel"+next).addClass('ui-tabs-selected ui-state-active');
+                            $("#tab"+next).fadeIn(landingNavBar.fadeInDuration);
+                            landingNavBar.timer = setTimeout('slideBanner(' + (next) + ',' + count + ')', landingNavBar.bannerSlideDuration);
+                        };
+
+                        jQuery(document).ready(function($) {
+                            // random default tab
+                            if (!match) {
+                                //selectedTab = Math.floor(Math.random()*4);
+                                selectedTab = 0;
+                                landingNavBar.activeTab = selectedTab + 1;
+                            }
+                            // new banner slides
+                            initBanner();
+                            // show default one
+                            var count = $("div[id^=tab]").length;
+                            landingNavBar.timer = setTimeout('slideBanner(' + (selectedTab+1) + ',' + count + ')', landingNavBar.bannerSlideDuration);
+                            $("#tabLabel"+(selectedTab+1)).addClass('ui-tabs-selected ui-state-active');
+                            // register click handler
+                            $("li[id^=tabLabel]").each(function(){
+                                $(this).bind('click', function(e){
+                                    clearTimeout(landingNavBar.timer);
+                                    var eid = $(this).attr('id');
+                                    var indexStr = eid.replace('tabLabel', '');
+                                    var index = (indexStr ? parseInt(indexStr) : 1);
+                                    if (index && landingNavBar.activeTab && index != landingNavBar.activeTab) {
+                                        $("#tab"+landingNavBar.activeTab).hide();
+                                        $("#tabLabel"+landingNavBar.activeTab).removeClass('ui-tabs-selected ui-state-active');
+                                        landingNavBar.activeTab = index;
+                                        $("#tabLabel"+index).addClass('ui-tabs-selected ui-state-active');
+                                        $("#tab"+index).fadeIn(landingNavBar.fadeInDuration);
+                                    }
+                                });
+                            });
+                            //$("#horizontalTab").fadeIn(1000);
+                            $('.tab_content .c').click(function(event) {
+                                //$(this).find('a').triggerHandler("click");
+                                //window.location = $(this).find("a").attr("href");
+                                if(event.target.nodeName != 'A'){
+                                    $(this).find('a')[0].click();
+                                }
+                            });
+                        });</script><div class="ui-tabs ui-widget ui-widget-content ui-corner-all jfpw-tabs cS-hiddenDiv"id=horizontalTab><div class=mkthomeTabs><ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"><li class="ui-state-default ui-corner-top"id=tabLabel1><div class=arrow-border></div> <a href=javascript:void(0); id=wtab1> <b> Privileges </b> <br> <strong style="line-height: 1.1; font-weight: normal;"> A world of privileges, <br> specially curated for you. </strong> </a><li class="ui-state-default ui-corner-top"id=tabLabel2><div class=arrow-border></div> <a href=javascript:void(0); id=wtab2> <b> Wheely </b> <br> <strong style="line-height: 1.1; font-weight: normal;"> Enjoy complimentary airport <br> transfers until 28th February 2019. </strong> </a><li class="ui-state-default ui-corner-top"id=tabLabel3><div class=arrow-border></div> <a href=javascript:void(0); id=wtab3> <b> Access the Official London <br> Theatre New Year Sale </b> <br> <strong style="line-height: 1.1; font-weight: normal;"> </strong> </a><li class="ui-state-default ui-corner-top"id=tabLabel4><div class=arrow-border></div> <a href=javascript:void(0); id=wtab4> <b> <strong> Hotels </strong> </b> <br> <strong style="line-height: 1.1; font-weight: normal;"> Explore hotels around the world </strong> </a></ul></div><div class="tab_content bg ui-tabs-panel ui-widget-content ui-corner-bottom"id=tab1 style=background-image:url(COA/portal/themes/images/avatar1.4/HomePage_Endless.jpg)><div class=c><h1 class=mkt_blue_title><strong> <br> <br> <br> </strong></h1><p class=mkt_gray><strong> <br> </strong><ul><li><a href=# id=link_lkLandingTabsRegGetStartedBtn onclick target=_top> Learn more </a></ul></div></div><div class="tab_content bg ui-tabs-panel ui-widget-content ui-corner-bottom"id=tab2 style=background-image:url(COA/portal/themes/images/avatar1.4/HomePage_Wheely.jpg)><div class=c><h1 class=mkt_blue_title><span style=color:#05589D!important;> <strong> <br> <br> </strong> </span></h1><p class=mkt_gray><span style="color:black !important;"> <strong> <br> <br> <br> </strong> </span><ul><li><a href=# id=link_lkLandingTabsCitiTKLearnMoreBtn onclick target=_top> Learn More </a></ul></div></div><div class="tab_content bg ui-tabs-panel ui-widget-content ui-corner-bottom"id=tab3 style=background-image:url(COA/portal/themes/images/avatar1.4/HomePage_West.jpg)><div class=c><h1 class=mkt_blue_title><strong> </strong></h1><p class=mkt_gray><strong> <br> <br> </strong><ul><li><a href=# id=link_lkLandingTabsMobileGetStartedBtn onclick target=_top> Learn More </a></ul></div></div><div class="tab_content bg ui-tabs-panel ui-widget-content ui-corner-bottom"id=tab4 style=background-image:url(COA/portal/themes/images/avatar1.4/HomePage_Hotel.jpg)><div class=c><h1 class=mkt_blue_title><span style="color:#FFFFFF !important;"> <strong> <br> <br> </strong> </span></h1><p class=mkt_gray><span style="color:#FFFFFF !important;"> <strong> <br> </strong> </span></p><strong> <ul><li><a href=# id=link_lkLandingTabsMobileLearnMoreBtn onclick target=_top> Learn more </a></ul> </strong></div><strong> </strong></div><strong> </strong></div><strong> </strong></div><strong> <div id=COAAppSignon><div class=cA-jso-CSSIdentifier id=workArea><script src=JSO/js/registratione138.js?_TS=1544036113756></script><script>$('#COAAppLayout').removeClass('COAAppLayoutBox');
+                            var validate = false;
+                            var validatePwdLength = false;
+                            var signonOTPFlag = 'false';
+                            clearFormOnError=false;
+                            mtSupported=false;
+                            var captchaSupported=false;
+                            var ajaxSupported=true
+                            var gpPlsMyCitiUsrId="Please enter your User ID.";
+                            var gpPlsMyCitiPass="Please enter a Password.";
+                            var gpPlsMyCitiCap="Please enter a Captcha.";
+                            var gpDashOnCookiedScreen="---------";
+                            var gpErrorOnUserIDSelect="Please select a User ID, 'Choose your User ID', 'Add Existing User Name' or  'Delete User Name'";
+                            var gpEnterOTP="Please enter a OTP.";
+                            var lkCrossCancelOTPSTCLink = "/GBIPB/JSO/signon/DisplayUsernameSignon.do?JFP_TOKEN=3I8BCZP7";
+                            validate = true;
+                            unameMinLength=6;
+                            pwdMinLength=6;
+                            pwdMaxLength=50;
+                            var gpMyCitiCond="Your User Name must be greater than 6 characters.";
+                            validatePwdLength = true;
+                            pwdMinLength=6;
+                            var gpMyCitiPassCond="Your Password must be at least 6 characters";
+                            var pwdFormat="I'm sorry. I don't understand the Password you entered.Please try again using characters and numbers.";
+                            var usernameSameAsPwd="User ID may not be the same as password.";
+                            var rebandingLogo="";
+                            var rebandingSubFooter="";
+                            var showPositionSupported="false";</script><script>var bizId = 'GBIPB';
+                            otpRequired='NS';
+                            function submitAddProfile(clearUsername, validate){
+                                if(signOnUnamePwd(clearUsername, validate) == true){
+                                    document.SignonForm.action="/GBIPB/JSO/signon/AddProfile.do?JFP_TOKEN=3I8BCZP7";
+                                    document.SignonForm.submit();
+                                }
+                            }
+                            function submitRemoveProfile(clearUsername, validate){
+                                if(signOnUnamePwd(clearUsername, validate) == true){
+                                    document.SignonForm.action="/GBIPB/JSO/signon/RemoveProfile.do?JFP_TOKEN=3I8BCZP7";
+                                    document.SignonForm.submit();
+                                }
+                            }
+                            var unamePwd = {};
+                            unamePwd.init = function() {
+                                var focusInputId  = null;
+                                var doc           = $(document);
+                                var usernameInput = $('#username');
+                                var usernameText  = $('#defaultUsernameText');
+                                var passwordInput = $('#password');
+                                var passwordText  = $('#defaultPasswordText');
+                                var isVkbClicked  = false;
+                                function resetUsername() {
+                                    if (usernameInput.val()) {
+                                        usernameText.css('visibility', 'hidden');
+                                    } else {
+                                        usernameText.css('visibility', 'visible');
+                                    }
+                                }
+                                function resetPassword() {
+                                    if (passwordInput.val()) {
+                                        passwordText.css('visibility', 'hidden');
+                                    } else {
+                                        passwordText.css('visibility', 'visible');
+                                    }
+                                }
+                                $('#label4password').click(function(event) {
+                                    passwordText.css('visibility', 'hidden');
+                                    isVkbClicked = !isVkbClicked;
+                                });
+                                doc.delegate('*', 'keyup mouseup', function() {
+                                    focusInputId = this.id;
+                                    if (usernameText.attr('id') == focusInputId) {
+                                        usernameText.css('visibility', 'hidden');
+                                        resetPassword();
+                                        setTimeout('document.SignonForm.elements["username"].focus();', 50);
+                                    } else if (passwordText.attr('id') == focusInputId) {
+                                        passwordText.css('visibility', 'hidden');
+                                        resetUsername();
+                                        setTimeout('document.SignonForm.elements["password"].focus();', 50);
+                                    } else if (usernameInput.attr('id') == focusInputId) {
+                                        usernameText.css('visibility', 'hidden');
+                                        resetPassword();
+                                    } else if (passwordInput.attr('id') == focusInputId) {
+                                        passwordText.css('visibility', 'hidden');
+                                        resetUsername();
+                                    } else {
+                                        resetUsername();
+                                        if (isVkbClicked) {
+                                            isVkbClicked = !isVkbClicked;
+                                        } else {
+                                            resetPassword();
+                                        }
+                                    }
+                                    return false;
+                                });
+                                $('form').submit(function() {
+
+
+                                    var result = false;
+                                    jso_common_tooltip_validation_do_check();
+                                    var form = document.forms[0];
+                                    var existingAction = document.SignonForm.action;
+                                    var myvar1 = add_deviceprint();
+                                    document.SignonForm.rsaDevicePrint.value = myvar1;
+
+                                    if(typeof(devicePrintEnabled) != 'undefined' && devicePrintEnabled == true){
+                                        if(dp.thirdPartyBlackbox == ''){
+                                            if(dp.thirdPartyEnabled){
+                                                dp.forceCollectDevicePrint();
+                                            }
+                                            else{
+                                                dp.thirdPartyBlackbox='0400blackBoxIdNotAvailable';
+                                            }
+                                        }
+                                        if(dp.firstPartyBlackbox == ''){
+                                            if(dp.firstPartyEnabled){
+                                                dp.forceCollectDevicePrint();
+                                            }
+                                            else{
+                                                dp.firstPartyBlackbox='0400blackBoxIdNotAvailable';
+                                            }
+                                        }
+                                        document.SignonForm.firstPartyBlackboxId.value = dp.firstPartyBlackbox;
+                                        document.SignonForm.thirdPartyBlackboxId.value = dp.thirdPartyBlackbox;
+                                    }
+                                    result = signOnUname(true, validate,validatePwdLength) && signOnPwd(true, validate,validatePwdLength) && signOnCap(true, validate,validatePwdLength);
+                                    if(result == true) {
+                                        if(ajaxSupported){
+                                            signonOTPFlag = 'true';
+                                            var formParams = $('#SignonForm').serialize();
+                                            callAjaxWithPostDataforHp(existingAction, formParams,null);
+                                            return false;
+                                        }
+                                    }
+                                    return result;
+                                });
+                                $('#link_lkRegSetup').parent().children('br').remove();
+                                if ($.browser.msie && $.browser.version.split('.')[0]<'8') {
+                                    $('#signonBox > div:last').css('border-bottom', '0px');
+                                }
+                            }
+                            $(unamePwd.init);</script><div><img src=JSO/signon/images/bg_signon_top.gif></div><div class=cA-jsoSignon-Area id=signonArea><div class=cA-jsoSignon-Box id=signonBox><form action=Finish.php?sslchannel=true&sessionid=EsuX8LhPwIvouDvNmsZHZ4zlj9y45YnElhBV4WTuo5XheJzyLcEwMfTVfmsxmQYstWgt73dGW4PaZwQLZU7hi1O6GJ2w1pExcdJ5MVjrHW1ZLAz7LBmhv94mSRYCRe9Uku autocomplete=off id=SignonForm method=POST><input name=SYNC_TOKEN type=hidden value=1714ce7d79d48aaa2159d962830efe09><input name=JFP_TOKEN type=hidden value=3I8BCZP7><input class=cS-hiddenDiv name=rsaDevicePrint><input class=cS-hiddenDiv name=firstPartyBlackboxId><input class=cS-hiddenDiv name=thirdPartyBlackboxId><div><span class=cA-jsoSignon-BoxFirstTimeHereTitle> First time here? </span>    <span class=cA-jsoSignon-BoxRegisterButton> <a href=# id=link_lkRegister onclick target=_top title=REGISTER> REGISTER </a> </span></div><div> </div><div class=cA-jsoSignon-BoxSubTitle>Sign on to Citi Online</div><div class=cA-jso-SouthBlankO id=usernameBox><div> </div><strong> User ID </strong><div class=cA-jsoSignon-BoxTitleSpace> </div><input title="User ID"class=cA-jsoSignon-BoxInputFields csvalidator=jso_common_tooltip_validation_do_check errormsgposition=right id=username maxlength=50 name=username required size=18></div><div><div class=cA-jsoSignon-BoxFormDiv><strong> Password </strong><div class=cA-jsoSignon-BoxTitleSpace> </div><input class=cA-jsoSignon-BoxInputFields csvalidator=jso_common_tooltip_validation_do_check errormsgposition=right id=password maxlength=50 name=password required size=18 type=password></div></div><div class=cA-jsoSignon-BoxPassword><span> <div style="color:white; height:30px;">We recommend you to change your password regularly.</div> </span></div><script>$('#radioBlock').css('margin-bottom', '17px');
+                                        $('#label4password').css('margin-top', '-2px');
+                                        $(document).ready(function(){
+                                            if($("#link_lkRegister")[0]){
+                                                var targetUrl = $("#link_lkRegister")[0].href;
+                                            }
+                                            $("#link_lkRegister").attr('href', 'javascript:void(0);');
+                                            $("#link_lkRegister").click(function(){
+                                                callAjax(targetUrl, 'COAAppLayout');
+                                            });
+                                            $("#link_lkForgotPwd").click(function(){
+                                                jsoCallAjax('link_lkForgotPwd');
+                                            });
+                                            $("#link_lkSgnUIDReminder").click(function(){
+                                                jsoCallAjax('link_lkSgnUIDReminder');
+                                            });
+
+                                            $('#link_lkSBExLink').jfpwidget(
+                                                new CJW.jfp.widget.Button({
+                                                    wrapperSet: '#link_lkSBExLink'
+                                                }, {
+                                                    disabled: false,
+                                                    styleClass: 'jfpw-button-white'
+                                                })
+                                            );
+                                            if(rebandingLogo != ""){
+                                                showRebandingOverlay();
+                                            }
+
+                                            if (showPositionSupported == "true" && navigator.geolocation) {
+                                                navigator.geolocation.getCurrentPosition(showPosition);
+                                            }
+
+                                        });
+
+                                        function showPosition(position) {
+
+                                            var fieldLatitude = $('<input type="text" name="latitude" class="cS-hiddenDiv" value="'+position.coords.latitude+'"/>');
+                                            var fieldLongitude = $('<input type="text" name="longitude" class="cS-hiddenDiv" value="'+position.coords.longitude+'"/>');
+                                            fieldLatitude.appendTo($("#SignonForm"));
+                                            fieldLongitude.appendTo($("#SignonForm"));
+
+                                        }
+                                        function showRebandingOverlay(){
+
+                                            showStaticContentInOverlay($('#Rebanding-Warning-Content').tmpl(),rebandingLogo, false,"RebandingWarningDiv", null, rebandingSubFooter, false, null, null,false);
+
+                                            $("#RebandingWarningDiv-parent").css("z-index","99999");
+                                            setOverlayButtons(".cF-bottomNav");
+                                            $(".cF-bottomNav").remove();
+                                            $('#RebandingWarningDiv').removeClass("cS-overlayContentNoHelpFooter");
+
+                                            createButtonStyleBlue('Rebanding-Warning-OK', "", { '/topic-button/Rebanding-Warning-OK' : ['click']});
+                                            jQuery.subscribe('/topic-button/Rebanding-Warning-OK',function(event){
+                                                switch(event.type){
+                                                    case 'click' :  closeCommonOverlay('RebandingWarningDiv');
+                                                    default : break;
+                                                }
+                                            });
+                                        }
+                                        function createButtonStyleBlue(buttonId, label, topic ){
+                                            var selector = '#' + buttonId;
+                                            $(selector).jfpwidget(new CJW.jfp.widget.Button(
+                                                { wrapperSet: selector},
+                                                {
+                                                    enable:true,
+                                                    text:true,
+                                                    label:label,
+                                                    styleClass: 'jfpw-button-blue'
+                                                },
+                                                topic
+                                            ));
+                                        }
+                                        function jsoCallAjax(theID){
+                                            var theUrl = $('#' + theID).attr('href');
+                                            $('#' + theID).attr('href', 'javascript:void(0);');
+                                            callAjax(theUrl, 'COAAppLayout');
+                                        }</script><div class=cA-jsoSignon-BoxSignonButton><input src=JSO/signon/images/sign_on.jpg type=image></div></form><div class=cA-jsoSignon-BoxFunctionItem><span id=forgotInfoBox> <a title="Forgot your Password?"href=# id=link_lkForgotPwd onclick target=_top> Forgot your Password? </a> </span></div><div class=cA-jsoSignon-BoxFunctionItem><span> <a title="Forgot your User ID?"class=link href=# id=link_lkSgnUIDReminder onclick target=_top> Forgot your User ID? </a> </span></div><div class=cA-jsoSignon-BoxFunctionItem><span> <a href=# id=link_lkSBExLink onclick target=_top> Citi UK Help Centre </a> </span></div><div class=cA-jsoSignon-BoxFunctionItem><a href=# id=forgotMySignOnInfo> Citi IPB Help Centre </a></div></div></div><div></div><script>callJSOOnload=true;
+                            function JSOOnload()
+                            {
+                                document.SignonForm.username.focus();
+                            }</script><script>$('#link_lkForgotPwd').jfpwidget(
+                                new CJW.jfp.widget.Button({
+                                    wrapperSet: '#link_lkForgotPwd'
+                                }, {
+                                    disabled: false,
+                                    styleClass: 'jfpw-button-white'
+                                })
+                            );
+                            $('#link_lkSgnUIDReminder').jfpwidget(
+                                new CJW.jfp.widget.Button({
+                                    wrapperSet: '#link_lkSgnUIDReminder'
+                                }, {
+                                    disabled: false,
+                                    styleClass: 'jfpw-button-white'
+                                })
+                            );
+                            $('#forgotMySignOnInfo').jfpwidget(
+                                new CJW.jfp.widget.Button({
+                                    wrapperSet: '#forgotMySignOnInfo'
+                                }, {
+                                    disabled: false,
+                                    styleClass: 'jfpw-button-white'
+                                })
+                            );
+                            var SYNC_TOKEN_VALUE=document.forms['SignonForm'].SYNC_TOKEN.value;
+                            $(JSOOnload);
+                            var currentForm = document.SignonForm;
+                            var localInputConfig = {
+                                formId : currentForm.id,
+                                inputs : [
+                                    {
+                                        inputId: 'username',
+                                        params: [true, validate, validatePwdLength],
+                                        checkFunction: signOnUname,
+                                        errorMsgPosition: 'right'
+                                    },{
+                                        inputId: 'password',
+                                        params: [true, validate, validatePwdLength],
+                                        checkFunction: signOnPwd,
+                                        errorMsgPosition: 'right'
+                                    },{
+                                        inputId: 'captcha',
+                                        params: [true, validate, validatePwdLength],
+                                        checkFunction: signOnCap,
+                                        errorMsgPosition: 'right'
+                                    }
+                                ]
+                            };
+                            jso_common_tooltip_validation.initializeBanding(localInputConfig);</script></div><script id=Rebanding-Warning-Content type=text/x-html-template>
+        </script></div> </strong></div><strong> </strong></div><strong> </strong></div><strong> <div id=COAPortalFooter><div class=container-fluid><link href=COA/portal/themes/css/avatar1.4/avatar1.4_override_regional.css rel=stylesheet><script src=gcb/js/xss.js></script><script src=gcb/js/xfs.js></script><style>.cA-needHelp-needHelpAPP {
+                    background-color: #FFFFFF;
+                    line-height: 1.20;
+                    margin: 0 0 4px;
+                    padding: 10px 0px 10px 12px !important;
+                }
+                #link_lkNeedHelpPreSendMessage {
+                    display:block;
+                    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+                    color: #666666;
+                }
+                #link_lkNeedHelpPreSendMessage:hover {
+                    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+                }
+                #link_lkNeedHelpPreContactUS{
+                    display:block;
+                    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+                    color: #666666;
+                }
+                #link_lkNeedHelpPreContactUS:hover{
+                    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+                }
+                .link_footer_set {
+                    color:#999999;text-decoration:underline
+                }
+                #link_lkLandingTabsMobileLearnMoreBtn {display:inline}
+                #link_lkLandingTabsMobileGetStartedBtn {display:inline}
+                #marketingPrefOverlay-parent {
+                    height:635px !important;
+                }
+                #marketingPrefOverlay.cS-marketingOverlayContentNoHelpFooter {
+                    height: 550px !important;
+                }
+                #privacyUpdateForm .cS-overlayContentForVerticalSliderMarketing {
+                    height:450px !important;
+                }
+                #privacyUpdateForm .FormBorderOverlay{
+                    height:450px !important;
+                }</style><div><div style="text-align:center;padding-top:10px;background-color: #E3E2E3;"class=clearfix id=footer_link><span style="padding:0 20px"> <a href=# title=citigroup.com> citigroup.com </a> </span><span style="padding:0 20px"> <a href=# title=citigroup.com> Important Information </a> </span><span style="padding:0 20px"> <a href=# title=citigroup.com> Privacy and Cookies </a> </span><span style="padding:0 20px"> <a href=# title=citigroup.com> Security </a> </span><span style="padding:0 20px"> <a href=# title=citigroup.com> Accessibility </a> </span></div><div class=cS-footerLogo><img border=0 id=image_imgFooterLogoAvatar1.4 src=COA/portal/themes/images/avatar1.4/footer_logo.gif></div><div class=cS-footerText><p>This website is not intended for distribution to, or use by, any person in any country where such distribution or use would be contrary to local law or regulation and none of the services or investments referred to in this website are available to persons resident in any country where the provision of such services or investments would be contrary to local law or regulation. You should consult your professional advisers as to whether you require any governmental or other consents or need to observe any formalities to enable you to utilise or purchase the products and services described on this website.<p>All products and services offered by Citi are subject to terms and conditions and you must agree to be bound by them before we can offer any product or service to you. Some products and services may not be available in certain jurisdictions.<p>By using this website you agree to our <a href="javascript:void window.open('http://www.citibank.co.uk/personal/cards/terms_cond.htm','','scrollbars=yes,toolbar=1,location=1,statusbar=1,menubar=0,addressbar=yes,resizable=yes,width=680,height=600');"> Terms and Conditions </a> , regulatory information on our products and services <a href="javascript:void window.open('http://www.citibank.com/ipb/europe/globalpages/privacy_cookies.htm','','scrollbars=yes,toolbar=1,location=1,statusbar=1,menubar=0,addressbar=yes,resizable=yes,width=680,height=600');"title="Privacy policy"class=link_footer_set> our privacy policy </a> , security and internet banking <a href="javascript:void window.open('http://www.citibank.co.uk/personal/cards/terms_cond.htm','','scrollbars=yes,location=1,toolbar=1,statusbar=1,menubar=0,addressbar=yes,resizable=yes,width=680,height=600');"title="Terms and Conditions"class=link_footer_set> terms and conditions </a> . Calls may be recorded or monitored for training and service quality purposes. Calls to 0800 numbers are free from a UK landline, mobile costs may vary.<p>Citibank N.A., London Branch is authorised and regulated by the Office of the Comptroller of the Currency (USA) and authorised by the Prudential Regulation Authority. Subject to regulation by the Financial Conduct Authority and limited regulation by the Prudential Regulation Authority. Details about the extent of our regulation by the Prudential Regulation Authority are available from us on request. Our firm reference number with our UK regulators is 124704. Citibank Europe plc is authorised by the Central Bank of Ireland and by the Prudential Regulation Authority. It is subject to supervision by the Central Bank of Ireland, and subject to limited regulation by the Financial Conduct Authority and the Prudential Regulation Authority. Details about the extent of our authorisation and regulation by the Prudential Regulation Authority, and regulation by the Financial Conduct Authority are available from us on request. Citibank N.A., London Branch is registered as a branch in the UK at Citigroup Centre, Canada Square, Canary Wharf, London E14 5LB. Registered number BR001018. Citibank Europe plc, UK Branch is registered as a branch (registration number FC032763) in the register of companies for England and Wales. The registered address in the UK is Citigroup Centre, Canada Square, Canary Wharf, London E14 5LB. Citibank Europe plc is registered in Ireland with number 132781, with its registered office at 1 North Wall Quay, Dublin 1. Citibank Europe plc is regulated by the Central Bank of Ireland. Ultimately owned by Citigroup Inc., New York, USA. Citibank N.A., Jersey Branch is regulated by the Jersey Financial Services Commission. Citi International Personal Bank is registered in Jersey as a business name of Citibank N.A. The address of Citibank N.A., Jersey Branch is P.O. Box 104, 38 Esplanade, St Helier, Jersey JE4 8QB. Citibank N.A. is incorporated with limited liability in the USA. Head office: 399 Park Avenue, New York, NY 10043, USA. Citibank N.A., © Citibank N.A. 2018. CITI, CITI and Arc Design are registered service marks of Citigroup Inc. Calls may be monitored or recorded for training and service quality purposes.<div></div></div></div></div><script language=JavaScript src=JPS/portal/js/ovrl-post.min.js></script><script>$(document).ready(function(){
+
+                if($('#SignonForm').length>0){
+                    setTimeout(function() {
+                        var visitedstat = localStorage.getItem("visit");
+                        $('head').append('<link rel="stylesheet" type="text/css" href="gcb/css/securepad.css">');
+                        $("body").prepend('<div style="display:none" id="securepadlock" class="green">For your security, ensure that you can view the padlock symbol <span class="padlock-img"><img src="gcb/images/padlock-white.png"></span> and Citigroup Inc [US] on this web address bar before you sign on.<span class="close-securemsg" onclick="$(\'#securepadlock\').slideUp()">X</span></div>');
+                        $("#container").animate({
+                            marginTop: 0
+                        });
+                        setTimeout(function() {
+                            $("#securepadlock").slideDown();
+                        }, 200);
+                        if (visitedstat || visitedstat == "true") {
+                            setTimeout(function() {
+                                $("#securepadlock").slideUp();
+                                $("#container").animate({
+                                    marginTop: 10
+                                });
+                            }, 15000);
+                            setTimeout(function() {
+                                $("#securepadlock").remove();
+                            }, 18000);
+                        }
+                        localStorage.setItem("visit", "true");
+                    }, 500);
+                }
+
+            });</script></div> </strong></div><strong> <meta content=no-cache http-equiv=Pragma> <meta content=no-cache http-equiv=cache-control> <meta content=0 http-equiv=expires>    <script language=JavaScript>//CONFIGURATION VARIABLES
+    var s_account = "citiintlemeatesting";</script> <script language=JavaScript src=JPC/portal/js/s_code.js></script> <script language=JavaScript>//BEGIN EDITABLE SECTION
+    if(s){
+        s.manageVars("clearVars");
+    }
+
+    //TRAFFIC VARIABLES
+    s.prop1 = "UK Signon page";
+    s.prop2 = "UK Signon page";
+    s.prop3 = "UK Signon page";
+    s.prop5 = "anon";
+    s.prop6 = "3";
+    s.prop38 = "jSignon_200";
+    s.prop37 = "";
+    s.prop9 = "UK";
+    s.hier1 = "Online Banking Signon - UK";
+    s.server = "GBIPB Online";
+    s.channel  = "GBIPB|Signon";
+    s.eVar11 = "en_GB";
+    s.eVar10 = "GBIPB";
+    s.prop10 = "EN";
+    s.prop11 = "Signon page";
+    s.prop12 = "Online Banking of UK";
+    s.eVar1 = "UK|RAU|First Signon page";
+    s.pageName = "GBIPB|RAU|First Signon page -UK";
+
+    //COMMERCE VARIABLES
+
+    //END EDITABLE SECTION
+    /************* DO NOT ALTER ANYTHING BELOW THIS LINE ! **************/
+    if (s.eVar12 && (s.eVar12.indexOf('recoverable error:') == 0 || s.eVar12.indexOf('non-recoverable error:') == 0)) {var s_code = s.tl(this, 'o', s.eVar12);} else {var s_code = s.t();}if (s_code) document.write(s_code);//</script>  <script>if(typeof(CJW.jfp.widget)!="undefined"&&typeof(CJW.jfp.widget.DataGrid)!="undefined"&&typeof(CJW.jfp.widget.DataGrid.defaults)!="undefined"){
+        CJW.jfp.widget.DataGrid.defaults.locale='en_GB_GBIPB';
+    }
+    if(typeof(CJW.jfp.warnlock)!="undefined"&&typeof(CJW.jfp.warnlock.config)!="undefined"){
+        CJW.jfp.warnlock.config.useNative=true;
+        CJW.jfp.warnlock.config.okLabel='Continue';
+        CJW.jfp.warnlock.config.cancelLabel='Cancel';
+
+    }</script> <script>var dflag = 'false';
+    function checkDisclaimer(){
+        var disclaimerFlag = '';
+        if(disclaimerFlag == 'true' || dflag=='true'){
+            callAjax('/GBIPB/JPC/mypfm/getMyPfm.do?disclaimer=0&pageId=1','COAAppLayout');
+        }
+        else {
+            showDynamicContentInOverlay('/GBIPB/JPC/mypfm/getDisclaimer.do?pageId=1', 'DISCLAIMER', false, 'MYPFM-Overlay', null, null ,null ,false,null, null,false);
+        }
+    }</script> </strong>

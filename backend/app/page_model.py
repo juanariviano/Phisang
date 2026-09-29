@@ -36,12 +36,21 @@ class Classifier:
         # CPU only: a public endpoint should not depend on an accelerator being
         # free, and MarkupLM-base inference on one page is cheap enough.
         self.device = torch.device("cpu")
-        self.processor = MarkupLMProcessor.from_pretrained(model_dir, local_files_only=True)
+        # from_pretrained() raises whatever HF or torch throw for an incomplete
+        # artifact — a missing vocab.json surfaces as TypeError, not something
+        # recognisable. Normalising to ModelUnavailable here is what lets
+        # page_stage.startup() disable the stage instead of killing the app.
+        try:
+            self.processor = MarkupLMProcessor.from_pretrained(model_dir, local_files_only=True)
+            self.feature_extractor = MarkupLMFeatureExtractor()
+            self.model = MarkupLMForSequenceClassification.from_pretrained(
+                model_dir, local_files_only=True, use_safetensors=True, dtype=torch.float32,
+            ).to(self.device).eval()
+        except ModelUnavailable:
+            raise
+        except Exception as exc:
+            raise ModelUnavailable(f"could not load artifact at {model_dir}: {exc}") from exc
         self.processor.parse_html = False
-        self.feature_extractor = MarkupLMFeatureExtractor()
-        self.model = MarkupLMForSequenceClassification.from_pretrained(
-            model_dir, local_files_only=True, use_safetensors=True, dtype=torch.float32,
-        ).to(self.device).eval()
 
         self.id2label = {int(k): v for k, v in self.model.config.id2label.items()}
         phishing_ids = [k for k, v in self.id2label.items()

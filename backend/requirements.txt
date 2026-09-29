@@ -14,3 +14,7 @@ beautifulsoup4>=4.13.0
 torch>=2.9.0
 transformers>=4.57.0
 pytest>=8.3.0
+
+# Scan history in SQL Server. pymssql ships wheels for macOS and Linux and needs
+# no ODBC system packages, unlike pyodbc.
+pymssql>=2.3.0

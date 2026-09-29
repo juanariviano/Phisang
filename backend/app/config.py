@@ -34,6 +34,19 @@ class Settings(BaseSettings):
     page_fetch_budget_seconds: float = 45.0
     page_fetch_proxy: str = ""
 
+    # Scan history in SQL Server. The pipeline consults this before URLhaus, so a
+    # repeat URL costs no rate-limit token and no browser fetch. Credentials come
+    # from .env, which is gitignored; nothing here carries a default secret.
+    db_enabled: bool = True
+    db_host: str = ""
+    db_port: int = 1433
+    db_name: str = "PhisangDB"
+    db_user: str = ""
+    db_password: str = ""
+    db_timeout_seconds: int = 10
+    # A URLhaus listing stays true far longer than a "not listed" answer does.
+    db_urlhaus_match_ttl_seconds: int = 86_400
+
 
 settings = Settings()
 DATA_DIR.mkdir(parents=True, exist_ok=True)

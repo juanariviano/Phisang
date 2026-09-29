@@ -21,7 +21,7 @@ Group=phishapi
 WorkingDirectory=/opt/phishing-api/api
 Environment=PYTHONUNBUFFERED=1
 Environment=PYTHONDONTWRITEBYTECODE=1
-Environment=MODEL_DIR=/opt/phishing-api/artifacts/phishing-html-classifier-v1
+Environment=MODEL_DIR=/opt/phishing-api/artifacts/laya_v2
 Environment=RATE_PER_MINUTE=5
 Environment=RATE_PER_HOUR=50
 Environment=MAX_IN_FLIGHT=4

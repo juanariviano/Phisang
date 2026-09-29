@@ -2,6 +2,8 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from .risk import RiskLevel
+
 Classification = Literal["malware", "phishing", "benign", "unavailable"]
 DecisionStage = Literal["urlhaus", "heuristic", "page", "error"]
 ClientName = Literal["web", "extension"]
@@ -47,6 +49,7 @@ class PageResult(BaseModel):
     confidence: Optional[int] = None
     phishing_score: Optional[float] = None
     threshold: Optional[float] = None
+    risk_level: Optional[RiskLevel] = None
     reasoning: Optional[str] = None
     final_url: Optional[str] = None
     http_status: Optional[int] = None
@@ -63,6 +66,9 @@ class AnalyzeResponse(BaseModel):
     normalized_url: str
     classification: Classification
     confidence: int
+    # 0 (clean) to 1 (malicious), banded into risk_level by app.risk.
+    risk_score: Optional[float] = None
+    risk_level: Optional[RiskLevel] = None
     decision_stage: DecisionStage
     threat_intel: ThreatIntel
     heuristic: Optional[HeuristicResult] = None

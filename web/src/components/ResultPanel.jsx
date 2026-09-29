@@ -133,6 +133,14 @@ export function ResultPanel({ busy, result, url }) {
               <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-6">
                 <Metric label="Classification" value={cls} />
                 <Metric label="Confidence" value={`${result.confidence}%`} />
+                <Metric
+                  label="Risk level"
+                  value={
+                    result.risk_level
+                      ? `${result.risk_level} · ${result.risk_score.toFixed(2)}`
+                      : "—"
+                  }
+                />
                 <Metric label="Decision stage" value={result.decision_stage} />
                 <Metric label="Scan ID" value={result.scan_id} />
                 <Metric label="URLhaus" value={intel.matched ? "Match" : "No match"} />

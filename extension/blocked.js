@@ -54,6 +54,10 @@ chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
     ["Classification", cls],
     ["Decision stage", result.decision_stage || "—"],
     ["Confidence", result.confidence != null ? result.confidence + "%" : "—"],
+    [
+      "Risk level",
+      result.risk_level ? result.risk_level + " (" + result.risk_score.toFixed(2) + ")" : "—",
+    ],
     ["Scan ID", result.scan_id || "—"],
     ["URLhaus match", intel.matched ? (intel.match_kind || "yes") + " " + (intel.id || "") : "no"],
     ["Threat type", intel.threat_type || "—"],

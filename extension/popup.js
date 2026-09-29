@@ -6,6 +6,7 @@ const el = {
   verdict: document.getElementById("verdict"),
   ripeness: document.getElementById("ripeness"),
   hint: document.getElementById("hint"),
+  risk: document.getElementById("risk"),
   caveat: document.getElementById("caveat"),
   peel: document.getElementById("peel"),
   signals: document.getElementById("signals"),
@@ -40,6 +41,11 @@ function render(payload) {
   el.ripeness.textContent = meta.ripeness;
   el.hint.textContent = meta.hint;
 
+  if (result.risk_level) {
+    el.risk.textContent = `Risk: ${result.risk_level} (${result.risk_score.toFixed(2)})`;
+    el.risk.classList.remove("hidden");
+  }
+
   if (meta.caveat) {
     el.caveat.textContent = meta.caveat;
     el.caveat.classList.remove("hidden");
@@ -60,6 +66,8 @@ function render(payload) {
       normalized_url: result.normalized_url,
       decision_stage: result.decision_stage,
       confidence: result.confidence,
+      risk_score: result.risk_score,
+      risk_level: result.risk_level,
       threat_intel: result.threat_intel,
       heuristic: result.heuristic,
       policy_version: result.policy_version,

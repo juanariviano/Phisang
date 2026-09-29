@@ -10,12 +10,13 @@ from .models import AnalyzeResponse, PageResult, ThreatIntel
 from .normalize import UrlError, normalize_url, redact_url
 from .page_stage import PageStageError
 from .reputation import is_popular_host, is_well_known_host
+from .risk import MALICIOUS_FROM, risk_level
 from .url_guard import UrlRejected, check_static
 from .urlhaus import UrlhausError
 
 logger = logging.getLogger("phisang")
 
-POLICY_VERSION = "poc-flowchart-v2.2"
+POLICY_VERSION = "poc-flowchart-v2.3"
 
 # Reported for a page the markup model flagged with nothing else behind it. The
 # v1 model scores ordinary sites (wikipedia.org 0.97, monkeytype.com 0.99) as
@@ -41,6 +42,7 @@ def _base(
     decision_stage: str,
     threat_intel: ThreatIntel,
     signals: list[str],
+    risk_score: float | None = None,
     heuristic=None,
     page_result=None,
     error_code: str | None = None,
@@ -50,6 +52,8 @@ def _base(
         normalized_url=normalized_url,
         classification=classification,  # type: ignore[arg-type]
         confidence=confidence,
+        risk_score=None if risk_score is None else round(risk_score, 4),
+        risk_level=None if risk_score is None else risk_level(risk_score),
         decision_stage=decision_stage,  # type: ignore[arg-type]
         threat_intel=threat_intel,
         heuristic=heuristic,
@@ -129,6 +133,7 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
             normalized_url=normalized,
             classification="malware",
             confidence=97,
+            risk_score=1.0,
             decision_stage="urlhaus",
             threat_intel=intel,
             signals=signals,
@@ -151,6 +156,7 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
             normalized_url=normalized,
             classification="benign",
             confidence=heuristic.confidence,
+            risk_score=heuristic.risk_score / 100,
             decision_stage="heuristic",
             threat_intel=intel,
             heuristic=heuristic,
@@ -188,11 +194,14 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
 
     classification = page_result.label or "unavailable"
     confidence = page_result.confidence or 0
+    risk_score = page_result.phishing_score
     # A benign-looking page must not clear a URL that is itself a strong phishing
     # shape (e.g. crocs-com.ru): kits often serve a clean landing page first.
     if classification == "benign" and heuristic.label == "phishing":
         classification = "phishing"
         confidence = heuristic.confidence
+        # Blocked on the URL's word, so it must read as at least MALICIOUS.
+        risk_score = max(risk_score or 0.0, heuristic.risk_score / 100, MALICIOUS_FROM)
         signals.append("The URL itself matches strong phishing patterns, which outweighs "
                        "the benign page reading")
     # The reverse needs corroboration: a phishing call stands only when the URL
@@ -213,6 +222,7 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
         normalized_url=normalized,
         classification=classification,
         confidence=confidence,
+        risk_score=risk_score,
         decision_stage="page",
         threat_intel=intel,
         heuristic=heuristic,

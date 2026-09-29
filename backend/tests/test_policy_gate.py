@@ -49,6 +49,9 @@ def test_model_alone_does_not_block_clean_url(stub_gates):
     assert calls
     assert result.classification == "benign"
     assert result.confidence == policy.UNCORROBORATED_BENIGN_CONFIDENCE
+    # Not blocked, but the page's own score still shows through as its risk.
+    assert result.risk_score == 0.99
+    assert result.risk_level == "High Risk"
     assert any(signal.startswith("Warning:") for signal in result.signals)
 
 
@@ -76,6 +79,7 @@ def test_well_known_host_still_skips_fetch(stub_gates):
     assert calls == []
     assert result.decision_stage == "heuristic"
     assert result.classification == "benign"
+    assert result.risk_level == "SAFE"
 
 
 def test_benign_page_does_not_clear_phishing_shaped_url(stub_gates):

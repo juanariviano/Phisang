@@ -1,7 +1,7 @@
 """The page-analysis gate: fetch the destination, classify its markup.
 
 Owns the browser and the model for the process lifetime, since starting Chromium
-and loading MarkupLM are both too slow to do per request.
+and loading the model are both too slow to do per request.
 """
 
 from __future__ import annotations
@@ -12,13 +12,14 @@ import logging
 from .config import settings
 from .models import PageResult, PageSignals
 from .page_fetch import FetchFailed, Fetcher, clean_html, page_signals
-from .page_model import Classifier, ModelUnavailable
+from .page_model import Classifier, LayaClassifier, ModelUnavailable, load_classifier
+from .risk import MALICIOUS_FROM, risk_level
 from .url_guard import UrlRejected
 
 logger = logging.getLogger("phisang")
 
 _fetcher: Fetcher | None = None
-_classifier: Classifier | None = None
+_classifier: Classifier | LayaClassifier | None = None
 
 
 class PageStageError(Exception):
@@ -31,7 +32,7 @@ async def startup() -> None:
         logger.info("page stage disabled by configuration")
         return
     try:
-        _classifier = Classifier(settings.page_model_dir)
+        _classifier = load_classifier(settings.page_model_dir)
     except ModelUnavailable as exc:
         logger.warning("page stage model unavailable: %s", exc)
         return
@@ -96,14 +97,17 @@ async def classify(url: str) -> PageResult:
     except ValueError as exc:
         raise PageStageError(f"Page held nothing to classify: {exc}") from None
 
+    # The label follows the risk bands rather than the artifact's own operating
+    # threshold, so a page shown as MALICIOUS or High Risk is also called phishing.
     score = verdict["phishing_score"]
-    is_phishing = verdict["verdict"].lower() in {"phishing", "phish"}
+    is_phishing = score >= MALICIOUS_FROM
     signals = page_signals(clean_html(page["html"]))
     return PageResult(
         label="phishing" if is_phishing else "benign",
         confidence=round((score if is_phishing else 1 - score) * 100),
         phishing_score=score,
-        threshold=verdict["threshold"],
+        threshold=MALICIOUS_FROM,
+        risk_level=risk_level(score),
         reasoning=_reasoning(score, signals),
         final_url=page["final_url"],
         http_status=page["status"],

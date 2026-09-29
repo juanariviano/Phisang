@@ -13,4 +13,6 @@ playwright>=1.49.0
 beautifulsoup4>=4.13.0
 torch>=2.9.0
 transformers>=4.57.0
+# laya_v2 page model; pinned to the version it was fine-tuned with.
+laya==0.3.21
 pytest>=8.3.0

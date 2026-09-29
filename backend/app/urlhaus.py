@@ -5,6 +5,7 @@ from urllib.parse import urlsplit
 
 import httpx
 
+from . import history
 from .cache import get_cached, set_cached
 from .config import settings
 from .models import ThreatIntel
@@ -133,9 +134,24 @@ async def _post(endpoint: str, data: dict[str, str]) -> dict[str, Any]:
     return payload
 
 
+def _cache_read(key: str):
+    """SQL archive first: a hit there spends no URLhaus token at all."""
+    if history.enabled():
+        hit = history.cache_get(key)
+        if hit is not None:
+            return hit
+    return get_cached(key)
+
+
+def _cache_write(key: str, payload: dict, matched: bool | None = None) -> None:
+    if history.enabled():
+        history.cache_set(key, payload, matched=matched)
+    set_cached(key, payload)
+
+
 async def lookup(normalized_url: str) -> ThreatIntel:
     url_key = f"{CACHE_PREFIX}:url:{normalized_url}"
-    cached = get_cached(url_key)
+    cached = _cache_read(url_key)
     if cached is not None:
         return ThreatIntel.model_validate(cached)
 
@@ -144,7 +160,7 @@ async def lookup(normalized_url: str) -> ThreatIntel:
 
     if status == "ok":
         intel = _to_intel(url_payload, "url")
-        set_cached(url_key, intel.model_dump())
+        _cache_write(url_key, intel.model_dump(), matched=True)
         return intel
 
     if status not in {"no_results", "invalid_url"}:
@@ -152,11 +168,11 @@ async def lookup(normalized_url: str) -> ThreatIntel:
 
     host = hostname_of(normalized_url)
     host_raw_key = f"{CACHE_PREFIX}:hostraw:{host}"
-    host_payload = get_cached(host_raw_key)
+    host_payload = _cache_read(host_raw_key)
     if host_payload is None:
         host_payload = await _post(URLHAUS_HOST_ENDPOINT, {"host": host})
-        set_cached(host_raw_key, host_payload)
+        _cache_write(host_raw_key, host_payload)
 
     intel = _intel_from_host(normalized_url, host, host_payload)
-    set_cached(url_key, intel.model_dump())
+    _cache_write(url_key, intel.model_dump(), matched=intel.matched)
     return intel

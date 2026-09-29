@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import logging
+import time
 from urllib.parse import urlsplit
 
-from . import heuristics, page_stage, urlhaus
+from . import heuristics, history, page_stage, urlhaus
 from .config import settings
 from .inventory import new_scan_id, remember
-from .models import AnalyzeResponse, PageResult, ThreatIntel
-from .normalize import UrlError, normalize_url, redact_url
+from .models import AnalyzeResponse, PageResult, PriorScan, ThreatIntel
+from .normalize import UrlError, hostname_of, normalize_url, redact_url
 from .page_stage import PageStageError
 from .reputation import is_popular_host, is_well_known_host
 from .risk import MALICIOUS_FROM, risk_level
@@ -33,6 +34,78 @@ LIMITATIONS = [
 ]
 
 
+def _format_when(value) -> str | None:
+    return value.strftime("%Y-%m-%d %H:%M UTC") if value is not None else None
+
+
+VERDICT_WORDS = {
+    "malicious": "malicious",
+    "safe": "safe",
+    "potentially_unsafe": "potentially unsafe",
+    "unknown": "inconclusive",
+}
+
+
+def _prior_from_row(row: dict) -> PriorScan:
+    """Turn the stored counters into the warning shown before a rescan."""
+    verdict = row["EffectiveVerdict"]
+    when = _format_when(row["LastScannedAt"])
+    parts = [f"This address was already scanned {row['ScanCount']}x, most recently on "
+             f"{when}, and was rated {VERDICT_WORDS.get(verdict, verdict)}."]
+    tally = []
+    for count, word in ((row["MaliciousCount"], "malicious"),
+                        (row["SafeCount"], "safe"),
+                        (row["PotentiallyUnsafeCount"], "potentially unsafe"),
+                        (row["UnknownCount"], "inconclusive")):
+        if count:
+            tally.append(f"{count}x {word}")
+    if tally:
+        parts.append("Across those scans: " + ", ".join(tally) + ".")
+    # The sticky rule is the whole reason a clean site can still read as unsafe,
+    # so say why rather than leaving the label unexplained.
+    if row["EverMalicious"] and row["LastVerdict"] == "safe":
+        parts.append("An earlier scan found it malicious, so it stays potentially unsafe "
+                     "even though the latest scan was clean.")
+    parts.append("Rescan to check it again.")
+    return PriorScan(
+        verdict=verdict,
+        last_scanned_at=when,
+        first_scanned_at=_format_when(row["FirstScannedAt"]),
+        scan_count=row["ScanCount"],
+        malicious_count=row["MaliciousCount"],
+        safe_count=row["SafeCount"],
+        potentially_unsafe_count=row["PotentiallyUnsafeCount"],
+        unknown_count=row["UnknownCount"],
+        ever_malicious=bool(row["EverMalicious"]),
+        last_score=row["LastScore"],
+        last_decision_stage=row["LastDecisionStage"],
+        message=" ".join(parts),
+    )
+
+
+def _from_history(scan_id: str, normalized: str, row: dict, prior: PriorScan) -> AnalyzeResponse:
+    """Answer from the archive: no URLhaus token spent, no page fetched."""
+    verdict = row["EffectiveVerdict"]
+    classification = row["LastClassification"] or (
+        "phishing" if verdict == "malicious" else "benign")
+    if verdict in {"potentially_unsafe", "unknown"}:
+        classification = "unavailable" if verdict == "unknown" else classification
+    return _base(
+        scan_id=scan_id,
+        normalized_url=normalized,
+        classification=classification,
+        confidence=int(round((row["LastScore"] or 0) * 100)) if row["LastScore"] is not None else 0,
+        decision_stage="history",
+        threat_intel=ThreatIntel(matched=False, source="PhisangDB", feed_status="skipped"),
+        signals=[prior.message,
+                 "Served from the scan archive; no URLhaus token spent and no page fetched",
+                 "Send rescan=true to run the full pipeline again"],
+        prior=prior,
+        served_from_history=True,
+        verdict=verdict,
+    )
+
+
 def _base(
     *,
     scan_id: str,
@@ -46,6 +119,9 @@ def _base(
     heuristic=None,
     page_result=None,
     error_code: str | None = None,
+    prior=None,
+    served_from_history: bool = False,
+    verdict: str | None = None,
 ) -> AnalyzeResponse:
     result = AnalyzeResponse(
         scan_id=scan_id,
@@ -58,6 +134,9 @@ def _base(
         threat_intel=threat_intel,
         heuristic=heuristic,
         page=page_result,
+        prior=prior,
+        served_from_history=served_from_history,
+        verdict=verdict,  # type: ignore[arg-type]
         signals=signals,
         limitations=list(LIMITATIONS),
         policy_version=POLICY_VERSION,
@@ -90,7 +169,8 @@ def _unavailable(
     )
 
 
-async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
+async def analyze(raw_url: str, client: str, rescan: bool = False) -> AnalyzeResponse:
+    started = time.monotonic()
     scan_id = new_scan_id()
     normalized = normalize_url(raw_url)
 
@@ -103,8 +183,33 @@ async def analyze(raw_url: str, client: str) -> AnalyzeResponse:
     except UrlRejected as exc:
         raise UrlError("unsupported_target", str(exc)) from None
 
-    logger.info("analyze start scan_id=%s client=%s url=%s", scan_id, client, redact_url(normalized))
+    logger.info("analyze start scan_id=%s client=%s rescan=%s url=%s",
+                scan_id, client, rescan, redact_url(normalized))
 
+    # Stage 0. A URL somebody already scanned is answered from the archive, which
+    # is the only stage that costs neither a URLhaus token nor a page fetch. The
+    # caller has to ask for a rescan to get past it.
+    prior_row = history.lookup(normalized)
+    prior = _prior_from_row(prior_row) if prior_row else None
+    if prior_row is not None and not rescan:
+        result = _from_history(scan_id, normalized, prior_row, prior)
+        history.record(result, client=client, host=hostname_of(normalized),
+                       duration_ms=int((time.monotonic() - started) * 1000),
+                       is_rescan=False, served_from_history=True)
+        return result
+
+    result = await _analyze_fresh(scan_id, normalized)
+    # One place records every fresh scan, so no return path can quietly skip it.
+    result.prior = prior
+    result.verdict = history.verdict_for(result)  # type: ignore[assignment]
+    history.record(result, client=client, host=hostname_of(normalized),
+                   duration_ms=int((time.monotonic() - started) * 1000),
+                   is_rescan=prior_row is not None, served_from_history=False)
+    return result
+
+
+async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
+    """URLhaus, then the lexical gate, then the page model."""
     try:
         intel = await urlhaus.lookup(normalized)
     except UrlhausError as exc:

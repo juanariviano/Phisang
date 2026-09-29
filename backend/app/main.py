@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import inventory, page_stage
+from . import history, inventory, page_stage
 from .cache import cache_ready, init_cache
 from .config import WEB_DIR, settings
 from .models import AnalyzeRequest, ErrorBody, HealthResponse, MetaResponse
@@ -54,6 +54,7 @@ def health() -> HealthResponse:
         urlhaus_configured=urlhaus_ok,
         page_stage_ready=page_ok,
         cache_ready=ready,
+        history_ready=history.ready(),
     )
 
 
@@ -72,7 +73,7 @@ def meta() -> MetaResponse:
 @app.post("/api/v1/analyze")
 async def analyze_url(body: AnalyzeRequest):
     try:
-        return await analyze(body.url, body.client)
+        return await analyze(body.url, body.client, rescan=body.rescan)
     except UrlError as exc:
         status, code, message = map_url_error(exc)
         return JSONResponse(

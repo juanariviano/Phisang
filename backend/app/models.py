@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from .risk import RiskLevel
 
 Classification = Literal["malware", "phishing", "benign", "unavailable"]
-DecisionStage = Literal["urlhaus", "heuristic", "page", "error"]
+DecisionStage = Literal["history", "urlhaus", "heuristic", "page", "error"]
 ClientName = Literal["web", "extension"]
 HeuristicLabel = Literal["benign", "suspicious", "phishing"]
 PageLabel = Literal["phishing", "benign"]
@@ -14,6 +14,31 @@ PageLabel = Literal["phishing", "benign"]
 class AnalyzeRequest(BaseModel):
     url: str = Field(..., min_length=1, max_length=4096)
     client: ClientName = "web"
+    # A known URL is answered from history unless the caller insists on a fresh look.
+    rescan: bool = False
+
+
+Verdict = Literal["malicious", "safe", "potentially_unsafe", "unknown"]
+
+
+class PriorScan(BaseModel):
+    """What the archive already knows about this URL, shown before a rescan."""
+
+    seen_before: bool = True
+    verdict: Verdict
+    last_scanned_at: Optional[str] = None
+    first_scanned_at: Optional[str] = None
+    scan_count: int = 0
+    malicious_count: int = 0
+    safe_count: int = 0
+    potentially_unsafe_count: int = 0
+    unknown_count: int = 0
+    # True once a scan has ever called it malicious, which keeps the verdict at
+    # potentially_unsafe even after a later clean result.
+    ever_malicious: bool = False
+    last_score: Optional[float] = None
+    last_decision_stage: Optional[str] = None
+    message: str
 
 
 class ThreatIntel(BaseModel):
@@ -73,6 +98,9 @@ class AnalyzeResponse(BaseModel):
     threat_intel: ThreatIntel
     heuristic: Optional[HeuristicResult] = None
     page: Optional[PageResult] = None
+    prior: Optional[PriorScan] = None
+    served_from_history: bool = False
+    verdict: Optional[Verdict] = None
     signals: list[str] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     policy_version: str
@@ -85,6 +113,7 @@ class HealthResponse(BaseModel):
     urlhaus_configured: bool
     page_stage_ready: bool
     cache_ready: bool
+    history_ready: bool = False
 
 
 class MetaResponse(BaseModel):

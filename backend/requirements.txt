@@ -16,3 +16,7 @@ transformers>=4.57.0
 # laya_v2 page model; pinned to the version it was fine-tuned with.
 laya==0.3.21
 pytest>=8.3.0
+
+# Scan history in SQL Server. pymssql ships wheels for macOS and Linux and needs
+# no ODBC system packages, unlike pyodbc.
+pymssql>=2.3.0

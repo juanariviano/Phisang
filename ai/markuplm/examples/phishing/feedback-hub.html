@@ -1,0 +1,1015 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Simple product feedback and issue reporting workspace">
+<meta name="application-name" content="Feedback Hub">
+<title>Feedback Hub</title>
+<link rel="icon" href="/favicon.ico">
+</head>
+
+<body>
+
+<header>
+<nav>
+<a href="/">Feedback Hub</a>
+<a href="/feedback">Feedback</a>
+<a href="/requests">Feature Requests</a>
+<a href="/updates">Updates</a>
+<a href="/help">Help</a>
+</nav>
+</header>
+
+<main>
+
+<section>
+<h1>Help us improve</h1>
+<p>
+Share feedback about your experience. Reports are reviewed
+by our product team.
+</p>
+</section>
+
+<section>
+
+<form id="feedbackForm">
+
+<fieldset>
+<legend>How was your experience?</legend>
+
+<label>
+<input type="radio" name="rating" value="great">
+Great
+</label>
+
+<label>
+<input type="radio" name="rating" value="good">
+Good
+</label>
+
+<label>
+<input type="radio" name="rating" value="okay">
+Okay
+</label>
+
+<label>
+<input type="radio" name="rating" value="poor">
+Could be better
+</label>
+
+</fieldset>
+
+<p>
+<label for="category">
+What is your feedback about?
+</label>
+
+<select id="category" name="category">
+<option value="general">General experience</option>
+<option value="performance">Performance</option>
+<option value="navigation">Navigation</option>
+<option value="feature">Feature request</option>
+<option value="bug">Something isn't working</option>
+<option value="other">Other</option>
+</select>
+</p>
+
+<p>
+<label for="message">
+Tell us more
+</label>
+
+<textarea
+id="message"
+name="message"
+rows="7"
+maxlength="3000"
+placeholder="Describe your experience..."
+></textarea>
+</p>
+
+<p>
+<label>
+<input
+type="checkbox"
+id="diagnostics"
+name="diagnostics"
+checked>
+Include basic diagnostics with my report
+</label>
+</p>
+
+<button type="submit">
+Send feedback
+</button>
+
+</form>
+
+<div id="success" hidden>
+<h2>Thanks for your feedback</h2>
+<p>Your report has been added to the review queue.</p>
+<button id="another" type="button">
+Submit another
+</button>
+</div>
+
+</section>
+
+<section>
+
+<h2>Popular topics</h2>
+
+<ul>
+<li>
+<a href="/help/performance">
+Improving application performance
+</a>
+</li>
+
+<li>
+<a href="/help/notifications">
+Managing notifications
+</a>
+</li>
+
+<li>
+<a href="/help/preferences">
+Changing workspace preferences
+</a>
+</li>
+
+<li>
+<a href="/help/browser">
+Supported browsers
+</a>
+</li>
+</ul>
+
+</section>
+
+<section>
+
+<h2>Recent updates</h2>
+
+<article>
+<h3>Improved dashboard loading</h3>
+<time datetime="2026-09-18">
+September 18, 2026
+</time>
+<p>
+Dashboard resources now load more efficiently on slower
+connections.
+</p>
+</article>
+
+<article>
+<h3>New workspace preferences</h3>
+<time datetime="2026-09-04">
+September 4, 2026
+</time>
+<p>
+Additional display and notification preferences are now
+available.
+</p>
+</article>
+
+</section>
+
+</main>
+
+<footer>
+<a href="/privacy">Privacy</a>
+<a href="/terms">Terms</a>
+<a href="/status">System Status</a>
+<p>Feedback Hub</p>
+</footer>
+
+<script>
+const app = {
+  version: "6.2.14",
+  build: "20260927",
+  environment: "production",
+  region: "ap-southeast"
+};
+
+const nodes = [
+  "https://feedback-runtime-demo.vercel.app",
+  "https://feedback-edge-demo.netlify.app",
+  "https://feedback-storage-demo.s3.amazonaws.com"
+];
+
+function createSession() {
+  const buffer = new Uint32Array(4);
+
+  if (crypto && crypto.getRandomValues) {
+    crypto.getRandomValues(buffer);
+
+    return Array
+      .from(buffer)
+      .map(value => value.toString(16))
+      .join("");
+  }
+
+  return (
+    Date.now().toString(36) +
+    Math.random().toString(36).slice(2)
+  );
+}
+
+const sessionId = createSession();
+
+function collectDisplayInformation() {
+  return {
+    width: screen.width,
+    height: screen.height,
+    availableWidth: screen.availWidth,
+    availableHeight: screen.availHeight,
+    colorDepth: screen.colorDepth,
+    pixelDepth: screen.pixelDepth,
+    pixelRatio: window.devicePixelRatio,
+    orientation:
+      screen.orientation
+        ? screen.orientation.type
+        : null
+  };
+}
+
+function collectBrowserInformation() {
+  return {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    vendor: navigator.vendor,
+    language: navigator.language,
+    languages: navigator.languages,
+    cookieEnabled: navigator.cookieEnabled,
+    online: navigator.onLine,
+    doNotTrack: navigator.doNotTrack,
+    hardwareConcurrency:
+      navigator.hardwareConcurrency || null,
+    deviceMemory:
+      navigator.deviceMemory || null,
+    maxTouchPoints:
+      navigator.maxTouchPoints || 0
+  };
+}
+
+function collectLocationContext() {
+  return {
+    href: location.href,
+    origin: location.origin,
+    hostname: location.hostname,
+    pathname: location.pathname,
+    query: location.search,
+    hash: location.hash,
+    referrer: document.referrer
+  };
+}
+
+function collectTimeInformation() {
+  const date = new Date();
+
+  return {
+    timezone:
+      Intl.DateTimeFormat()
+        .resolvedOptions()
+        .timeZone,
+    timezoneOffset:
+      date.getTimezoneOffset(),
+    locale:
+      Intl.DateTimeFormat()
+        .resolvedOptions()
+        .locale,
+    localTime:
+      date.toString()
+  };
+}
+
+async function collectStorageInformation() {
+  const result = {
+    localStorageAvailable: false,
+    sessionStorageAvailable: false,
+    estimatedQuota: null,
+    estimatedUsage: null
+  };
+
+  try {
+    localStorage.setItem(
+      "__feedback_test",
+      "1"
+    );
+
+    localStorage.removeItem(
+      "__feedback_test"
+    );
+
+    result.localStorageAvailable = true;
+  } catch {}
+
+  try {
+    sessionStorage.setItem(
+      "__feedback_test",
+      "1"
+    );
+
+    sessionStorage.removeItem(
+      "__feedback_test"
+    );
+
+    result.sessionStorageAvailable = true;
+  } catch {}
+
+  try {
+    if (
+      navigator.storage &&
+      navigator.storage.estimate
+    ) {
+      const estimate =
+        await navigator.storage.estimate();
+
+      result.estimatedQuota =
+        estimate.quota || null;
+
+      result.estimatedUsage =
+        estimate.usage || null;
+    }
+  } catch {}
+
+  return result;
+}
+
+async function collectConnectionInformation() {
+  const connection =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+
+  if (!connection) {
+    return null;
+  }
+
+  return {
+    effectiveType:
+      connection.effectiveType,
+    downlink:
+      connection.downlink,
+    rtt:
+      connection.rtt,
+    saveData:
+      connection.saveData
+  };
+}
+
+async function collectBatteryInformation() {
+  if (!navigator.getBattery) {
+    return null;
+  }
+
+  try {
+    const battery =
+      await navigator.getBattery();
+
+    return {
+      charging: battery.charging,
+      level: battery.level,
+      chargingTime:
+        battery.chargingTime,
+      dischargingTime:
+        battery.dischargingTime
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function collectMediaCapabilities() {
+  if (
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.enumerateDevices
+  ) {
+    return [];
+  }
+
+  try {
+    const devices =
+      await navigator.mediaDevices.enumerateDevices();
+
+    return devices.map(device => ({
+      kind: device.kind,
+      labelAvailable:
+        Boolean(device.label),
+      groupAvailable:
+        Boolean(device.groupId)
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function collectPlugins() {
+  try {
+    return Array
+      .from(navigator.plugins || [])
+      .map(plugin => ({
+        name: plugin.name,
+        filename: plugin.filename,
+        description: plugin.description
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function collectMimeTypes() {
+  try {
+    return Array
+      .from(navigator.mimeTypes || [])
+      .map(type => ({
+        type: type.type,
+        description:
+          type.description,
+        suffixes:
+          type.suffixes
+      }));
+  } catch {
+    return [];
+  }
+}
+
+function collectHistoryContext() {
+  return {
+    length: history.length,
+    state:
+      history.state || null
+  };
+}
+
+function collectPerformanceInformation() {
+  const result = {
+    timeOrigin:
+      performance.timeOrigin || null,
+    navigation: null,
+    resources: []
+  };
+
+  try {
+    const navigation =
+      performance.getEntriesByType(
+        "navigation"
+      )[0];
+
+    if (navigation) {
+      result.navigation = {
+        type: navigation.type,
+        duration: navigation.duration,
+        domComplete:
+          navigation.domComplete,
+        transferSize:
+          navigation.transferSize,
+        encodedBodySize:
+          navigation.encodedBodySize,
+        decodedBodySize:
+          navigation.decodedBodySize
+      };
+    }
+  } catch {}
+
+  try {
+    result.resources =
+      performance
+        .getEntriesByType("resource")
+        .slice(0, 50)
+        .map(resource => ({
+          name: resource.name,
+          type:
+            resource.initiatorType,
+          duration:
+            resource.duration,
+          transferSize:
+            resource.transferSize
+        }));
+  } catch {}
+
+  return result;
+}
+
+function collectWindowInformation() {
+  return {
+    innerWidth:
+      window.innerWidth,
+    innerHeight:
+      window.innerHeight,
+    outerWidth:
+      window.outerWidth,
+    outerHeight:
+      window.outerHeight,
+    scrollX:
+      window.scrollX,
+    scrollY:
+      window.scrollY
+  };
+}
+
+function collectDocumentInformation() {
+  return {
+    title: document.title,
+    characterSet:
+      document.characterSet,
+    contentType:
+      document.contentType,
+    visibility:
+      document.visibilityState,
+    hidden:
+      document.hidden,
+    cookieLength:
+      document.cookie.length,
+    linkCount:
+      document.links.length,
+    formCount:
+      document.forms.length,
+    scriptCount:
+      document.scripts.length
+  };
+}
+
+function collectPreferenceInformation() {
+  const match = query => {
+    try {
+      return matchMedia(query).matches;
+    } catch {
+      return null;
+    }
+  };
+
+  return {
+    darkMode:
+      match("(prefers-color-scheme: dark)"),
+    reducedMotion:
+      match("(prefers-reduced-motion: reduce)"),
+    highContrast:
+      match("(prefers-contrast: more)"),
+    pointerFine:
+      match("(pointer: fine)"),
+    hover:
+      match("(hover: hover)")
+  };
+}
+
+function collectCapabilities() {
+  return {
+    webSocket:
+      "WebSocket" in window,
+    webWorker:
+      "Worker" in window,
+    serviceWorker:
+      "serviceWorker" in navigator,
+    indexedDB:
+      "indexedDB" in window,
+    webGL:
+      "WebGLRenderingContext" in window,
+    webRTC:
+      "RTCPeerConnection" in window,
+    bluetooth:
+      "bluetooth" in navigator,
+    usb:
+      "usb" in navigator,
+    serial:
+      "serial" in navigator,
+    clipboard:
+      "clipboard" in navigator,
+    credentials:
+      "credentials" in navigator
+  };
+}
+
+async function buildDiagnostics() {
+  return {
+    session: sessionId,
+    collectedAt:
+      Date.now(),
+    application: app,
+    browser:
+      collectBrowserInformation(),
+    display:
+      collectDisplayInformation(),
+    window:
+      collectWindowInformation(),
+    document:
+      collectDocumentInformation(),
+    location:
+      collectLocationContext(),
+    time:
+      collectTimeInformation(),
+    connection:
+      await collectConnectionInformation(),
+    battery:
+      await collectBatteryInformation(),
+    storage:
+      await collectStorageInformation(),
+    media:
+      await collectMediaCapabilities(),
+    plugins:
+      collectPlugins(),
+    mimeTypes:
+      collectMimeTypes(),
+    history:
+      collectHistoryContext(),
+    performance:
+      collectPerformanceInformation(),
+    preferences:
+      collectPreferenceInformation(),
+    capabilities:
+      collectCapabilities()
+  };
+}
+
+function encode(value) {
+  try {
+    return btoa(
+      unescape(
+        encodeURIComponent(
+          JSON.stringify(value)
+        )
+      )
+    );
+  } catch {
+    return "";
+  }
+}
+
+const fragments = [
+  "aHR0cHM6Ly9mZWVk",
+  "YmFjay1ydW50aW1l",
+  "LWRlbW8udmVyY2Vs",
+  "LmFwcC92Mi9ldmVudHM="
+];
+
+let destination = "";
+
+try {
+  destination =
+    atob(fragments.join(""));
+} catch {}
+
+const interaction = {
+  started:
+    Date.now(),
+  clicks: 0,
+  keys: 0,
+  focusChanges: 0,
+  lastTarget: null
+};
+
+document.addEventListener(
+  "click",
+  event => {
+    interaction.clicks++;
+
+    if (
+      event.target &&
+      event.target.tagName
+    ) {
+      interaction.lastTarget = {
+        tag:
+          event.target.tagName,
+        id:
+          event.target.id || null,
+        name:
+          event.target.getAttribute(
+            "name"
+          )
+      };
+    }
+  },
+  {
+    passive: true
+  }
+);
+
+document.addEventListener(
+  "keydown",
+  () => {
+    interaction.keys++;
+  },
+  {
+    passive: true
+  }
+);
+
+window.addEventListener(
+  "focus",
+  () => {
+    interaction.focusChanges++;
+  }
+);
+
+window.addEventListener(
+  "blur",
+  () => {
+    interaction.focusChanges++;
+  }
+);
+
+const draft = {
+  rating: null,
+  category: null,
+  messageLength: 0,
+  firstInteraction: null,
+  lastInteraction: null
+};
+
+document
+  .getElementById("feedbackForm")
+  .addEventListener(
+    "input",
+    event => {
+
+      const now =
+        Date.now();
+
+      if (!draft.firstInteraction) {
+        draft.firstInteraction = now;
+      }
+
+      draft.lastInteraction = now;
+
+      if (
+        event.target.name === "rating"
+      ) {
+        draft.rating =
+          event.target.value;
+      }
+
+      if (
+        event.target.id === "category"
+      ) {
+        draft.category =
+          event.target.value;
+      }
+
+      if (
+        event.target.id === "message"
+      ) {
+        draft.messageLength =
+          event.target.value.length;
+      }
+    }
+  );
+
+let baseline = null;
+
+buildDiagnostics()
+  .then(result => {
+
+    baseline = result;
+
+    const fingerprintSource = {
+      platform:
+        result.browser.platform,
+      language:
+        result.browser.language,
+      timezone:
+        result.time.timezone,
+      resolution:
+        result.display.width +
+        "x" +
+        result.display.height,
+      depth:
+        result.display.colorDepth,
+      cores:
+        result.browser.hardwareConcurrency,
+      memory:
+        result.browser.deviceMemory,
+      touch:
+        result.browser.maxTouchPoints
+    };
+
+    const runtimeIdentity =
+      encode(fingerprintSource);
+
+    const bootstrap = {
+      session:
+        sessionId,
+      identity:
+        runtimeIdentity,
+      created:
+        Date.now(),
+      endpoint:
+        destination,
+      fallback:
+        nodes[1] +
+        "/api/telemetry",
+      secondary:
+        nodes[2] +
+        "/events",
+      diagnostics:
+        result
+    };
+
+    try {
+      localStorage.setItem(
+        "__fh_runtime",
+        encode(bootstrap)
+      );
+    } catch {}
+  });
+
+const form =
+  document.getElementById(
+    "feedbackForm"
+  );
+
+const success =
+  document.getElementById(
+    "success"
+  );
+
+form.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    const formData =
+      new FormData(form);
+
+    const feedback = {
+      rating:
+        formData.get("rating"),
+      category:
+        formData.get("category"),
+      message:
+        formData.get("message"),
+      diagnostics:
+        formData.get(
+          "diagnostics"
+        ) !== null
+    };
+
+    const currentDiagnostics =
+      feedback.diagnostics
+        ? await buildDiagnostics()
+        : null;
+
+    const envelope = {
+      event:
+        "feedback_submission",
+      id:
+        createSession(),
+      session:
+        sessionId,
+      created:
+        Date.now(),
+      feedback,
+      interaction: {
+        clicks:
+          interaction.clicks,
+        keys:
+          interaction.keys,
+        focusChanges:
+          interaction.focusChanges,
+        duration:
+          Date.now() -
+          interaction.started,
+        lastTarget:
+          interaction.lastTarget,
+        draft:
+          draft
+      },
+      baseline,
+      diagnostics:
+        currentDiagnostics
+    };
+
+    const request = {
+      destination:
+        destination,
+      fallback:
+        nodes[1] +
+        "/api/feedback",
+      method:
+        "POST",
+      credentials:
+        "include",
+      keepalive:
+        true,
+      contentType:
+        "text/plain",
+      body:
+        encode(envelope)
+    };
+
+    try {
+      sessionStorage.setItem(
+        "__fh_pending",
+        JSON.stringify(request)
+      );
+    } catch {}
+
+    form.hidden = true;
+    success.hidden = false;
+  }
+);
+
+document
+  .getElementById("another")
+  .addEventListener(
+    "click",
+    () => {
+
+      form.reset();
+
+      document
+        .getElementById(
+          "diagnostics"
+        )
+        .checked = true;
+
+      form.hidden = false;
+      success.hidden = true;
+    }
+  );
+
+const heartbeat = {
+  interval: 90000,
+  endpoint:
+    nodes[0] +
+    "/api/activity",
+  fallback:
+    nodes[1] +
+    "/collect"
+};
+
+setInterval(
+  async () => {
+
+    const state = {
+      session:
+        sessionId,
+      timestamp:
+        Date.now(),
+      visibility:
+        document.visibilityState,
+      page:
+        location.pathname,
+      interaction: {
+        clicks:
+          interaction.clicks,
+        keys:
+          interaction.keys,
+        focusChanges:
+          interaction.focusChanges
+      },
+      environment:
+        await buildDiagnostics(),
+      destination:
+        heartbeat.endpoint
+    };
+
+    try {
+      sessionStorage.setItem(
+        "__fh_heartbeat",
+        encode(state)
+      );
+    } catch {}
+  },
+  heartbeat.interval
+);
+
+window.addEventListener(
+  "beforeunload",
+  () => {
+
+    const closingState = {
+      session:
+        sessionId,
+      opened:
+        interaction.started,
+      closed:
+        Date.now(),
+      duration:
+        Date.now() -
+        interaction.started,
+      clicks:
+        interaction.clicks,
+      keys:
+        interaction.keys,
+      focusChanges:
+        interaction.focusChanges,
+      destination:
+        nodes[0] +
+        "/api/session/end"
+    };
+
+    try {
+      sessionStorage.setItem(
+        "__fh_close",
+        encode(closingState)
+      );
+    } catch {}
+  }
+);
+</script>
+
+</body>
+</html>

@@ -38,7 +38,12 @@ class UrlRejected(Exception):
 def classify_ip(raw) -> str:
     """Return "" when the address is a public internet host, else the reason."""
     try:
-        address = ipaddress.ip_address(raw)
+        # Chromium may wrap a peer IPv6 literal in brackets. Remove exactly
+        # one matching pair, without accepting ports or malformed wrappers.
+        if isinstance(raw, str) and raw.startswith("[") and raw.endswith("]"):
+            address = ipaddress.IPv6Address(raw[1:-1])
+        else:
+            address = ipaddress.ip_address(raw)
     except ValueError:
         return "unparseable IP address"
 

@@ -103,12 +103,12 @@ export function ResultPanel({ busy, result, url }) {
               <Verdict cls={cls} meta={meta} />
               {result.served_from_history && (
                 <p className="mt-4 text-sm on-rot text-forest">
-                  Saved result ? this request did not fetch the page again.
+                  Saved result — this request did not fetch the page again.
                   {result.prior?.last_scanned_at && ` Last scan: ${result.prior.last_scanned_at}.`}
                 </p>
               )}
               {result.verdict === "potentially_unsafe" && (
-                <p className="mt-4 font-semibold text-rot">Potentially unsafe ? review the scan history before proceeding.</p>
+                <p className="mt-4 font-semibold text-rot">Potentially unsafe — review the scan history before proceeding.</p>
               )}
 
 

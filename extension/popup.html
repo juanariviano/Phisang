@@ -40,12 +40,22 @@
       </section>
 
       <p id="caveat" class="caveat hidden"></p>
+      <ul id="history" class="notes hidden"></ul>
 
       <p class="section-label">The peel</p>
       <ul id="peel" class="peel"></ul>
 
+      <section id="page" class="hidden">
+        <p class="section-label">The page we opened</p>
+        <p id="reasoning" class="reasoning"></p>
+        <dl id="page-facts" class="facts"></dl>
+      </section>
+
       <p id="signals-label" class="section-label hidden">Signals</p>
       <ul id="signals" class="signals"></ul>
+
+      <button id="rescan" type="button" class="rescan hidden">Scan again</button>
+      <p id="rescan-status" class="fine hidden" role="status"></p>
 
       <label class="toggle" for="enabled">
         <span>Check pages before they load</span>
@@ -54,7 +64,7 @@
 
       <details>
         <summary>Technical details</summary>
-        <pre id="tech">Browse to an http(s) page with the API on localhost:8000.</pre>
+        <dl id="tech" class="facts"></dl>
       </details>
 
       <p class="fine">A low risk score is not a guarantee · URLhaus data by abuse.ch</p>

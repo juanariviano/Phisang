@@ -32,11 +32,16 @@
           </div>
         </div>
         <p id="summary" class="summary"></p>
+        <ul id="history" class="signals hidden"></ul>
 
         <p class="section-label">The peel</p>
         <ul id="peel" class="peel"></ul>
 
-        <section id="reasoning" class="reasoning hidden"></section>
+        <section id="page" class="hidden">
+          <p class="section-label">The page we opened</p>
+          <div class="reasoning"><p id="reasoning"></p></div>
+          <dl id="page-facts" class="tech"></dl>
+        </section>
 
         <p class="section-label" id="signals-label">Signals</p>
         <ul id="signals" class="signals"></ul>
@@ -49,7 +54,7 @@
           <button id="continue" type="button" class="ghost">Continue anyway (demo only)</button>
         </div>
         <p class="fine">
-          Educational interstitial · the destination was never fetched · URLhaus data by abuse.ch
+          Educational interstitial · nothing was loaded in your tab · URLhaus data by abuse.ch
         </p>
       </div>
       <div class="hazard-rule" aria-hidden="true"></div>

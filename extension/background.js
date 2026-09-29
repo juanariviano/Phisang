@@ -225,6 +225,30 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return { ok: true };
     }
 
+    if (message.type === "RESCAN") {
+      // Same as the web scanner's rescan: skip the scan archive and run every gate.
+      const url = message.url;
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, client: "extension", rescan: true }),
+        });
+        const result = await res.json();
+        if (!res.ok) return { ok: false };
+        await remember(tabId, url, result);
+        setBadge(tabId, result.classification, result.risk_level);
+        // A page that now reads as a threat is taken away from the user, as on first visit.
+        if (result.classification === "malware" || result.classification === "phishing") {
+          skipOnce.set(tabId, blockedUrl());
+          await chrome.tabs.update(tabId, { url: blockedUrl() });
+        }
+        return { ok: true, payload: { url, result } };
+      } catch {
+        return { ok: false };
+      }
+    }
+
     if (message.type === "GET_TAB_RESULT") {
       const stored = await chrome.storage.session.get(`tab:${tabId}`);
       return stored[`tab:${tabId}`] || lastByTab.get(tabId) || null;

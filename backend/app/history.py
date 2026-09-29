@@ -141,11 +141,15 @@ def lookup(normalized_url: str) -> Optional[dict]:
             return None
         cur.execute(
             """
-            SELECT SiteId, NormalizedUrl, Host, FirstScannedAt, LastScannedAt,
-                   ScanCount, MaliciousCount, SafeCount, PotentiallyUnsafeCount,
-                   UnknownCount, EverMalicious, LastVerdict, EffectiveVerdict,
-                   LastScore, LastDecisionStage, LastScanRef, LastClassification
-            FROM dbo.Sites WHERE UrlHash = %s
+            SELECT sites.*, fresh.RawResponseJson
+            FROM dbo.Sites AS sites
+            OUTER APPLY (
+                SELECT TOP 1 scans.RawResponseJson
+                FROM dbo.Scans AS scans
+                WHERE scans.SiteId = sites.SiteId AND scans.ServedFromHistory = 0
+                ORDER BY scans.ScannedAt DESC, scans.ScanRef DESC
+            ) AS fresh
+            WHERE sites.UrlHash = %s
             """,
             (url_hash(normalized_url),),
         )
@@ -156,6 +160,10 @@ def record(result: AnalyzeResponse, *, client: str = "web", host: str = "",
            duration_ms: Optional[int] = None, is_rescan: bool = False,
            served_from_history: bool = False) -> None:
     """Append the scan to the log and roll the site's counters forward."""
+    # A cache read is not a new observation. Never overwrite the last actual
+    # score, timestamp, classification or counters with a reduced cached response.
+    if served_from_history or result.served_from_history:
+        return
     verdict = verdict_for(result)
     page = result.page
     heuristic = result.heuristic

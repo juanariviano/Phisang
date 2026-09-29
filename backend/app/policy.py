@@ -86,18 +86,35 @@ def _prior_from_row(row: dict) -> PriorScan:
 def _from_history(scan_id: str, normalized: str, row: dict, prior: PriorScan) -> AnalyzeResponse:
     """Answer from the archive: no URLhaus token spent, no page fetched."""
     verdict = row["EffectiveVerdict"]
-    classification = row["LastClassification"] or (
-        "phishing" if verdict == "malicious" else "benign")
-    if verdict in {"potentially_unsafe", "unknown"}:
-        classification = "unavailable" if verdict == "unknown" else classification
+    saved = None
+    if row.get("RawResponseJson"):
+        try:
+            saved = AnalyzeResponse.model_validate_json(row["RawResponseJson"])
+        except ValueError:
+            logger.warning("Invalid archived response; using stored verdict for %s", scan_id)
+    if saved is not None:
+        # Recover the last actual verdict even if older cache reads corrupted
+        # the Sites summary. Preserve the database's historical warning rule.
+        verdict = history.verdict_for(saved)
+        if verdict == "safe" and row.get("EverMalicious"):
+            verdict = "potentially_unsafe"
+    classification = (saved.classification if saved else
+                      "malware" if verdict == "malicious" and row.get("LastClassification") == "malware" else
+                      "phishing" if verdict == "malicious" else
+                      "benign" if verdict == "safe" else "unavailable")
+    score = saved.risk_score if saved else row.get("LastScore")
     return _base(
         scan_id=scan_id,
         normalized_url=normalized,
         classification=classification,
-        confidence=int(round((row["LastScore"] or 0) * 100)) if row["LastScore"] is not None else 0,
+        confidence=saved.confidence if saved else 0,
+        risk_score=score,
+        page_result=saved.page if saved else None,
+        heuristic=saved.heuristic if saved else None,
+        error_code=saved.error_code if saved else None,
         decision_stage="history",
-        threat_intel=ThreatIntel(matched=False, source="PhisangDB", feed_status="skipped"),
-        signals=[prior.message,
+        threat_intel=saved.threat_intel if saved else ThreatIntel(matched=False, source="PhisangDB", feed_status="skipped"),
+        signals=(list(saved.signals) if saved else []) + [prior.message,
                  "Served from the scan archive; no URLhaus token spent and no page fetched",
                  "Send rescan=true to run the full pipeline again"],
         prior=prior,
@@ -192,11 +209,8 @@ async def analyze(raw_url: str, client: str, rescan: bool = False) -> AnalyzeRes
     prior_row = history.lookup(normalized)
     prior = _prior_from_row(prior_row) if prior_row else None
     if prior_row is not None and not rescan:
-        result = _from_history(scan_id, normalized, prior_row, prior)
-        history.record(result, client=client, host=hostname_of(normalized),
-                       duration_ms=int((time.monotonic() - started) * 1000),
-                       is_rescan=False, served_from_history=True)
-        return result
+        # Returning an existing result is not another scan: no database write.
+        return _from_history(scan_id, normalized, prior_row, prior)
 
     result = await _analyze_fresh(scan_id, normalized)
     # One place records every fresh scan, so no return path can quietly skip it.

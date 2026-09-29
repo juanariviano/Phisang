@@ -94,6 +94,16 @@ export function ResultPanel({ busy, result, url }) {
           ) : (
             <>
               <Verdict cls={cls} meta={meta} />
+              {result.served_from_history && (
+                <p className="mt-4 text-sm on-rot text-forest">
+                  Saved result ? this request did not fetch the page again.
+                  {result.prior?.last_scanned_at && ` Last scan: ${result.prior.last_scanned_at}.`}
+                </p>
+              )}
+              {result.verdict === "potentially_unsafe" && (
+                <p className="mt-4 font-semibold text-rot">Potentially unsafe ? review the scan history before proceeding.</p>
+              )}
+
 
               {blocked && (
                 <p
@@ -104,7 +114,7 @@ export function ResultPanel({ busy, result, url }) {
                   Do not open this address in a normal tab.
                 </p>
               )}
-              {cls === "benign" && result.decision_stage !== "page" && (
+              {cls === "benign" && result.decision_stage !== "page" && !result.served_from_history && (
                 <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
                   Not listed is not safe. Phisang did not visit this page — the placeholder model
                   only inspected the address string.
@@ -143,7 +153,7 @@ export function ResultPanel({ busy, result, url }) {
                 />
                 <Metric label="Decision stage" value={result.decision_stage} />
                 <Metric label="Scan ID" value={result.scan_id} />
-                <Metric label="URLhaus" value={intel.matched ? "Match" : "No match"} />
+                <Metric label="URLhaus" value={intel.feed_status === "skipped" ? "Not checked" : intel.matched ? "Match" : "No match"} />
                 <Metric label="Threat" value={intel.threat_type || intel.feed_status || "—"} />
                 <Metric
                   label="Heuristic"

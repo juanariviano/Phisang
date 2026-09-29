@@ -1,4 +1,4 @@
-const { VERDICTS, renderBanana, renderPeel, escapeHtml } = self.Phisang;
+const { VERDICTS, verdictMeta, renderBanana, renderPeel, escapeHtml } = self.Phisang;
 
 const el = {
   badge: document.getElementById("badge"),
@@ -31,7 +31,7 @@ function render(payload) {
 
   const result = payload.result;
   const cls = VERDICTS[result.classification] ? result.classification : "unavailable";
-  const meta = VERDICTS[cls];
+  const meta = verdictMeta(result, cls);
   renderBanana(el.banana, cls, 92);
 
   document.body.className = "is-" + cls;
@@ -41,8 +41,8 @@ function render(payload) {
   el.ripeness.textContent = meta.ripeness;
   el.hint.textContent = meta.hint;
 
-  if (result.risk_level) {
-    el.risk.textContent = `Risk: ${result.risk_level} (${result.risk_score.toFixed(2)})`;
+  if (meta.score != null) {
+    el.risk.textContent = `Risk score ${meta.score.toFixed(2)} of 1`;
     el.risk.classList.remove("hidden");
   }
 

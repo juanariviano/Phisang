@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CLASS_META } from "../lib/copy.js";
+import { verdictMeta } from "../lib/copy.js";
 
 export function InventoryRail({ scans, onRefresh }) {
   return (
@@ -27,7 +27,7 @@ export function InventoryRail({ scans, onRefresh }) {
       ) : (
         <ul className="mt-5">
           {scans.map((scan, index) => {
-            const meta = CLASS_META[scan.classification] || CLASS_META.unavailable;
+            const meta = verdictMeta(scan, scan.classification);
             return (
               <motion.li
                 key={scan.scan_id}

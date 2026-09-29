@@ -20,11 +20,11 @@ chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
     "font:600 13px/1.45 'Public Sans',Segoe UI,system-ui,sans-serif",
     "padding:11px 16px",
     "border-bottom:2.5px solid #16210F",
-    // The unread state carries a hatch everywhere else in Phisang; carry it
+    // The risk-unknown state carries a hatch everywhere else in Phisang; carry it
     // here too, so the banner is not signalling with colour alone.
     "background-image:repeating-linear-gradient(45deg,rgba(70,114,53,.3) 0 1.5px,transparent 1.5px 8px)",
   ].join(";");
   banner.textContent =
-    "Phisang: Unread — the threat feed or model was unreachable. This is a degraded result, not a clean one.";
+    "Phisang: Risk unknown — the threat feed or model was unreachable. This is a degraded result, not a clean one.";
   document.documentElement.prepend(banner);
 });

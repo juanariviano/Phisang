@@ -91,7 +91,7 @@ function isTrusted(host) {
   return TRUSTED_ROOTS.has(rootHost(host));
 }
 
-function setBadge(tabId, classification) {
+function setBadge(tabId, classification, riskLevel) {
   // Palette-native badges. The toolbar icon is 16px, so the word carries the
   // state and the colour only reinforces it.
   const map = {
@@ -101,7 +101,11 @@ function setBadge(tabId, classification) {
     unavailable: { text: "?", color: "#8AA37E" },
     checking: { text: "..", color: "#6FA355" },
   };
-  const spec = map[classification] || { text: "", color: "#467235" };
+  let spec = map[classification] || { text: "", color: "#467235" };
+  // Allowed through, but scored risky enough that "OK" would be misleading.
+  if (classification === "benign" && riskLevel && riskLevel !== "SAFE") {
+    spec = { text: "!", color: "#E0A526" };
+  }
   chrome.action.setBadgeText({ tabId, text: spec.text });
   chrome.action.setBadgeBackgroundColor({ tabId, color: spec.color });
 }
@@ -131,7 +135,7 @@ async function analyzeQuietly(tabId, url) {
     const result = await res.json();
     if (!res.ok) return;
     await remember(tabId, url, result);
-    setBadge(tabId, result.classification);
+    setBadge(tabId, result.classification, result.risk_level);
     if (result.classification === "malware" || result.classification === "phishing") {
       skipOnce.set(tabId, blockedUrl());
       await chrome.tabs.update(tabId, { url: blockedUrl() });
@@ -187,7 +191,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const result = message.result;
       const url = message.url;
       await remember(tabId, url, result);
-      setBadge(tabId, result.classification);
+      setBadge(tabId, result.classification, result.risk_level);
 
       if (result.classification === "malware" || result.classification === "phishing") {
         skipOnce.set(tabId, blockedUrl());

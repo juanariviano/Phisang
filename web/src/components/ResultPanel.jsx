@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { CLASS_META } from "../lib/copy.js";
+import { CLASS_META, verdictMeta } from "../lib/copy.js";
 import { Banana } from "./Banana.jsx";
 import { PeelStrips } from "./PeelStrips.jsx";
 
@@ -24,6 +24,13 @@ function Verdict({ cls, meta }) {
           >
             {meta.ripeness}
           </span>
+          {meta.score != null && (
+            <span
+              className={`font-mono text-xs font-semibold ${meta.rots ? "text-flesh" : "text-ink"}`}
+            >
+              risk {meta.score.toFixed(2)}
+            </span>
+          )}
         </div>
         <p
           className={`mt-2 max-w-[34ch] text-sm leading-relaxed ${
@@ -67,7 +74,7 @@ export function ResultPanel({ busy, result, url }) {
   if (!busy && !result) return null;
 
   const cls = busy && !result ? "checking" : result?.classification || "unavailable";
-  const meta = CLASS_META[cls] || CLASS_META.unavailable;
+  const meta = busy && !result ? CLASS_META.checking : verdictMeta(result, cls);
   const intel = result?.threat_intel || {};
   const heuristic = result?.heuristic || {};
   const blocked = cls === "malware" || cls === "phishing";
@@ -106,14 +113,14 @@ export function ResultPanel({ busy, result, url }) {
               )}
               {cls === "benign" && result.decision_stage !== "page" && (
                 <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
-                  Not listed is not safe. Phisang did not visit this page — the placeholder model
-                  only inspected the address string.
+                  A low risk score is not a guarantee. Phisang did not visit this page — it cleared
+                  a well-known host on the address string alone.
                 </p>
               )}
               {cls === "benign" && result.decision_stage === "page" && (
                 <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
-                  Not listed is not safe. Phisang opened this page on its own server and the markup
-                  classifier found nothing — a demo-grade model that misreads ordinary login pages.
+                  A low risk score is not a guarantee. Phisang opened this page on its own server
+                  and scored its markup with a demo-grade model that can misread ordinary pages.
                 </p>
               )}
               {cls === "unavailable" && (
@@ -134,12 +141,8 @@ export function ResultPanel({ busy, result, url }) {
                 <Metric label="Classification" value={cls} />
                 <Metric label="Confidence" value={`${result.confidence}%`} />
                 <Metric
-                  label="Risk level"
-                  value={
-                    result.risk_level
-                      ? `${result.risk_level} · ${result.risk_score.toFixed(2)}`
-                      : "—"
-                  }
+                  label="Risk score"
+                  value={result.risk_score != null ? result.risk_score.toFixed(2) : "—"}
                 />
                 <Metric label="Decision stage" value={result.decision_stage} />
                 <Metric label="Scan ID" value={result.scan_id} />

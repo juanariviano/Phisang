@@ -30,16 +30,15 @@
       rots: false,
     },
     benign: {
-      verdict: "Not listed",
+      verdict: "Safe",
       ripeness: "Ripe",
-      hint: "No URLhaus match and no strong lexical risk.",
+      hint: "Nothing suspicious was found.",
       badge: "Checked",
-      caveat:
-        "Not listed is not safe. It only means Phisang found no URLhaus match and no strong lexical risk — the page itself was never opened.",
+      caveat: "A low risk score is not a guarantee of safety.",
       rots: false,
     },
     unavailable: {
-      verdict: "Unread",
+      verdict: "Risk unknown",
       ripeness: "Unpeeled",
       hint: "A required check failed, so Phisang will not call this address clean.",
       badge: "Degraded",
@@ -56,5 +55,31 @@
     },
   };
 
-  self.Phisang = Object.assign(self.Phisang || {}, { VERDICTS });
+  // The risk level the API attaches to every scored result. It replaces the
+  // classification word in the headline; the classification still drives the
+  // banana and whether navigation is blocked.
+  const RISK_HINTS = {
+    SAFE: "Nothing suspicious was found.",
+    "POTENTIALLY UNSAFE": "Mixed signals. Be careful before entering any details.",
+    MALICIOUS:
+      "Scored as malicious, but nothing else backed the score up, so it was not blocked. Do not enter any details.",
+    "High Risk":
+      "Scored as high risk, but nothing else backed the score up, so it was not blocked. Do not enter any details.",
+  };
+
+  /** Headline for a result: the risk level when there is one, else the classification word. */
+  function verdictMeta(result, cls) {
+    const base = VERDICTS[cls] || VERDICTS.unavailable;
+    const level = result && result.risk_level;
+    if (!RISK_HINTS[level]) return base;
+    const blocked = cls === "malware" || cls === "phishing";
+    return Object.assign({}, base, {
+      verdict: level,
+      score: result.risk_score,
+      // A blocked result keeps its specific reason; the risk hint covers the rest.
+      hint: blocked ? base.hint : RISK_HINTS[level],
+    });
+  }
+
+  self.Phisang = Object.assign(self.Phisang || {}, { VERDICTS, verdictMeta });
 })();

@@ -1,4 +1,4 @@
-const { VERDICTS, renderBanana, renderPeel, escapeHtml } = self.Phisang;
+const { verdictMeta, renderBanana, renderPeel, escapeHtml } = self.Phisang;
 
 const TITLES = {
   malware: "This address serves malware",
@@ -20,7 +20,7 @@ chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
   const result = (payload && payload.result) || {};
   const url = (payload && payload.url) || result.normalized_url || "";
   const cls = result.classification === "phishing" ? "phishing" : "malware";
-  const meta = VERDICTS[cls];
+  const meta = verdictMeta(result, cls);
   renderBanana(document.getElementById("banana"), cls, 120);
 
   document.body.classList.remove("is-malware");
@@ -54,10 +54,7 @@ chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
     ["Classification", cls],
     ["Decision stage", result.decision_stage || "—"],
     ["Confidence", result.confidence != null ? result.confidence + "%" : "—"],
-    [
-      "Risk level",
-      result.risk_level ? result.risk_level + " (" + result.risk_score.toFixed(2) + ")" : "—",
-    ],
+    ["Risk score", result.risk_score != null ? result.risk_score.toFixed(2) : "—"],
     ["Scan ID", result.scan_id || "—"],
     ["URLhaus match", intel.matched ? (intel.match_kind || "yes") + " " + (intel.id || "") : "no"],
     ["Threat type", intel.threat_type || "—"],

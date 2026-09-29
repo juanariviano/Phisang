@@ -35,15 +35,15 @@ export const CLASS_META = {
     rots: false,
   },
   benign: {
-    verdict: "Not listed",
+    verdict: "Safe",
     ripeness: "Ripe",
-    hint: "No URLhaus match and no strong lexical risk. Not listed is not the same as safe.",
+    hint: "Nothing suspicious was found. That is not a guarantee of safety.",
     tone: "text-forest",
     dot: "bg-peel",
     rots: false,
   },
   unavailable: {
-    verdict: "Unread",
+    verdict: "Risk unknown",
     ripeness: "Unpeeled",
     hint: "A required check failed, so Phisang will not call this address clean.",
     tone: "text-leaf",
@@ -59,3 +59,48 @@ export const CLASS_META = {
     rots: false,
   },
 };
+
+/**
+ * The risk level the API attaches to every scored result. It replaces the
+ * classification word in the headline; the classification still drives the
+ * banana and whether navigation is blocked.
+ */
+export const RISK_META = {
+  SAFE: {
+    tone: "text-forest",
+    dot: "bg-peel",
+    hint: "Nothing suspicious was found. That is not a guarantee of safety.",
+  },
+  "POTENTIALLY UNSAFE": {
+    tone: "text-leaf",
+    dot: "pat-hatch",
+    hint: "Mixed signals. Be careful before entering any details.",
+  },
+  MALICIOUS: {
+    tone: "text-rot",
+    dot: "pat-speckle",
+    hint: "Scored as malicious, but nothing else backed the score up, so it was not blocked. Do not enter any details.",
+  },
+  "High Risk": {
+    tone: "text-bruise",
+    dot: "bg-bruise",
+    hint: "Scored as high risk, but nothing else backed the score up, so it was not blocked. Do not enter any details.",
+  },
+};
+
+/** Headline for a result: the risk level when there is one, else the classification word. */
+export function verdictMeta(result, cls) {
+  const base = CLASS_META[cls] || CLASS_META.unavailable;
+  const risk = result && RISK_META[result.risk_level];
+  if (!risk) return base;
+  const blocked = cls === "malware" || cls === "phishing";
+  return {
+    ...base,
+    verdict: result.risk_level,
+    score: result.risk_score,
+    tone: risk.tone,
+    dot: risk.dot,
+    // A blocked result keeps its specific reason; the risk hint covers the rest.
+    hint: blocked ? base.hint : risk.hint,
+  };
+}

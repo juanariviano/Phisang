@@ -1,7 +1,7 @@
 import { EXAMPLES } from "../lib/copy.js";
 import { MagneticButton } from "./MagneticButton.jsx";
 
-export function ScanForm({ url, setUrl, busy, error, onSubmit }) {
+export function ScanForm({ url, setUrl, busy, error, onSubmit, isRescan = false }) {
   return (
     <form onSubmit={onSubmit} className="mt-9 flex flex-col gap-2.5" autoComplete="off">
       <label htmlFor="url-input" className="text-sm font-bold text-forest">
@@ -20,7 +20,7 @@ export function ScanForm({ url, setUrl, busy, error, onSubmit }) {
           className="w-full rounded-lg border-[2.5px] border-ink bg-paper px-4 py-3.5 font-mono text-sm text-ink outline-none transition-colors placeholder:text-leaf/70 focus:bg-flesh/45"
         />
         <MagneticButton disabled={busy} className="w-full sm:w-auto">
-          {busy ? "Peeling" : "Peel URL"}
+          {busy ? (isRescan ? "Rescanning" : "Peeling") : (isRescan ? "Rescan" : "Peel URL")}
         </MagneticButton>
       </div>
       {error ? (

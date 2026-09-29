@@ -101,3 +101,21 @@ def test_classify_ip_reasons():
     assert "loopback" in classify_ip("127.0.0.1")
     assert "non-routable" in classify_ip("100.100.100.200")
     assert classify_ip("not-an-ip") == "unparseable IP address"
+
+
+@pytest.mark.parametrize("ip", ["2606:4700:10::6814:179a", "2606:4700:4700::1111"])
+def test_bracketed_public_ipv6_peer_accepted(ip):
+    assert classify_ip(f"[{ip}]") == classify_ip(ip) == ""
+
+
+@pytest.mark.parametrize("ip", ["::1", "::", "fc00::1", "fe80::1", "ff02::1",
+                                "::ffff:127.0.0.1", "::ffff:10.0.0.1", "2001:db8::1"])
+def test_bracketed_nonpublic_ipv6_stays_blocked(ip):
+    assert classify_ip(f"[{ip}]") == classify_ip(ip)
+    assert classify_ip(f"[{ip}]") != ""
+
+
+@pytest.mark.parametrize("raw", ["[::1", "::1]", "[[::1]]", "[::1]:443", "[]",
+                                 "[8.8.8.8]", "[not-an-ip]"])
+def test_malformed_peer_address_rejected(raw):
+    assert classify_ip(raw) == "unparseable IP address"

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InventoryRail } from "./components/InventoryRail.jsx";
 import { Banana } from "./components/Banana.jsx";
 import { Pipeline } from "./components/Pipeline.jsx";
@@ -8,6 +8,13 @@ import { ScanForm } from "./components/ScanForm.jsx";
 
 export default function App() {
   const [url, setUrl] = useState("");
+  const [rescanTarget, setRescanTarget] = useState(null);
+  const editVersion = useRef(0);
+  function changeUrl(value) {
+    editVersion.current += 1;
+    setUrl(value);
+    setRescanTarget(null);
+  }
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
@@ -29,8 +36,12 @@ export default function App() {
 
   async function onSubmit(event) {
     event.preventDefault();
-    const value = url.trim();
-    if (!value) return;
+    await runScan(rescanTarget || url.trim(), Boolean(rescanTarget));
+  }
+
+  async function runScan(value, rescan = false) {
+    if (!value || busy) return;
+    const submittedVersion = editVersion.current;
     setBusy(true);
     setError("");
     setResult(null);
@@ -38,7 +49,7 @@ export default function App() {
       const res = await fetch("/api/v1/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: value, client: "web" }),
+        body: JSON.stringify({ url: value, client: "web", rescan }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -47,6 +58,9 @@ export default function App() {
         return;
       }
       setResult(data);
+      if (editVersion.current === submittedVersion) {
+        setRescanTarget(data.normalized_url || value);
+      }
       loadInventory();
     } catch {
       setError("Backend unreachable. Start the API on port 8000.");
@@ -83,7 +97,7 @@ export default function App() {
               locked-down browser, never in your tab.
             </p>
 
-            <ScanForm url={url} setUrl={setUrl} busy={busy} error={error} onSubmit={onSubmit} />
+            <ScanForm url={url} setUrl={changeUrl} isRescan={Boolean(rescanTarget)} busy={busy} error={error} onSubmit={onSubmit} />
 
             <p className="mt-10 max-w-[54ch] text-xs leading-relaxed text-leaf">
               Do not open the malware sample in a normal tab. Threat matches are attributed to{" "}

@@ -1,56 +1,149 @@
-# LinkGuard POC
+<div align="center">
 
-Chrome extension + web scanner + API that classifies URLs as **malware**, **phishing**, or **benign**. This is a 3-day proof of concept: no model training, and the destination page is never fetched.
+<img src="extension/icons/icon128.png" alt="Phisang logo" width="96" height="96">
 
-Detection follows the product flowchart, minus HTML crawling:
+# Phisang
 
-1. Normalize the URL (no DNS, no visit).
-2. Look it up in [URLhaus](https://urlhaus.abuse.ch/). An **exact URL** match (or the same path on that host, or any listing on a malware IP) blocks immediately. A few unrelated URLhaus rows on a large site such as `www.google.com` do **not** block every page on that host.
-3. Run a **placeholder lexical “ML”** (heuristics, not a trained model).
-4. If the URL does not look benign, or benign confidence is **≤ 80%**, send the URL string to **Gemini** for classification and educational reasoning.
-5. Show a block interstitial or allow navigation with an explicit **not listed ≠ safe** caveat.
+**Reads the peel before you bite.** A Chrome extension, web scanner and API that catches malware and phishing links before the page opens.
 
+![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React_19-scanner-61DAFB?logo=react&logoColor=black)
+![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white)
+![Model](https://img.shields.io/badge/page_model-laya__v2-8A2BE2)
+![Status](https://img.shields.io/badge/status-proof_of_concept-orange)
+
+[How it works](#-how-it-works) · [Risk levels](#-risk-levels) · [Quick start](#-quick-start) · [Try it](#-try-it) · [API](#-api) · [Layout](#-project-layout)
+
+</div>
+
+> [!WARNING]
+> Phisang is a proof of concept, not production protection. A `benign` result means nothing suspicious was found. It does **not** mean the site is safe.
+
+## 🍌 How it works
+
+Every URL passes through up to four gates. It stops at the first gate that can decide.
+
+```mermaid
+flowchart LR
+    A([URL from scanner<br/>or extension]) --> B[Normalize<br/>no DNS, no visit]
+    B -->|local or private target| X([Rejected])
+    B --> C{Listed on<br/>URLhaus?}
+    C -->|yes| M([malware<br/>High Risk])
+    C -->|no| D{URL looks clean<br/>and host is popular?}
+    D -->|yes| S([benign<br/>not fetched])
+    D -->|no| E[Fetch page in<br/>headless Chromium]
+    E -->|fetch fails| U([unavailable<br/>never benign])
+    E --> F[laya_v2 scores<br/>the markup]
+    F --> G{Corroborated?}
+    G -->|URL doubtful or<br/>password field| P([phishing])
+    G -->|model alone| W([benign<br/>+ warning])
+
+    classDef bad fill:#fde2e1,stroke:#c0392b,color:#7b241c
+    classDef good fill:#e3f4e1,stroke:#467235,color:#1e3d14
+    classDef meh fill:#fff4d6,stroke:#b7950b,color:#6e5a07
+    class M,P,X bad
+    class S good
+    class U,W meh
 ```
-Web scanner ─┐
-             ├─▶ FastAPI ─▶ normalize ─▶ URLhaus ─▶ heuristic ─▶ Gemini (if needed)
-Extension ───┘
+
+<details>
+<summary><b>What each gate does, in detail</b></summary>
+
+1. **Normalize** the URL and refuse local or private-network targets.
+2. **URLhaus lookup** ([abuse.ch](https://urlhaus.abuse.ch/)). An exact URL match (or the same path on that host, or any listing on a malware IP) blocks immediately as `malware`. A few unrelated rows on a large site such as `www.google.com` do **not** block every page on that host.
+3. **Lexical heuristic** on the URL string (hand-written rules, not a trained model). If it looks clearly benign (confidence above 80%) **and** the host is on the well-known list or the [Tranco](https://tranco-list.eu) top-domain ranking, the URL is cleared without being visited.
+4. **Page analysis** for everything else. The destination is fetched in a locked-down headless Chromium, and its cleaned markup is scored by **laya_v2** (ModernBERT-large, fine-tuned from [`convaiinnovations/laya`](https://huggingface.co/convaiinnovations/laya)).
+   - A benign-looking page does not clear a URL that itself looks like phishing. Phishing kits often serve a clean landing page first.
+   - The model alone does not block. A phishing call stands only when the URL is doubtful or the page asks for a password.
+   - A dead host, a non-2xx status or a timeout gives `unavailable`, so a taken-down phishing site is never reported clean.
+
+</details>
+
+### In the browser
+
+```mermaid
+sequenceDiagram
+    actor You
+    participant Ext as Extension
+    participant API as Phisang API
+    You->>Ext: click a link
+    Ext->>Ext: hold the tab on a "checking" page
+    Ext->>API: POST /api/v1/analyze
+    API-->>Ext: classification + risk level
+    alt malware or phishing
+        Ext->>You: block page, with Go back / Continue anyway
+    else benign or unavailable
+        Ext->>You: open the page (degraded results show a banner)
+    end
 ```
 
-## Requirements
+## 🚦 Risk levels
 
-- Python 3.10+ (3.14 is fine)
-- Google Chrome
-- `URLHAUS_AUTH_KEY` from [auth.abuse.ch](https://auth.abuse.ch/)
-- `GEMINI_API_KEY` from [Google AI Studio](https://aistudio.google.com/apikey) (needed for phishing / low-confidence paths)
+Every result carries a `risk_score` from 0 to 1 and a `risk_level`. Each band includes its lower bound.
 
-## Setup
+| | `risk_score` | `risk_level` | Typical cause |
+|:-:|---|---|---|
+| 🟢 | 0 – below 0.4 | `SAFE` | Popular host with a clean URL, or a page the model finds unremarkable |
+| 🟡 | 0.4 – below 0.6 | `POTENTIALLY UNSAFE` | Mixed signals: be careful before entering anything |
+| 🟠 | 0.6 – below 0.8 | `MALICIOUS` | The model or the URL shape points to phishing |
+| 🔴 | 0.8 – 1.0 | `High Risk` | URLhaus listing, or a strong phishing reading |
+
+<details>
+<summary><b>Where the score comes from</b></summary>
+
+| Decided at | `risk_score` |
+|---|---|
+| URLhaus match | always 1.0 |
+| Heuristic (popular host cleared) | heuristic risk (0–100) ÷ 100 |
+| Page analysis | laya_v2's phishing score. A page scoring 0.6 or more is labelled `phishing`. |
+| URL alone forces a block | raised to at least 0.6 |
+| `unavailable` | `null` |
+
+> [!NOTE]
+> Because the model alone does not block, a page can come back `benign` with a `High Risk` level. That means the model is worried, but nothing else backed it up. The result lists a warning explaining this.
+
+</details>
+
+## 🚀 Quick start
+
+**You need:** Python 3.10+ (3.14 works), Node.js, Google Chrome, a free [`URLHAUS_AUTH_KEY`](https://auth.abuse.ch/), and the laya_v2 model folder ([how to get it](#the-page-model)).
+
+**1. Configure**
 
 ```bash
-cp .env.example .env
-# fill URLHAUS_AUTH_KEY and GEMINI_API_KEY
+cp .env.example .env    # then fill in URLHAUS_AUTH_KEY
+```
 
+**2. Backend**
+
+```bash
 cd backend
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+python -m playwright install chromium
+```
 
+**3. Scanner UI**
+
+```bash
 cd ../web
 npm install
 npm run build
+```
 
+**4. Run**
+
+```bash
 cd ../backend
 uvicorn app.main:app --reload --port 8000
 ```
 
-Scanner: [http://localhost:8000](http://localhost:8000)
+Open **http://localhost:8000**. For UI work, `cd web && npm run dev` runs Vite with `/api` proxied to port 8000.
 
-During UI work you can also run the scanner with Vite (proxies `/api` to port 8000):
-
-```bash
-cd web && npm run dev
-```
-
-### Load the extension
+<details>
+<summary><b>🧩 Load the Chrome extension</b></summary>
 
 1. Open `chrome://extensions`
 2. Enable **Developer mode**
@@ -59,43 +152,162 @@ cd web && npm run dev
 5. Leave **Protect navigations** on in the toolbar popup while demoing; turn it off when you need to browse normally
 6. After UI changes, reload the unpacked extension
 
-The extension intercepts `http(s)` navigations (except the scanner itself), shows a checking page, then either continues or replaces the tab with a blocked interstitial.
+The extension intercepts `http(s)` navigations (except the scanner itself). The popup and the block page both show the risk level.
 
-## Demo URLs
+</details>
 
-Use these in the **scanner**. Do **not** open the malware sample in a normal tab without the extension; the point of LinkGuard is to stop that navigation.
+<details id="the-page-model">
+<summary><b>🧠 The page model (laya_v2)</b></summary>
 
-| Case | URL | Expected path |
+`ai/markuplm/artifacts/` is gitignored, so a fresh clone has no model. laya_v2 is produced by [`finetune_laya_phishing_kaggle.ipynb`](ai/markuplm/finetune_laya_phishing_kaggle.ipynb) on a Kaggle GPU. Download its output folder and place it at:
+
+```
+ai/markuplm/artifacts/laya_v2/
+├── model.safetensors      (~1.7 GB)
+├── metadata.json
+├── rl_agent_config.json
+├── encoder/
+└── tokenizer/
+```
+
+- The model runs on CPU. Allow a few GB of RAM.
+- The backend picks the loader from the folder's contents, so an older MarkupLM artifact still works if you point `PAGE_MODEL_DIR` at it.
+- Without a model the API still starts, but every URL that reaches page analysis comes back `unavailable`. `GET /api/v1/health` reports `page_stage_ready`.
+
+> [!CAUTION]
+> laya_v2 is demo-grade: 63.5% accuracy on its own held-out test split, catching only 28% of phishing pages at its tuned threshold. Treat its score as advisory.
+
+</details>
+
+<details>
+<summary><b>📈 Popular-domain list (optional)</b></summary>
+
+```bash
+cd backend
+python scripts/update_tranco.py --top 100000
+```
+
+This downloads the Tranco ranking into `backend/data/tranco_top.txt`. Restart the API afterwards. Without the file, only the built-in well-known list in [`backend/app/reputation.py`](backend/app/reputation.py) skips the page fetch.
+
+</details>
+
+<details>
+<summary><b>⚙️ All settings</b></summary>
+
+Set these in `.env` at the repository root. Every one except the URLhaus key is optional.
+
+| Variable | Default | What it does |
 |---|---|---|
-| Benign Google search | `https://www.google.com/search?q=youtube` | Not listed (unrelated google.com URLhaus rows are ignored) |
-| Known malware | `http://77.73.133.113/lego/mine.exe` | URLhaus match → `malware`, no Gemini |
-| Phishing-looking, unlisted | `https://secure-login-paypal-verify.account-update.xyz/signin?session=unlock` | Heuristic escalate → Gemini `phishing` + reasoning |
-| Degraded | Omit `GEMINI_API_KEY` and retry the phishing URL | `unavailable` — not treated as benign |
+| `URLHAUS_AUTH_KEY` | *(required)* | URLhaus API key |
+| `URLHAUS_TIMEOUT_SECONDS` | `8.0` | URLhaus request timeout |
+| `CACHE_TTL_SECONDS` | `900` | How long verdicts are cached |
+| `HEURISTIC_BENIGN_THRESHOLD` | `80` | Heuristic confidence needed to skip the page fetch |
+| `PAGE_STAGE_ENABLED` | `true` | Turn page analysis off entirely |
+| `PAGE_MODEL_DIR` | `<repo>/ai/markuplm/artifacts/laya_v2` | Absolute path to the model folder |
+| `PAGE_FETCH_CONCURRENCY` | `2` | Pages fetched at once |
+| `PAGE_FETCH_TIMEOUT_SECONDS` | `20.0` | Navigation timeout |
+| `PAGE_FETCH_BUDGET_SECONDS` | `45.0` | Total time allowed per fetch |
+| `PAGE_FETCH_PROXY` | *(none)* | Proxy for page fetches, e.g. `http://127.0.0.1:8080` |
 
-## API
+</details>
 
-`POST /api/v1/analyze`
+## 🧪 Try it
+
+Paste these into the **scanner**. Each code block has a copy button.
+
+> [!IMPORTANT]
+> Do **not** open the malware sample in a normal tab without the extension. Stopping that navigation is the whole point.
+
+**🟢 Popular site:** cleared at `heuristic` and never fetched. Expect `benign`, `SAFE`.
+
+```text
+https://www.google.com/search?q=youtube
+```
+
+**🔴 Known malware:** a URLhaus match. Expect `malware`, `High Risk`.
+
+```text
+http://77.73.133.113/lego/mine.exe
+```
+
+**🟠 Typosquat:** fetched, and the URL's own phishing shape outweighs a clean-looking page. Expect `phishing`.
+
+```text
+https://crocs-com.ru/
+```
+
+**⚪ Dead phishing-looking host:** the page can't be fetched. Expect `unavailable`, not benign.
+
+```text
+https://secure-login-paypal-verify.account-update.xyz/signin
+```
+
+Live results depend on the URLhaus feed and on what the sites serve at the time.
+
+## 🔌 API
+
+```bash
+curl -X POST http://localhost:8000/api/v1/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.wikipedia.org", "client": "web"}'
+```
+
+<details>
+<summary><b>Example response</b></summary>
 
 ```json
-{ "url": "https://www.wikipedia.org", "client": "web" }
+{
+  "classification": "benign",
+  "confidence": 96,
+  "risk_score": 0.03,
+  "risk_level": "SAFE",
+  "decision_stage": "heuristic",
+  "threat_intel": { "matched": false, "source": "URLhaus" },
+  "page": { "status": "skipped" },
+  "signals": ["..."],
+  "policy_version": "poc-flowchart-v2.3"
+}
 ```
 
-Also: `GET /api/v1/health`, `GET /api/v1/meta`, `GET /api/v1/scans`.
+</details>
 
-Classifications: `malware` | `phishing` | `benign` | `unavailable`.  
-Decision stages: `urlhaus` | `heuristic` | `llm` | `error`.
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/v1/analyze` | Classify a URL |
+| `GET /api/v1/health` | Readiness of URLhaus, cache and page analysis |
+| `GET /api/v1/meta` | Policy version, page model name and accuracy, thresholds |
+| `GET /api/v1/scans` | Recent scans (`?limit=` up to 100) |
+| `GET /api/v1/scans/{scan_id}` | One scan by ID |
 
-## Privacy and licensing
+- **Classifications:** `malware` · `phishing` · `benign` · `unavailable`
+- **Decision stages:** `urlhaus` · `heuristic` · `page` · `error`
 
-- Keys live in `.env` only. Never put URLhaus or Gemini credentials in the extension.
+## ✅ Tests
+
+```bash
+cd backend
+python -m pytest tests -q
+```
+
+## 🔒 Privacy and licensing
+
+- Keys live in `.env` only. Never put the URLhaus key in the extension.
 - Query strings and credentials are stripped from backend logs.
+- Page analysis visits the destination from the server. Set `PAGE_FETCH_PROXY` if the server's IP should not be the one visiting suspect sites.
 - URLhaus data is provided by [abuse.ch](https://urlhaus.abuse.ch/). Follow their terms (attribution, non-resale / community use).
-- This prototype is load-unpacked only. It is not store-ready and is not production protection.
+- This prototype is load-unpacked only. It is not store-ready.
 
-## Project layout
+## 🗂️ Project layout
 
 ```
-backend/app/     FastAPI, URLhaus adapter, heuristics, Gemini, policy
-web/             Scanner UI (served by the API)
-extension/       Chrome Manifest V3 (checking, blocked, popup, banner)
+Phisang/
+├── backend/
+│   ├── app/            FastAPI: normalize, URLhaus, heuristics, page fetch + model, risk levels, policy
+│   ├── scripts/        update_tranco.py (popular-domain list)
+│   └── tests/          pytest suite
+├── web/                Scanner UI (React + Vite, served by the API from web/dist)
+├── extension/          Chrome Manifest V3 (checking, blocked, popup, banner)
+└── ai/
+    ├── markuplm/       Page-model training and smoke-test notebooks; artifacts/ holds the models
+    └── url_classifier/ Experimental URL-string classifier (not wired into the API)
 ```

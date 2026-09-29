@@ -310,9 +310,6 @@ async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
     signals = list(heuristic.signals)
     signals.append("URL checks were inconclusive, so the destination was fetched server-side")
     signals.append(f"Markup classifier read the fetched page as {page_result.label}")
-    if page_result.model_accuracy is not None:
-        signals.append(f"That classifier scores {page_result.model_accuracy:.0%} accuracy on its "
-                       "own test split — treat the verdict as advisory")
 
     classification = page_result.label or "unavailable"
     confidence = page_result.confidence or 0

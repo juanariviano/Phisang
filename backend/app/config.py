@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     urlhaus_auth_key: str = ""
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.0-flash"
-    urlhaus_timeout_seconds: float = 8.0
+    urlhaus_timeout_seconds: float = 15.0
     cache_ttl_seconds: int = 900
     heuristic_benign_threshold: int = 80
     api_host: str = "0.0.0.0"

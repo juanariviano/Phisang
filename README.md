@@ -203,7 +203,7 @@ Set these in `.env` at the repository root. Every one except the URLhaus key is 
 | Variable | Default | What it does |
 |---|---|---|
 | `URLHAUS_AUTH_KEY` | *(required)* | URLhaus API key |
-| `URLHAUS_TIMEOUT_SECONDS` | `8.0` | URLhaus request timeout |
+| `URLHAUS_TIMEOUT_SECONDS` | `15.0` | URLhaus request timeout (a timed-out request is retried once) |
 | `CACHE_TTL_SECONDS` | `900` | How long verdicts are cached |
 | `HEURISTIC_BENIGN_THRESHOLD` | `80` | Heuristic confidence needed to skip the page fetch |
 | `PAGE_STAGE_ENABLED` | `true` | Turn page analysis off entirely |

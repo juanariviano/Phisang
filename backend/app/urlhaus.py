@@ -118,14 +118,26 @@ def _intel_from_host(normalized_url: str, host: str, payload: dict[str, Any]) ->
     return ThreatIntel(matched=False, source="URLhaus", feed_status="ok")
 
 
+# The host endpoint occasionally takes 10+ seconds on a cold query and answers in
+# about one on the next, so a timeout gets one more try before the scan degrades.
+TIMEOUT_ATTEMPTS = 2
+
+
 async def _post(endpoint: str, data: dict[str, str]) -> dict[str, Any]:
     try:
         async with httpx.AsyncClient(timeout=settings.urlhaus_timeout_seconds) as client:
-            response = await client.post(endpoint, data=data, headers=_headers())
+            for attempt in range(1, TIMEOUT_ATTEMPTS + 1):
+                try:
+                    response = await client.post(endpoint, data=data, headers=_headers())
+                    break
+                except httpx.TimeoutException:
+                    if attempt == TIMEOUT_ATTEMPTS:
+                        raise
             response.raise_for_status()
             payload = response.json()
     except httpx.HTTPError as exc:
-        raise UrlhausError(f"URLhaus request failed: {exc}") from exc
+        # Timeouts carry an empty message, so the type is what says what happened.
+        raise UrlhausError(f"URLhaus request failed: {type(exc).__name__} {exc}".rstrip()) from exc
     except ValueError as exc:
         raise UrlhausError("URLhaus returned non-JSON") from exc
 

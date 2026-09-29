@@ -187,14 +187,7 @@ export function ResultPanel({ busy, result, url }) {
                     {result.page.final_url !== result.normalized_url && (
                       <Metric label="Redirected to" value={result.page.final_url || "—"} />
                     )}
-                    <Metric
-                      label="Markup model"
-                      value={`${result.page.model_name || "—"}${
-                        result.page.model_accuracy
-                          ? ` · ${Math.round(result.page.model_accuracy * 100)}% acc`
-                          : ""
-                      }`}
-                    />
+                    <Metric label="Markup model" value={result.page.model_name || "—"} />
                   </div>
                 </div>
               )}

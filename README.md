@@ -138,7 +138,11 @@ npm run build
 ```bash
 cd ../backend
 uvicorn app.main:app --reload --port 8000
+# Windows: add --loop asyncio:ProactorEventLoop
 ```
+
+> [!IMPORTANT]
+> On Windows, `--reload` makes uvicorn use an event loop that cannot start Chromium, so page analysis stays off and scans come back **Risk unknown**. Adding `--loop asyncio:ProactorEventLoop` fixes it. `GET /api/v1/health` shows `"page_stage_ready": true` when page analysis is working.
 
 Open **http://localhost:8000**. For UI work, `cd web && npm run dev` runs Vite with `/api` proxied to port 8000.
 
@@ -230,7 +234,7 @@ https://www.google.com/search?q=youtube
 http://77.73.133.113/lego/mine.exe
 ```
 
-**🟠 Typosquat:** fetched, and the URL's own phishing shape outweighs a clean-looking page. Expect `phishing`.
+**🟠 Typosquat:** the URL rules flag the fake `-com` label as suspicious, so the page is fetched. If laya_v2 scores it 0.6 or more it is blocked as `phishing`; a clean-looking page can still come back `benign`.
 
 ```text
 https://crocs-com.ru/

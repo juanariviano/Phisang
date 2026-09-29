@@ -83,6 +83,13 @@ def _prior_from_row(row: dict) -> PriorScan:
     )
 
 
+_HISTORY_LEVELS = {
+    history.SAFE: "SAFE",
+    history.POTENTIALLY_UNSAFE: "POTENTIALLY UNSAFE",
+    history.MALICIOUS: "MALICIOUS",
+}
+
+
 def _from_history(scan_id: str, normalized: str, row: dict, prior: PriorScan) -> AnalyzeResponse:
     """Answer from the archive: no URLhaus token spent, no page fetched."""
     verdict = row["EffectiveVerdict"]
@@ -90,12 +97,19 @@ def _from_history(scan_id: str, normalized: str, row: dict, prior: PriorScan) ->
         "phishing" if verdict == "malicious" else "benign")
     if verdict in {"potentially_unsafe", "unknown"}:
         classification = "unavailable" if verdict == "unknown" else classification
+    # The archive keeps only the page score. A malware match was a certainty; for
+    # anything else without a score, the level is read from the stored verdict.
+    score = row["LastScore"]
+    if score is None and classification == "malware":
+        score = 1.0
     return _base(
         scan_id=scan_id,
         normalized_url=normalized,
         classification=classification,
         confidence=int(round((row["LastScore"] or 0) * 100)) if row["LastScore"] is not None else 0,
         decision_stage="history",
+        risk_score=score,
+        level=None if score is not None else _HISTORY_LEVELS.get(verdict),
         threat_intel=ThreatIntel(matched=False, source="PhisangDB", feed_status="skipped"),
         signals=[prior.message,
                  "Served from the scan archive; no URLhaus token spent and no page fetched",
@@ -116,6 +130,7 @@ def _base(
     threat_intel: ThreatIntel,
     signals: list[str],
     risk_score: float | None = None,
+    level: str | None = None,
     heuristic=None,
     page_result=None,
     error_code: str | None = None,
@@ -129,7 +144,7 @@ def _base(
         classification=classification,  # type: ignore[arg-type]
         confidence=confidence,
         risk_score=None if risk_score is None else round(risk_score, 4),
-        risk_level=None if risk_score is None else risk_level(risk_score),
+        risk_level=level if risk_score is None else risk_level(risk_score),
         decision_stage=decision_stage,  # type: ignore[arg-type]
         threat_intel=threat_intel,
         heuristic=heuristic,
@@ -191,7 +206,9 @@ async def analyze(raw_url: str, client: str, rescan: bool = False) -> AnalyzeRes
     # caller has to ask for a rescan to get past it.
     prior_row = history.lookup(normalized)
     prior = _prior_from_row(prior_row) if prior_row else None
-    if prior_row is not None and not rescan:
+    # An "unknown" record is a failed check, not a verdict, so it is never replayed:
+    # the pipeline runs again and gets a chance to produce a real answer.
+    if prior_row is not None and not rescan and prior_row["EffectiveVerdict"] != history.UNKNOWN:
         result = _from_history(scan_id, normalized, prior_row, prior)
         history.record(result, client=client, host=hostname_of(normalized),
                        duration_ms=int((time.monotonic() - started) * 1000),

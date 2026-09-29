@@ -103,3 +103,36 @@ def test_popular_match_is_exact_host_only(monkeypatch, tmp_path):
         assert not reputation.is_popular_host("monkeytype.com.evil.ru")
     finally:
         reputation._popular_domains.cache_clear()
+
+
+def _history_row(verdict, classification, score, stage):
+    return {"SiteId": 1, "NormalizedUrl": "https://zkic.com/", "Host": "zkic.com",
+            "FirstScannedAt": None, "LastScannedAt": None, "ScanCount": 1,
+            "MaliciousCount": 0, "SafeCount": 0, "PotentiallyUnsafeCount": 0,
+            "UnknownCount": 1, "EverMalicious": False, "LastVerdict": verdict,
+            "EffectiveVerdict": verdict, "LastScore": score, "LastDecisionStage": stage,
+            "LastScanRef": "scan_old", "LastClassification": classification}
+
+
+def test_unknown_history_is_rescanned(stub_gates, monkeypatch):
+    make_classify, calls = stub_gates
+    make_classify("phishing", 91, password_inputs=1)
+    monkeypatch.setattr(policy.history, "lookup",
+                        lambda url: _history_row("unknown", "unavailable", None, "error"))
+    monkeypatch.setattr(policy.history, "record", lambda *a, **k: None)
+    result = asyncio.run(policy.analyze("https://zkic.com/", "web"))
+    assert calls == ["https://zkic.com/"]
+    assert result.decision_stage == "page"
+    assert result.risk_level == "High Risk"
+
+
+def test_history_replay_keeps_risk_level(stub_gates, monkeypatch):
+    make_classify, calls = stub_gates
+    make_classify("phishing", 91)
+    monkeypatch.setattr(policy.history, "lookup",
+                        lambda url: _history_row("safe", "benign", None, "heuristic"))
+    monkeypatch.setattr(policy.history, "record", lambda *a, **k: None)
+    result = asyncio.run(policy.analyze("https://zkic.com/", "web"))
+    assert calls == []
+    assert result.decision_stage == "history"
+    assert result.risk_level == "SAFE"

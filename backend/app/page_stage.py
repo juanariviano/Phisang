@@ -45,6 +45,14 @@ async def startup() -> None:
     )
     try:
         await fetcher.start()
+    except NotImplementedError:
+        # uvicorn --reload on Windows runs a selector loop, which cannot start the
+        # Chromium subprocess; the proactor loop can.
+        logger.warning("page stage browser unavailable: this event loop cannot start "
+                       "subprocesses. On Windows, run uvicorn with "
+                       "--loop asyncio:ProactorEventLoop")
+        _classifier = None
+        return
     except Exception as exc:
         logger.warning("page stage browser unavailable: %s", exc)
         _classifier = None

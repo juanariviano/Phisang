@@ -1,39 +1,9 @@
 importScripts('stream.js', 'api.js', 'verdicts.js');
-const { analyzeUrl, savedExplanation, verdictMeta } = self.Phisang;
-const continueAnywayHosts = new Set();
+const { analyzeUrl, savedExplanation, verdictMeta, isHighRisk } = self.Phisang;
 const skipOnce = new Map();
 const lastByTab = new Map();
 const lastSafeUrl = new Map();
 let protectionEnabled = true;
-
-const TRUSTED_ROOTS = new Set([
-  "google.com",
-  "youtube.com",
-  "youtu.be",
-  "gstatic.com",
-  "googleusercontent.com",
-  "googlevideo.com",
-  "wikipedia.org",
-  "github.com",
-  "microsoft.com",
-  "live.com",
-  "office.com",
-  "apple.com",
-  "icloud.com",
-  "cloudflare.com",
-  "amazon.com",
-  "facebook.com",
-  "instagram.com",
-  "whatsapp.com",
-  "twitter.com",
-  "x.com",
-  "linkedin.com",
-  "reddit.com",
-  "bing.com",
-  "duckduckgo.com",
-  "yahoo.com",
-  "mozilla.org",
-]);
 
 chrome.storage.local.get({ protectionEnabled: true }, (stored) => {
   protectionEnabled = stored.protectionEnabled !== false;
@@ -43,22 +13,6 @@ chrome.storage.onChanged.addListener((changes, area) => {
     protectionEnabled = changes.protectionEnabled.newValue !== false;
   }
 });
-
-function rootHost(host) {
-  if (!host) return "";
-  if (/^(\d{1,3}\.){3}\d{1,3}$/.test(host) || host.includes(":")) return host;
-  const parts = host.split(".");
-  if (parts.length <= 2) return host;
-  return parts.slice(-2).join(".");
-}
-
-function hostOf(url) {
-  try {
-    return new URL(url).hostname;
-  } catch {
-    return "";
-  }
-}
 
 function isIgnored(url) {
   if (!url) return true;
@@ -81,16 +35,7 @@ function isIgnored(url) {
   }
 }
 
-function isAllowed(host) {
-  if (!host) return false;
-  return continueAnywayHosts.has(host);
-}
-
-function isTrusted(host) {
-  return TRUSTED_ROOTS.has(rootHost(host));
-}
-
-function setBadge(tabId, classification, riskLevel, result) {
+function setBadge(tabId, classification, result) {
   // Palette-native badges. The toolbar icon is 16px, so the word carries the
   // state and the colour only reinforces it.
   const map = {
@@ -101,12 +46,15 @@ function setBadge(tabId, classification, riskLevel, result) {
     checking: { text: "..", color: "#6FA355" },
   };
   let spec = map[classification] || { text: "", color: "#467235" };
-  // Allowed through, but scored risky enough that "OK" would be misleading.
-  if (classification === "benign" && result && verdictMeta(result, classification).bananaState !== "benign") {
+  if (isHighRisk(result)) {
+    spec = { text: "STOP", color: "#FFBF00" };
+  } else if (classification === "benign" && result && verdictMeta(result, classification).bananaState !== "benign") {
     spec = { text: "!", color: "#E0A526" };
   }
-  chrome.action.setBadgeText({ tabId, text: spec.text });
-  chrome.action.setBadgeBackgroundColor({ tabId, color: spec.color });
+  return Promise.all([
+    chrome.action.setBadgeText({ tabId, text: spec.text }),
+    chrome.action.setBadgeBackgroundColor({ tabId, color: spec.color }),
+  ]).catch(() => {}); // The tab may have closed while the scan was running.
 }
 
 async function remember(tabId, url, result) {
@@ -124,32 +72,21 @@ function blockedUrl() {
   return chrome.runtime.getURL("blocked.html");
 }
 
-async function analyzeQuietly(tabId, url) {
+chrome.webNavigation.onCommitted.addListener(async ({ tabId, frameId, url }) => {
+  if (frameId !== 0) return;
+  // Chrome resets tab-specific badge state when navigation commits. Restore it
+  // from the stored observation, including after a service-worker restart.
+  if (url.startsWith(chrome.runtime.getURL("checking.html?"))) {
+    await setBadge(tabId, "checking");
+    return;
+  }
   try {
-    const result = await analyzeUrl(url);
-    const tab = await chrome.tabs.get(tabId);
-    if ((tab.pendingUrl || tab.url) !== url) return;
-    await remember(tabId, url, result);
-    setBadge(tabId, result.classification, result.risk_level, result);
-    if (result.classification === "malware" || result.classification === "phishing") {
-      skipOnce.set(tabId, blockedUrl());
-      await chrome.tabs.update(tabId, { url: blockedUrl() });
-      return;
+    const stored = await chrome.storage.session.get(`tab:${tabId}`);
+    const payload = stored[`tab:${tabId}`];
+    if (payload?.result && (url === blockedUrl() || url === payload.url)) {
+      await setBadge(tabId, payload.result.classification, payload.result);
     }
-    if (result.classification === "benign") {
-      lastSafeUrl.set(tabId, url);
-    }
-  } catch {
-    // Trusted navigations continue even if the API is down.
-  }
-}
-
-chrome.webNavigation.onCommitted.addListener((details) => {
-  if (details.frameId !== 0) return;
-  if (isIgnored(details.url)) return;
-  if (isAllowed(hostOf(details.url))) {
-    lastSafeUrl.set(details.tabId, details.url);
-  }
+  } catch { /* A closing tab has no badge to restore. */ }
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener((details) => {
@@ -163,12 +100,8 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
     return;
   }
 
-  const host = hostOf(url);
-  if (isAllowed(host)) return;
-  if (isTrusted(host)) {
-    analyzeQuietly(tabId, url);
-    return;
-  }
+  // A one-visit permission must not linger after navigating somewhere else.
+  skipOnce.delete(tabId);
 
   setBadge(tabId, "checking");
   chrome.tabs.update(tabId, { url: checkingUrl(url, tabId) });
@@ -188,9 +121,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const result = message.result;
       const url = message.url;
       await remember(tabId, url, result);
-      setBadge(tabId, result.classification, result.risk_level, result);
+      setBadge(tabId, result.classification, result);
 
-      if (result.classification === "malware" || result.classification === "phishing") {
+      if (isHighRisk(result)) {
         skipOnce.set(tabId, blockedUrl());
         await chrome.tabs.update(tabId, { url: blockedUrl() });
         return { ok: true };
@@ -233,9 +166,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           },
         });
         await remember(tabId, url, result);
-        setBadge(tabId, result.classification, result.risk_level, result);
+        setBadge(tabId, result.classification, result);
         // A page that now reads as a threat is taken away from the user, as on first visit.
-        if (result.classification === "malware" || result.classification === "phishing") {
+        if (isHighRisk(result)) {
           const tab = await chrome.tabs.get(tabId);
           if (tab.url !== blockedUrl()) {
             skipOnce.set(tabId, blockedUrl());
@@ -260,8 +193,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.type === "CONTINUE_ANYWAY") {
-      const host = hostOf(message.url);
-      continueAnywayHosts.add(host);
       skipOnce.set(tabId, message.url);
       await chrome.tabs.update(tabId, { url: message.url });
       return { ok: true };

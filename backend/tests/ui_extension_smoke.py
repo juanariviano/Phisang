@@ -31,7 +31,7 @@ async def run():
               await new Promise(resolve => { self.__releaseScan = resolve; });
               return Response.json(self.__fresh);
             }
-            return Response.json({explanation: self.__saved});
+            return Response.json({explanation: self.__answers?.[url.split('/').at(-1)] || null});
           };
         }""")
         page = context.pages[0]
@@ -80,7 +80,7 @@ async def run():
         await page.goto(f'chrome-extension://{extension_id}/popup.html')
         await worker.evaluate("""async ({result, answer}) => {
           const [tab] = await chrome.tabs.query({active:true, currentWindow:true});
-          self.__tabId = tab.id; self.__saved = answer;
+          self.__tabId = tab.id; self.__answers = {original: answer};
           self.__fresh = {...result, scan_id:'fresh', evidence_scan_id:'fresh', served_from_history:false, explanation:null};
           await chrome.storage.session.set({['tab:'+tab.id]: {url:result.normalized_url, result}});
         }""", {'result': result, 'answer': answer})
@@ -106,6 +106,13 @@ async def run():
         await page.locator('.banana-scan-fruit').wait_for()
         await page.screenshot(path=str(OUTPUT / 'popup-scanning.png'), full_page=True)
         await worker.evaluate('self.__releaseScan()')
+        await page.wait_for_url(f'chrome-extension://{extension_id}/blocked.html')
+        await page.wait_for_function("""async () => {
+          const [tab] = await chrome.tabs.query({active:true, currentWindow:true});
+          return (await chrome.action.getBadgeText({tabId:tab.id})) === 'STOP';
+        }""")
+        badge = await worker.evaluate('chrome.action.getBadgeText({tabId:self.__tabId})')
+        assert badge == 'STOP', f'Badge after high-risk navigation: {badge!r}'
         await page.get_by_role('button', name='Explain this result').wait_for()
         assert await page.get_by_text(answer['summary'], exact=True).count() == 0
         await page.get_by_role('button', name='Explain this result').click()
@@ -121,6 +128,7 @@ async def run():
         calls = await worker.evaluate('self.__calls')
         scans = [json.loads(call['options']['body']) for call in calls if call['url'].endswith('/analyze')]
         assert scans == [{'url': 'https://example.org/', 'client': 'extension', 'rescan': True}]
+        await worker.evaluate('answer => { self.__answers.fresh = answer; }', answer)
 
         # Warning page uses the same cached explanation and remains readable on mobile.
         await page.set_viewport_size({'width': 390, 'height': 844})
@@ -145,7 +153,7 @@ async def run():
 
         # The initial navigation screen streams progress, then hands off to the
         # real service worker, which stores the result and opens the warning page.
-        checking_result = dict(result, classification='phishing')
+        checking_result = dict(result, classification='benign', risk_score=.994)
         await page.add_init_script('self.__checkingResult = ' + json.dumps(checking_result) + ';' + """
           if (location.pathname.endsWith('/checking.html')) {
             self.fetch = async (url, options) => {
@@ -167,6 +175,11 @@ async def run():
         await page.evaluate('self.__finishScan()')
         await page.wait_for_url(f'chrome-extension://{extension_id}/blocked.html')
         await page.get_by_text(answer['summary'], exact=True).wait_for()
+        await page.wait_for_function("""async () => {
+          const [tab] = await chrome.tabs.query({active:true, currentWindow:true});
+          return (await chrome.action.getBadgeText({tabId:tab.id})) === 'STOP';
+        }""")
+        assert await worker.evaluate('chrome.action.getBadgeText({tabId:self.__tabId})') == 'STOP'
         assert not errors, errors
         await context.close()
     print('Unpacked extension passed: cached explanation, preview, domain, redirects, safe text, risk, banana, Rescan progress, partial streaming/retry, mobile, reduced motion.')

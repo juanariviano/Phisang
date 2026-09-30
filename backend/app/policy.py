@@ -27,7 +27,7 @@ UNCORROBORATED_BENIGN_CONFIDENCE = 50
 
 LIMITATIONS = [
     "Some scans can be decided without fetching the destination page",
-    "A markup-model phishing call blocks only when the URL or a password field backs it up",
+    "The extension stops high-risk results even when the URL checks do not corroborate the page model",
     "URL checks use hand-written rules, not a trained model",
     "Automated checks can miss threats or flag legitimate pages",
     "Domain registration details are context, not proof of safety",

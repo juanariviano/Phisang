@@ -29,12 +29,65 @@ function worker() {
   context.importScripts = (...files) => files.forEach(file => vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context));
   context.importScripts('background.js');
   return { stored, requests, navigations, events, badges, tab, context,
-    respond: callback => { response = callback; }, navigate: url => before({ tabId: 7, frameId: 0, url }),
+    respond: callback => { response = callback; }, navigate: (url, tabId = 7) => before({ tabId, frameId: 0, url }),
     message: message => new Promise(resolve => handler(message, { tab: { id: 7 } }, resolve)),
   };
 }
 const result = (changes = {}) => ({ scan_id: 'request', evidence_scan_id: 'original', normalized_url: 'https://example.org/',
   classification: 'benign', verdict: 'safe', risk_score: .1, page: { status: 'ok' }, ...changes });
+
+test('every website High risk verdict blocks the initial navigation, even with a benign classification', async () => {
+  for (const changes of [
+    { risk_score: .994 }, { risk_score: .6 }, { verdict: 'malicious', risk_score: null },
+    { classification: 'malware' }, { classification: 'phishing' },
+  ]) {
+    const w = worker();
+    await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url: 'https://example.org/', result: result(changes) });
+    assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html', JSON.stringify(changes));
+    assert.equal(w.badges.at(-1).text, 'STOP');
+  }
+});
+
+test('Continue anyway releases only this visit, not future visits or sibling paths', async () => {
+  const w = worker();
+  await w.message({ type: 'CONTINUE_ANYWAY', tabId: 7, url: 'https://example.org/' });
+  const count = w.navigations.length;
+  w.navigate('https://example.org/');
+  assert.equal(w.navigations.length, count);
+  w.navigate('https://example.org/');
+  assert.match(w.navigations.at(-1), /checking.html/);
+  w.navigate('https://example.org/other');
+  assert.match(w.navigations.at(-1), /checking.html/);
+});
+
+test('well-known domains are checked before being released instead of silently loading', () => {
+  const w = worker();
+  w.navigate('https://github.com/example/suspicious');
+  assert.match(w.navigations.at(-1), /checking.html/);
+  assert.equal(w.requests.length, 0); // The checking screen owns the scan.
+});
+
+test('a one-visit override cannot leak to another tab or survive a different destination', async () => {
+  const w = worker();
+  await w.message({ type: 'CONTINUE_ANYWAY', tabId: 7, url: 'https://example.org/' });
+  w.navigate('https://example.org/', 8);
+  assert.match(w.navigations.at(-1), /checking.html/);
+  w.navigate('https://other.example/', 7);
+  w.navigate('https://example.org/', 7);
+  assert.match(w.navigations.at(-1), /checking.html/);
+});
+
+test('caution and unknown remain distinct from the high-risk stop rule', async () => {
+  for (const changes of [
+    { risk_score: .5999, verdict: 'potentially_unsafe' },
+    { classification: 'unavailable', risk_score: null, verdict: 'unknown' },
+  ]) {
+    const w = worker();
+    await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url: 'https://example.org/', result: result(changes) });
+    assert.equal(w.navigations.at(-1), 'https://example.org/');
+    assert.notEqual(w.badges.at(-1).text, 'STOP');
+  }
+});
 
 test('popup reload retrieves the SQL-backed explanation using the durable evidence ID', async () => {
   const w = worker();
@@ -58,7 +111,8 @@ test('Rescan streams real progress, sends rescan true, and replaces an old expla
   assert.equal(w.events[0].type, 'SCAN_PROGRESS');
   assert.equal(w.events[0].progress.stage, 'page');
   assert.deepEqual(JSON.parse(w.requests[0].options.body), { url: 'https://example.org/', client: 'extension', rescan: true });
-  assert.equal(w.badges.at(-1).text, '!');
+  assert.equal(w.badges.at(-1).text, 'STOP');
+  assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
 });
 
 test('a failed Rescan keeps the previous result and can be retried', async () => {

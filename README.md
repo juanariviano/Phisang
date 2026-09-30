@@ -61,7 +61,7 @@ flowchart LR
 3. **Lexical heuristic** on the URL string (hand-written rules, not a trained model). If it looks clearly benign (confidence above 80%) **and** the host is on the well-known list or the [Tranco](https://tranco-list.eu) top-domain ranking, the URL is cleared without being visited.
 4. **Page analysis** for everything else. The destination is fetched in a locked-down headless Chromium, and its cleaned markup is scored by **laya_v2** (ModernBERT-large, fine-tuned from [`convaiinnovations/laya`](https://huggingface.co/convaiinnovations/laya)).
    - A benign-looking page does not clear a URL that itself looks like phishing. Phishing kits often serve a clean landing page first.
-   - The model alone does not block. A phishing call stands only when the URL is doubtful or the page asks for a password.
+   - The API's `phishing` classification requires a doubtful URL or a password field to corroborate the model. The extension also stops any result the website displays as **High risk**, even if the API classification remains `benign`.
    - A dead host, a non-2xx status or a timeout gives `unavailable`, so a taken-down phishing site is never reported clean.
 
 </details>
@@ -77,9 +77,9 @@ sequenceDiagram
     Ext->>Ext: hold the tab on a "checking" page
     Ext->>API: POST /api/v1/analyze
     API-->>Ext: classification + risk level
-    alt malware or phishing
+    alt High risk verdict (including benign classification with a high score)
         Ext->>You: block page, with Go back / Continue anyway
-    else benign or unavailable
+    else Lower risk or unavailable
         Ext->>You: open the page (degraded results show a banner)
     end
 ```
@@ -107,7 +107,7 @@ Every result carries a `risk_score` from 0 to 1 and a `risk_level`. Each band in
 | `unavailable` | `null` |
 
 > [!NOTE]
-> Because the model alone does not block, a page can come back `benign` with a `High Risk` level. That means the model is worried, but nothing else backed it up. The result lists a warning explaining this.
+> A page can come back `benign` with a `High Risk` level when the model is worried but other checks do not corroborate it. The website still displays **High risk**, and the extension sends it to the warning page. Both use the same rule: malware/phishing classification, a malicious verdict, or a score of at least 0.6. Unavailable checks remain unknown.
 
 </details>
 
@@ -169,6 +169,11 @@ has not been saved for that scan; Rescan requests fresh findings. The checking
 screen and Rescan show live progress. A benign scan no longer skips later checks
 for the entire domain; repeat URLs use the API's scan archive, and failed checks
 can retry.
+
+Known domains now pass through the checking screen too. **Continue anyway**
+releases only that exact URL for one visit in that tab; it does not exempt the
+hostname or later visits. The extension redirects tabs through `webNavigation`;
+this is not a network-level guarantee that no initial request reaches a site.
 
 The extension ships as plain JavaScript with no runtime build step. After editing
 the website's shared verdict wording, stream reader, or banana artwork, run

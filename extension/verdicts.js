@@ -8,10 +8,17 @@ const CLASS_META = {
   checking: { bananaState: "checking", verdict: "Checking the link", hint: "Checking for known threats and gathering information about the website.", tone: "text-leaf", dot: "bg-leaf" },
 };
 
+// Shared with the extension: the displayed high-risk verdict is also its stop rule.
+function isHighRisk(result, cls = result?.classification) {
+  if (!result || cls === "unavailable") return false;
+  return cls === "malware" || cls === "phishing" || result.verdict === "malicious"
+    || (result.risk_score ?? 0) >= 0.6;
+}
+
 function verdictMeta(result, cls) {
   const base = CLASS_META[cls] || CLASS_META.unavailable;
   if (!result || cls === "unavailable" || cls === "malware") return base;
-  if (result.verdict === "malicious" || (result.risk_score ?? 0) >= 0.6 || cls === "phishing") {
+  if (isHighRisk(result, cls)) {
     return { ...CLASS_META.phishing, hint: cls === "benign"
       ? "The page model flagged this site, while other checks found less evidence. Be cautious and avoid sharing sensitive details."
       : CLASS_META.phishing.hint };
@@ -24,5 +31,5 @@ function verdictMeta(result, cls) {
   return base;
 }
 
-Object.assign(self.Phisang ||= {}, { CLASS_META, verdictMeta });
+Object.assign(self.Phisang ||= {}, { CLASS_META, verdictMeta, isHighRisk });
 })();

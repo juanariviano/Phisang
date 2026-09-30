@@ -255,8 +255,8 @@ body {
 
 .banana-scan-fruit {
   transform-box: view-box;
-  transform-origin: 80px 175px;
-  animation: banana-scan-sway 1.4s ease-in-out infinite;
+  transform-origin: 117px 126px;
+  animation: banana-scan-sway 1.8s ease-in-out infinite;
 }
 
 .banana-scan-shadow {
@@ -278,8 +278,8 @@ body {
 }
 
 @keyframes banana-scan-sway {
-  0%, 100% { transform: translateY(0) rotate(-9deg); }
-  50% { transform: translateY(-10px) rotate(9deg); }
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-6px) rotate(4deg); }
 }
 
 @keyframes banana-scan-shadow {
@@ -294,8 +294,8 @@ body {
 
 .banana-rot-fruit {
   transform-box: view-box;
-  transform-origin: 80px 175px;
-  animation: banana-rot-sway 4s ease-in-out infinite;
+  transform-origin: 117px 126px;
+  animation: banana-rot-sway 5s ease-in-out infinite;
 }
 
 .banana-fly {
@@ -309,15 +309,15 @@ body {
 }
 
 @keyframes banana-rot-sway {
-  0%, 100% { transform: rotate(-2deg); }
-  50% { transform: rotate(2deg); }
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
 }
 
 @keyframes banana-fly-drift {
   0%, 100% { transform: translate(0, 0) rotate(-12deg); }
-  25% { transform: translate(10px, -8px) rotate(20deg); }
-  50% { transform: translate(5px, 8px) rotate(-20deg); }
-  75% { transform: translate(-7px, 3px) rotate(12deg); }
+  25% { transform: translate(6px, -5px) rotate(20deg); }
+  50% { transform: translate(3px, 5px) rotate(-20deg); }
+  75% { transform: translate(-4px, 2px) rotate(12deg); }
 }
 
 @keyframes banana-fly-wings {

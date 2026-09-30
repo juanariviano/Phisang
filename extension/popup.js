@@ -38,7 +38,7 @@ function setText(node, text) {
   node.classList.toggle("hidden", !text);
 }
 
-function setList(node, items) {
+function setList(node, items) { 
   node.replaceChildren(...items.map((item) => {
     const li = document.createElement("li");
     li.textContent = item;

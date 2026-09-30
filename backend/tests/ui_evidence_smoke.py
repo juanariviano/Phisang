@@ -96,6 +96,7 @@ async def run():
                     await request_route.fulfill(content_type=mime, body=file.read_bytes())
             await context.route("**/*", route)
             await page.goto("http://phisang.test/")
+            await page.get_by_role("img", name="Phisang logo", exact=True).wait_for()
             assert await page.get_by_role("button", name="Wikipedia", exact=True).count() == 0
             assert await page.get_by_role("button", name="GitHub", exact=True).count() == 0
             peel_button = page.get_by_role("button", name="Peel URL", exact=True)
@@ -124,7 +125,7 @@ async def run():
             await page.get_by_role("img", name="High risk: rotten banana", exact=True).wait_for()
             await page.get_by_text("94%", exact=True).wait_for()
             assert await page.get_by_role("meter", name="Estimated risk").get_attribute("aria-valuenow") == "94"
-            assert await page.locator(".banana-fly").count() == 3
+            assert await page.locator(".banana-fly").count() == 2
             fly_animation = await page.locator(".banana-fly").first.evaluate("el => getComputedStyle(el).animationName")
             assert fly_animation == ("banana-fly-drift" if width == 1280 else "none")
             await page.wait_for_function("document.querySelector('main').dataset.layout === 'stacked' && document.querySelector('[data-result-region]').getBoundingClientRect().top > document.querySelector('form').getBoundingClientRect().bottom")
@@ -132,7 +133,7 @@ async def run():
             await page.get_by_role("img", name="Website preview captured during this scan").wait_for()
             await page.get_by_role("button", name="Explain this result").click()
             await page.get_by_role("heading", name="Why this result?").wait_for()
-            await page.get_by_text("Writing explanation…", exact=True).wait_for()
+            assert await page.locator('[aria-label="Explanation"]').get_attribute("aria-busy") == "true"
             await page.get_by_text("The model found a warning", exact=True).wait_for()
             assert await page.get_by_text("Use a known bookmark.", exact=True).count() == 0
             await page.evaluate("window.__holdExplanation = false; window.__finishExplanation()")
@@ -142,7 +143,22 @@ async def run():
             await page.get_by_text("Example Registrar", exact=True).wait_for()
             assert await page.evaluate("document.documentElement.scrollWidth <= innerWidth")
             await page.screenshot(path=str(OUTPUT / f"result-{width}.png"), full_page=True)
-            result = dict(result, classification="benign")  # Model score still makes the displayed verdict high-risk.
+            # Another visitor receives the stored explanation without Explain.
+            result = dict(result, scan_id="replayed_scan", served_from_history=True,
+                explanation={"summary": "Previously saved explanation.",
+                             "reasons": ["Saved evidence."], "advice": ["Check the address."],
+                             "included_screenshot": True})
+            await page.reload()
+            await page.get_by_label("URL to peel").fill("https://example.org/")
+            await page.get_by_role("button", name="Peel URL", exact=True).click()
+            await page.get_by_text("Previously saved explanation.", exact=True).wait_for()
+            assert await page.get_by_role("button", name="Explain this result").count() == 0
+            assert sum(c[0] == "explain" for c in calls) == 1
+            assert [c[1] for c in calls if c[0] == "scan"][-1]["rescan"] is False
+            await page.evaluate("window.__holdExplanation = false")
+            result = dict(result, scan_id="fresh_scan", evidence_scan_id="fresh_scan",
+                          served_from_history=False, explanation=None,
+                          classification="benign")  # Model score still makes the displayed verdict high-risk.
             await page.get_by_role("button", name="Rescan", exact=True).click()
             assert await page.locator("main").get_attribute("data-layout") == "stacked"
             await page.get_by_role("button", name="Explain this result").wait_for()

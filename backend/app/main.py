@@ -79,13 +79,24 @@ async def analyze_url(body: AnalyzeRequest, request: Request):
         return StreamingResponse(_scan_events(body), media_type="text/event-stream", headers={
             "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"})
     try:
-        return await analyze(body.url, body.client, rescan=body.rescan)
+        return await _analyze_with_explanation(body)
     except UrlError as exc:
         status, code, message = map_url_error(exc)
         return JSONResponse(
             status_code=status,
             content=ErrorBody(error_code=code, message=message).model_dump(),
         )
+
+
+async def _analyze_with_explanation(body):
+    result = await analyze(body.url, body.client, rescan=body.rescan)
+    return await asyncio.to_thread(_with_saved_explanation, result)
+
+
+def _with_saved_explanation(result):
+    # Reading a result never initiates an LLM call. A rescan has a new evidence ID.
+    answer = evidence.get_explanation(result.evidence_scan_id or result.scan_id)
+    return result.model_copy(update={"explanation": answer})
 
 
 async def _scan_events(body):
@@ -97,7 +108,7 @@ async def _scan_events(body):
     async def run():
         with scan_progress.listen(progress):
             try:
-                result = await analyze(body.url, body.client, rescan=body.rescan)
+                result = await _analyze_with_explanation(body)
                 await queue.put(("done", result.model_dump(mode="json")))
             except UrlError as exc:
                 _, code, message = map_url_error(exc)
@@ -139,7 +150,7 @@ def get_scan(scan_id: str):
             status_code=404,
             content=ErrorBody(error_code="not_found", message="Scan not found").model_dump(),
         )
-    return item
+    return _with_saved_explanation(item)
 
 
 @app.get("/api/v1/scans/{scan_id}/preview")

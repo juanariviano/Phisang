@@ -75,7 +75,8 @@ def test_subscribers_share_generation_and_disconnect_does_not_cancel(monkeypatch
         completion = AsyncMock(side_effect=complete)
         monkeypatch.setattr(explanations, "_completion", completion)
         first = await explanations.stream(scan())
-        second = await explanations.stream(scan())
+        second = await explanations.stream(scan(scan_id="another_users_request",
+            served_from_history=True, decision_stage="history", risk_level="MALICIOUS"))
         assert "connected" in await anext(first)
         assert "connected" in await anext(second)
         assert "snapshot" in await asyncio.wait_for(anext(first), 2)

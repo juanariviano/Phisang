@@ -189,7 +189,7 @@ def test_uninspected_destination_does_not_claim_redirect_knowledge(status):
     assert context["final_url"] is None
 
 
-def test_prompt_changes_invalidate_saved_explanations(monkeypatch):
+def test_saved_explanations_survive_provider_and_prompt_changes_until_rescan(monkeypatch):
     monkeypatch.setattr(settings, "explanation_api_key", "test")
     completion = AsyncMock(return_value=Explanation(summary="An account sign-in page.",
         reasons=["The page asks for a password."], advice=["Verify the address first."]))
@@ -199,7 +199,12 @@ def test_prompt_changes_invalidate_saved_explanations(monkeypatch):
         await explanations.explain(scan())
         assert completion.await_count == 1
         monkeypatch.setattr(explanations, "SYSTEM_PROMPT", explanations.SYSTEM_PROMPT + " Updated guidance.")
+        monkeypatch.setattr(settings, "explanation_model", "another-model")
+        monkeypatch.setattr(settings, "explanation_api_key", "")
         await explanations.explain(scan())
+        assert completion.await_count == 1
+        monkeypatch.setattr(settings, "explanation_api_key", "test")
+        await explanations.explain(scan(scan_id="rescan", evidence_scan_id="rescan"))
         assert completion.await_count == 2
     asyncio.run(run())
 

@@ -219,6 +219,11 @@ class _Generation:
 async def _generate(scan_id, key, facts, image, generation):
     try:
         async with _slots:
+            # A previous generation can finish between a caller's cache read
+            # and its task reservation. Check again before spending a request.
+            cached = await asyncio.to_thread(evidence.get_explanation, scan_id)
+            if cached:
+                return cached
             result = await asyncio.wait_for(_completion(facts, image, generation.publish), settings.explanation_timeout_seconds)
         await asyncio.to_thread(evidence.save_explanation, scan_id, key, result)
         return result
@@ -232,19 +237,21 @@ async def _generate(scan_id, key, facts, image, generation):
 
 
 async def _request(scan):
+    source_id = scan.evidence_scan_id or scan.scan_id
+    # Replays have new request IDs and may have different history metadata.
+    # The saved observation owns the answer, independently of provider settings.
+    cached = await asyncio.to_thread(evidence.get_explanation, source_id)
+    if cached:
+        return cached
     if not api_key():
         raise ExplanationError("Explanations are not configured yet.", 503)
-    source_id = scan.evidence_scan_id or scan.scan_id
     image = (await asyncio.to_thread(evidence.get_preview, source_id)
              if settings.explanation_include_screenshot and scan.page and scan.page.preview_available else None)
     facts = facts_for(scan)
     key = hashlib.sha256(json.dumps([SYSTEM_PROMPT, settings.explanation_base_url,
         settings.explanation_model, facts, hashlib.sha256(image).hexdigest() if image else None],
         sort_keys=True).encode()).hexdigest()
-    cached = await asyncio.to_thread(evidence.get_explanation, source_id, key)
-    if cached:
-        return cached
-    identity = (source_id, key)
+    identity = source_id
     if identity not in _inflight:
         if len(_inflight) >= 8:
             raise ExplanationError("Explanations are busy. Please try again shortly.", 429)

@@ -131,6 +131,7 @@ class AnalyzeResponse(BaseModel):
     # A replay has a new request ID but keeps the original evidence identity.
     evidence_scan_id: Optional[str] = None
     scanned_at: Optional[str] = None
+    explanation: Optional[Explanation] = None
 
 
 class HealthResponse(BaseModel):

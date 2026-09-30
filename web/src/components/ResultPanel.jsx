@@ -31,7 +31,7 @@ function DomainDetails({ info }) {
 }
 
 function Explanation({ result }) {
-  const [answer, setAnswer] = useState(null);
+  const [answer, setAnswer] = useState(result.explanation ?? null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const controller = useRef(null);

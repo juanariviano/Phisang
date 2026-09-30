@@ -6,7 +6,7 @@ from .models import AnalyzeResponse, Explanation
 
 MAX_PREVIEW_BYTES = 600_000
 _images: OrderedDict[str, bytes] = OrderedDict()
-_explanations: OrderedDict[tuple[str, str], Explanation] = OrderedDict()
+_explanations: OrderedDict[str, Explanation] = OrderedDict()
 
 
 def _put(cache, key, value):
@@ -64,26 +64,27 @@ def get_preview(scan_id: str) -> bytes | None:
             return _images.get(scan_id)
 
 
-def get_explanation(scan_id: str, key: str) -> Explanation | None:
-    cached = _explanations.get((scan_id, key))
+def get_explanation(scan_id: str) -> Explanation | None:
+    """Reuse a completed answer for this observation until a new scan replaces it."""
+    cached = _explanations.get(scan_id)
     if cached:
         return cached
     with history._cursor() as cur:
         if cur is None:
             return None
-        cur.execute("SELECT ExplanationJson FROM dbo.Scans WHERE ScanRef = %s AND ExplanationKey = %s", (scan_id, key))
+        cur.execute("SELECT ExplanationJson FROM dbo.Scans WHERE ScanRef = %s", (scan_id,))
         row = cur.fetchone()
         if row and row.get("ExplanationJson"):
             try:
                 cached = Explanation.model_validate_json(row["ExplanationJson"])
-                _put(_explanations, (scan_id, key), cached)
+                _put(_explanations, scan_id, cached)
                 return cached
             except ValueError:
                 return None
 
 
 def save_explanation(scan_id: str, key: str, result: Explanation):
-    _put(_explanations, (scan_id, key), result)
+    _put(_explanations, scan_id, result)
     with history._cursor() as cur:
         if cur is not None:
             cur.execute("UPDATE dbo.Scans SET ExplanationJson = %s, ExplanationKey = %s WHERE ScanRef = %s",

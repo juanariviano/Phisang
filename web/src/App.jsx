@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import { InventoryRail } from "./components/InventoryRail.jsx";
-import { Banana } from "./components/Banana.jsx";
+import { BrandMark } from "./components/BrandMark.jsx";
 import { Pipeline } from "./components/Pipeline.jsx";
 import { ResultPanel } from "./components/ResultPanel.jsx";
 import { Bench } from "./components/Bench.jsx";
@@ -88,10 +88,8 @@ export default function App() {
 
       <div className="relative mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-6 md:px-8 md:py-10">
         <header className="flex items-center gap-3">
-          {/* The brand mark is the same banana the verdicts use, sealed. Upright
-              it is 1:3 and reads as a sliver, so the lockup tilts it. */}
-          <Banana state="benign" frame="tight" height={38} className="rotate-[-20deg]" />
-          <p className="font-display text-xl font-extrabold leading-none tracking-tight text-ink">
+          <BrandMark />
+          <p className="font-display text-2xl font-extrabold leading-none tracking-tight text-ink">
             Phisang
           </p>
         </header>

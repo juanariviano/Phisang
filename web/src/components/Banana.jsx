@@ -1,222 +1,83 @@
-import { useEffect, useId, useState } from "react";
+﻿import { useId } from "react";
 
-/**
- * The verdict, as a banana.
- *
- * Sealed means there was nothing to open: benign is untouched, and "unread"
- * means the check failed before anything could be opened. Peeled means Phisang
- * found something and is showing it — and how far the peel swings is severity,
- * so malware opens wider than phishing.
- *
- * Geometry lives in a 160x200 space. Three peel strips tile the closed fruit
- * and all hinge on the stem at 80,36. The "full" frame leaves room either side
- * for the peel to swing into; "tight" crops to the sealed fruit and is what the
- * brand mark uses, since a logo never opens.
- *
- * The hinge is plain CSS rather than a motion library on purpose: motion
- * libraries default SVG children to `transform-box: fill-box` with a centre
- * origin, which rotates each strip about itself and scissors them across each
- * other. `.peel-flap` pins the origin to the stem in viewBox units.
- *
- * Rotation signs: SVG's positive angle is clockwise, so a point below the hinge
- * swings LEFT — the left strip takes a positive angle, the right a negative one.
- */
-const PEEL_LEFT =
-  "M80 34 C 66 44 56 84 56 120 C 56 152 66 174 80 184 C 75 150 71 100 76 40 Z";
-const PEEL_CENTER =
-  "M76 40 C 71 100 75 150 80 184 C 85 186 89 184 91 178 C 87 148 87 96 84 40 Z";
-const PEEL_RIGHT =
-  "M84 40 C 87 96 87 148 91 178 C 101 168 104 146 104 120 C 104 84 94 44 80 34 Z";
-const FLESH =
-  "M80 42 C 71 58 68 92 68 120 C 68 148 73 170 82 178 C 91 170 96 148 96 120 C 96 92 90 58 80 42 Z";
-
-const LEFT_SPOTS = [
-  [62, 74, 3],
-  [60, 104, 2.4],
-  [60, 134, 3.4],
-  [66, 160, 2.4],
-];
-const CENTER_SPOTS = [
-  [80, 64, 2.4],
-  [84, 110, 3],
-  [82, 150, 2.6],
-];
-const RIGHT_SPOTS = [
-  [100, 70, 2.6],
-  [99, 102, 3.2],
-  [100, 132, 2.8],
-  [96, 158, 3.2],
-];
-const FLESH_SPOTS = [
-  [78, 72, 4],
-  [88, 104, 5.5],
-  [74, 132, 4.5],
-  [86, 158, 3.5],
-];
-
-const FRAMES = {
-  full: { viewBox: "-30 0 220 200", w: 220, h: 200 },
-  tight: { viewBox: "48 2 64 192", w: 64, h: 192 },
+// A shared curved silhouette keeps every verdict recognizable at icon size.
+const BODY = "M54 43 C43 79 55 123 89 146 C129 173 180 144 193 97 C172 121 146 133 117 120 C86 106 70 78 67 44 Z";
+const PALETTES = {
+  benign: { light: "#FFE985", mid: "#F8C83C", dark: "#DDA423", edge: "#96701E", stem: "#617C3D" },
+  checking: { light: "#F2EF99", mid: "#D5D767", dark: "#A7B74F", edge: "#70813B", stem: "#526D35" },
+  phishing: { light: "#F6D879", mid: "#DEB64F", dark: "#BB8D34", edge: "#896329", stem: "#736238", bruises: true },
+  rotten: { light: "#D5BC77", mid: "#B69650", dark: "#876434", edge: "#655030", stem: "#645435", bruises: true, rotten: true },
+  unavailable: { light: "#DFE2D2", mid: "#BDC4AC", dark: "#A0AB8E", edge: "#788368", stem: "#788368" },
 };
 
-const STATES = {
-  benign: { open: 0, peel: "#FFBF00", stem: "#467235", tip: "#8A5A0F" },
-  checking: { open: 0, peel: "#8FBF5C", stem: "#467235", tip: "#467235", pulse: true },
-  unavailable: { open: 0, peel: "#C2C7B4", stem: "#467235", tip: "#5C6B4F", hatch: true },
-  phishing: {
-    open: 26,
-    peel: "#E0A526",
-    stem: "#8A5A0F",
-    tip: "#5B3A08",
-    peelSpots: "#8A5A0F",
-    flesh: "#EBD9A0",
-    fleshSpots: "#8A5A0F",
-  },
-  malware: {
-    open: 40,
-    peel: "#FFBF00",
-    stem: "#467235",
-    tip: "#0E1408",
-    flesh: "#C0A87A",
-    fleshSpots: "#1C1508",
-    rotHeavy: true,
-  },
-  rotten: {
-    open: 36,
-    peel: "#74602D",
-    stem: "#40371F",
-    tip: "#231C13",
-    peelSpots: "#30271A",
-    flesh: "#A69662",
-    fleshSpots: "#3A3020",
-    rotHeavy: true,
-    flies: true,
-  },
-};
-
-function Spots({ points, fill, opacity = 0.85, scale = 1 }) {
-  if (!fill) return null;
-  return points.map(([cx, cy, r]) => (
-    <ellipse key={`${cx}-${cy}`} cx={cx} cy={cy} rx={r * scale} ry={r * scale * 1.35} fill={fill} opacity={opacity} />
-  ));
+function Fly({ x, y, index }) {
+  return <g transform={`translate(${x} ${y})`} aria-hidden="true">
+    <g className="banana-fly" style={{ animationDelay: `${index * -2.1}s`, animationDuration: `${4.8 + index}s` }}>
+      <g className="banana-fly-wings" fill="#E2E7D9" stroke="#65715C" strokeWidth="0.8">
+        <ellipse cx="-4" cy="-2.5" rx="4.5" ry="2.6" transform="rotate(28 -4 -2.5)" />
+        <ellipse cx="4" cy="-2.5" rx="4.5" ry="2.6" transform="rotate(-28 4 -2.5)" />
+      </g>
+      <ellipse rx="2.5" ry="3.7" fill="#3D4032" />
+      <circle cy="-3.8" r="2" fill="#303629" />
+    </g>
+  </g>;
 }
 
 export function Banana({ state = "benign", width, height, frame = "full", className = "" }) {
-  const cfg = STATES[state] || STATES.unavailable;
-  const box = FRAMES[frame] || FRAMES.full;
-  // Pattern ids must be unique or a second banana on the page resolves its
-  // fill against the first one's def.
-  const hatchId = `ph-hatch-${useId()}`;
-  const w = width ?? (height ? (height * box.w) / box.h : 132);
-  const h = height ?? (w * box.h) / box.w;
-  const open = cfg.open > 0;
+  const cfg = PALETTES[state === "malware" ? "rotten" : state] || PALETTES.unavailable;
+  const id = useId();
+  const gradient = `banana-fill-${id}`;
+  const clip = `banana-clip-${id}`;
+  const compact = frame === "tight";
+  const box = compact ? { viewBox: "35 18 166 140", width: 166, height: 140 } : { viewBox: "0 0 220 180", width: 220, height: 180 };
+  const w = width ?? (height ? height * box.width / box.height : 132);
+  const h = height ?? w * box.height / box.width;
+  const checking = state === "checking";
 
-  // Render sealed for one frame, then let CSS transition the peel open.
-  const [engaged, setEngaged] = useState(false);
-  useEffect(() => {
-    setEngaged(false);
-    let second;
-    const id = requestAnimationFrame(() => { second = requestAnimationFrame(() => setEngaged(true)); });
-    return () => { cancelAnimationFrame(id); cancelAnimationFrame(second); };
-  }, [state]);
+  return <svg viewBox={box.viewBox} width={w} height={h} className={className} role="img"
+    aria-label={cfg.rotten ? "High risk: rotten banana" : `${state}: banana`}>
+    <defs>
+      <linearGradient id={gradient} x1="70" y1="59" x2="114" y2="158" gradientUnits="userSpaceOnUse">
+        <stop stopColor={cfg.light} />
+        <stop offset="0.6" stopColor={cfg.mid} />
+        <stop offset="1" stopColor={cfg.dark} />
+      </linearGradient>
+      <clipPath id={clip}><path d={BODY} /></clipPath>
+    </defs>
 
-  const angle = engaged ? cfg.open : 0;
-  const flap = (degrees) => ({
-    className: "peel-flap",
-    style: { transform: `rotate(${degrees}deg)` },
-  });
+    {!compact && <ellipse className={checking ? "banana-scan-shadow" : undefined}
+      cx="120" cy="164" rx="51" ry="5" fill="#435331" opacity="0.1" />}
 
-  const Left = (
-    <g key="left" {...flap(angle)}>
-      <path d={PEEL_LEFT} fill={cfg.peel} />
-      {cfg.hatch && <path d={PEEL_LEFT} fill={`url(#${hatchId})`} />}
-      <Spots points={LEFT_SPOTS} fill={cfg.peelSpots} scale={cfg.rotHeavy ? 1.6 : 1} />
-    </g>
-  );
-
-  const Right = (
-    <g key="right" {...flap(-angle)}>
-      <path d={PEEL_RIGHT} fill={cfg.peel} />
-      {cfg.hatch && <path d={PEEL_RIGHT} fill={`url(#${hatchId})`} />}
-      <Spots points={RIGHT_SPOTS} fill={cfg.peelSpots} scale={cfg.rotHeavy ? 1.6 : 1} />
-    </g>
-  );
-
-  const Center = (
-    <g key="center" {...flap(open && engaged ? 5 : 0)}>
-      <path d={PEEL_CENTER} fill={cfg.peel} />
-      {cfg.hatch && <path d={PEEL_CENTER} fill={`url(#${hatchId})`} />}
-      <Spots points={CENTER_SPOTS} fill={cfg.peelSpots} scale={cfg.rotHeavy ? 1.6 : 1} />
-      {/* Blossom tip: the small dark nub that says "banana" louder than the
-          silhouette does. It rides the centre strip. */}
-      <ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill={cfg.tip} />
-    </g>
-  );
-
-  const Fruit = cfg.flesh ? (
-    <g key="flesh" className="peel-fruit" style={{ opacity: engaged ? 1 : 0 }}>
-      <path d={FLESH} fill={cfg.flesh} />
-      <Spots points={FLESH_SPOTS} fill={cfg.fleshSpots} scale={cfg.rotHeavy ? 1.5 : 1} opacity={cfg.rotHeavy ? 0.9 : 0.5} />
-    </g>
-  ) : null;
-
-  return (
-    <svg
-      viewBox={box.viewBox}
-      width={w}
-      height={h}
-      className={`${cfg.pulse ? "banana-scanning" : ""} ${className}`}
-      role="img"
-      aria-label={state === "rotten" ? "High risk: rotten banana" : `${state}: peel ${open ? "opened" : "intact"}`}
-    >
-      <defs>
-        <pattern
-          id={hatchId}
-          width="8"
-          height="8"
-          patternTransform="rotate(45)"
-          patternUnits="userSpaceOnUse"
-        >
-          <line x1="0" y1="0" x2="0" y2="8" stroke="#467235" strokeWidth="1.6" opacity="0.45" />
-        </pattern>
-      </defs>
-
-      {cfg.pulse && <>
-        <ellipse className="banana-scan-shadow" cx="82" cy="195" rx="27" ry="4" fill="#467235" opacity="0.18" />
-        <g className="banana-scan-sparks" fill="#FFBF00" aria-hidden="true">
-          <circle cx="36" cy="75" r="3" /><circle cx="130" cy="105" r="2.5" />
-          <path d="M124 43v12m-6-6h12" stroke="#467235" strokeWidth="2" strokeLinecap="round" />
-        </g>
-      </>}
-      <g className={cfg.pulse ? "banana-scan-fruit" : cfg.flies ? "banana-rot-fruit" : undefined}>
-
-      {/* Stem stays put while the peel swings away from it. */}
-      <path
-        d="M80 38 C 78 27 76 20 74 12"
-        fill="none"
-        stroke={cfg.stem}
-        strokeWidth="9"
-        strokeLinecap="round"
-      />
-
-      {/* Order is the depth cue we have in 2D: sealed, the centre strip covers
-          the fruit; opened, it falls behind it. */}
-      {open ? [Center, Fruit, Left, Right] : [Fruit, Left, Center, Right]}
+    <g className={checking ? "banana-scan-fruit" : cfg.rotten ? "banana-rot-fruit" : undefined}>
+      <path d="M55 49 49 29 Q48 25 52 24 L62 22 Q66 22 67 27 L69 48Z"
+        fill={cfg.stem} stroke={cfg.edge} strokeWidth="2.5" strokeLinejoin="round" />
+      <path d="m54 29 7-2" stroke="#F0E7B5" strokeWidth="2.5" strokeLinecap="round" opacity="0.55" />
+      <path d={BODY} fill={`url(#${gradient})`} stroke={cfg.edge} strokeWidth="2.5" strokeLinejoin="round" />
+      <g clipPath={`url(#${clip})`}>
+        <path d="M50 65 C58 111 85 144 124 147 C153 151 180 125 193 97 L203 165 65 171Z"
+          fill={cfg.dark} opacity="0.28" />
+        <path d="M61 58 C61 95 81 121 106 133" fill="none" stroke={cfg.light}
+          strokeWidth="7" strokeLinecap="round" opacity="0.8" />
+        <path d="M68 57 C72 102 102 139 140 140" fill="none" stroke={cfg.edge}
+          strokeWidth="1.8" strokeLinecap="round" opacity="0.3" />
+        {cfg.bruises && <g fill={cfg.rotten ? "#674B2C" : "#A17B37"} opacity={cfg.rotten ? "0.82" : "0.65"}>
+          <path d="M81 115 C75 111 72 118 77 126 C80 133 92 139 97 134 C102 129 91 118 87 119Z" />
+          <path d="M145 135 C140 130 130 134 132 141 C132 149 145 150 151 144 C155 139 152 137 145 135Z" />
+          {cfg.rotten && <>
+            <path d="M55 77 C49 79 53 98 60 101 C69 104 71 95 66 87 C62 82 63 76 55 77Z" />
+            <path d="M169 123 C163 124 160 134 165 135 C173 136 181 123 178 119 C175 115 172 122 169 123Z" />
+            <circle cx="115" cy="149" r="2.1" /><circle cx="104" cy="140" r="1.5" />
+            <circle cx="72" cy="112" r="1.7" />
+          </>}
+        </g>}
       </g>
-      {cfg.flies && <g aria-hidden="true">
-        {[[23, 73], [143, 100], [113, 24]].map(([x, y], i) => (
-          <g key={i} transform={`translate(${x} ${y})`}>
-            <g className="banana-fly" style={{ animationDelay: `${i * -1.3}s`, animationDuration: `${3.2 + i * 0.6}s` }}>
-              <g className="banana-fly-wings" fill="#D3D9C8" stroke="#5C6B4F" strokeWidth="0.7">
-                <ellipse cx="-4" cy="-3" rx="4" ry="2.5" transform="rotate(25 -4 -3)" />
-                <ellipse cx="4" cy="-3" rx="4" ry="2.5" transform="rotate(-25 4 -3)" />
-              </g>
-              <ellipse rx="2.5" ry="4" fill="#231C13" />
-              <circle cy="-4" r="2" fill="#231C13" />
-            </g>
-          </g>
-        ))}
-      </g>}
-    </svg>
-  );
+      <path d="M185 104 Q190 98 194 95 Q196 94 197 98 L194 105 189 109Z"
+        fill={cfg.rotten ? "#493C28" : "#80602B"} stroke={cfg.edge} strokeWidth="1.3" strokeLinejoin="round" />
+    </g>
+
+    {checking && <g className="banana-scan-sparks" stroke="#819440" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <path d="M151 45v10m-5-5h10" /><circle cx="34" cy="112" r="2" fill="#BAC660" stroke="none" />
+    </g>}
+    {cfg.rotten && !compact && <><Fly x={35} y={71} index={0} /><Fly x={169} y={54} index={1} /></>}
+  </svg>;
 }

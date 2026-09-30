@@ -38,8 +38,11 @@ No provider call occurs during scanning. Explain sends the URL, scan evidence,
 registration facts and available JPEG to the configured provider only on demand.
 It does not send the full HTML. Treat scans of URLs containing private query
 parameters accordingly. Provider output is validated and rendered as text.
-Successful answers are cached against the evidence, provider and model. Failures
-are retryable. Changing evidence or model invalidates the cached answer.
+Completed answers are stored in SQL against the original evidence scan ID and
+shared by all users scanning the same normalized URL. Repeat results include the
+saved explanation and display it without another provider call. Rescan creates
+a new observation with no explanation; clicking Explain generates and stores a
+fresh answer. Failed or partial explanations are retryable and are never saved.
 
 The website requests `Accept: text/event-stream` on Explain. The API streams
 `snapshot` events as the provider generates text, then a validated `done` event.
@@ -55,8 +58,9 @@ Explanations start with the destination's apparent purpose, using the captured
 title and preview. They describe changes from the submitted address to the final
 address, including changes of hostname. This is observed navigation, not a
 complete redirect chain; intermediate hops are not stored. Skipped or failed
-page checks leave purpose/navigation unverified. Prompt changes invalidate saved
-explanations so the next Explain request uses the updated guidance.
+page checks leave purpose/navigation unverified. Provider, model, and prompt
+changes apply to newly generated answers; existing answers remain available,
+even without provider credentials, until the user rescans.
 
 After the first completed scan, the website transitions from its initial desktop
 columns to a single column with the result below the URL form. Rescans keep that
@@ -79,7 +83,8 @@ may have none. `PAGE_PREVIEW_ENABLED=false` disables capture.
 
 JPEGs are stored as `VARBINARY(MAX)` in `dbo.Scans.ScreenshotJpeg`. Base64 is used
 only in the provider request. Registration facts remain in `RawResponseJson`;
-explanations use `ExplanationJson` and `ExplanationKey`. A bounded in-memory cache
+explanations use `ExplanationJson` and `ExplanationKey` (a generation fingerprint
+retained for provenance, not a reuse condition). A bounded in-memory cache
 keeps the current preview/explanation available if SQL is temporarily offline;
 that fallback is lost on restart. A replay uses the original evidence scan ID.
 
@@ -98,7 +103,9 @@ that fallback is lost on restart. A replay uses the original evidence scan ID.
   server. Returns 404 for missing scans, 503 for missing configuration, 429 when
   busy, or 502 if the provider fails or returns malformed output.
 - Scan responses include `domain_info`, `scanned_at`, `evidence_scan_id`, and
-  `page.preview_available`. Image bytes are omitted from JSON responses.
+  `page.preview_available`. Analyze and individual scan responses also include
+  `explanation` when already saved, otherwise `null`. Reading a scan never starts
+  an LLM request. Image bytes are omitted from JSON responses.
 
 Incomplete scans remain in the audit log but cannot be reused. This includes DNS,
 browser, non-2xx page responses and threat-feed failures. A normal subsequent Peel

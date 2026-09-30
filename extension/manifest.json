@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Phisang",
-  "version": "0.1.0",
-  "description": "Reads the peel, never the fruit: URLhaus lookup, lexical scoring, and Gemini reasoning on the URL string alone.",
+  "version": "0.2.0",
+  "description": "Check links for known threats and phishing, with website previews, domain details, and explanations of scan findings.",
   "action": {
     "default_title": "Phisang",
     "default_popup": "popup.html",

@@ -1,6 +1,6 @@
 chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
   const result = payload && payload.result;
-  if (!result || result.classification !== "unavailable") return;
+  if (!result || result.classification !== "unavailable" || (payload.url && new URL(payload.url).href !== location.href)) return;
   if (document.getElementById("phisang-banner")) return;
 
   const banner = document.createElement("div");
@@ -25,6 +25,6 @@ chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
     "background-image:repeating-linear-gradient(45deg,rgba(70,114,53,.3) 0 1.5px,transparent 1.5px 8px)",
   ].join(";");
   banner.textContent =
-    "Phisang: Risk unknown — the threat feed or model was unreachable. This is a degraded result, not a clean one.";
+    "Phisang could not finish checking this website. Its safety is unknown. Open Phisang to try again.";
   document.documentElement.prepend(banner);
 });

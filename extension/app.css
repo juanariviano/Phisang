@@ -1,0 +1,59 @@
+body { margin: 0; background: var(--bench); color: var(--ink); font: 14px/1.55 var(--font-sans); }
+[hidden] { display: none !important; }
+.popup { width: 400px; min-width: 320px; }
+.panel { background: var(--paper); padding: 20px; }
+.full-page { min-height: 100dvh; display: grid; place-items: start center; padding: 32px 16px; }
+.full-page .panel { width: min(680px, 100%); padding: clamp(20px, 4vw, 36px); border: 2px solid var(--ink); border-radius: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.brand-mark { flex: none; transform: rotate(-20deg); }
+.brand strong { font: 800 24px/1 var(--font-display); letter-spacing: -.03em; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
+h1 { font-size: 24px; margin: 0 0 10px; letter-spacing: -.03em; }
+h2 { font-size: 20px; margin: 0 0 12px; }
+h3 { font-size: 15px; margin: 16px 0 8px; }
+p { margin: 8px 0; }
+button { width: 100%; border: 2px solid var(--ink); background: var(--peel); color: var(--ink); border-radius: 10px; padding: 12px 16px; font: 700 14px var(--font-sans); cursor: pointer; }
+button:hover { background: var(--flesh); }
+button:disabled { opacity: .65; cursor: wait; }
+.secondary { background: transparent; margin-top: 16px; }
+.result-heading { display: flex; gap: 12px; align-items: center; }
+.result-heading > div:last-child { min-width: 0; }
+.result-heading p { font-size: 13px; color: var(--forest); }
+.banana-slot { flex: none; }
+.risk-meter { display: flex; align-items: center; gap: 14px; margin: 20px 0; padding: 14px 0; border-block: 1px solid #46723540; }
+.risk-meter strong { font: 800 32px var(--font-display); }
+.risk-meter span { color: var(--leaf); font-size: 12px; }
+.address { overflow-wrap: anywhere; font: 12px/1.6 var(--font-mono); color: var(--leaf); margin-bottom: 20px; }
+.fine, footer, figcaption { font-size: 12px; color: var(--leaf); }
+.error { color: var(--rot); }
+.error:empty { display: none; }
+.preview { margin: 20px 0; }
+.preview img { width: 100%; max-height: 300px; object-fit: contain; display: block; border: 1px solid #46723540; border-radius: 10px; background: var(--bench); }
+figcaption { margin-top: 6px; }
+.explain { margin: 20px 0; }
+.explanation { border: 1px solid #46723540; background: #fff78d25; padding: 16px; border-radius: 12px; overflow-wrap: anywhere; }
+.explanation ul { padding-left: 20px; }
+.explanation li { margin: 7px 0; }
+details { border-top: 1px solid #46723540; padding: 14px 0; }
+summary { cursor: pointer; font-weight: 700; }
+.info-rows { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; font-size: 12px; }
+.info-rows dt { color: var(--leaf); }
+.info-rows dd { margin: 0; overflow-wrap: anywhere; }
+details ul { padding-left: 20px; font-size: 12px; overflow-wrap: anywhere; }
+.toggle { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #46723540; margin-top: 22px; padding-top: 16px; cursor: pointer; }
+.toggle input { accent-color: var(--leaf); width: 18px; height: 18px; }
+footer { margin-top: 24px; border-top: 1px solid #46723540; padding-top: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.actions button { flex: 1; margin-top: 0; }
+.eyebrow { font-size: 11px; font-weight: 700; color: var(--leaf); text-transform: uppercase; letter-spacing: .12em; }
+.progress-heading { display: flex; justify-content: space-between; color: var(--leaf); font-size: 12px; }
+.progress-track { overflow: hidden; background: #46723526; height: 6px; border-radius: 9px; margin: 10px 0 16px; }
+.scan-progress-fill { background: var(--leaf); width: 33%; height: 100%; border-radius: 9px; }
+.progress-stages { list-style: none; padding: 0; font-size: 13px; }
+.progress-stages li { margin: 12px 0; }
+.progress-stages li:not([data-status="running"]) { color: var(--leaf); }
+.progress-stages p { margin: 4px 0; font-size: 12px; }
+#scanning { text-align: center; }
+#result { animation: result-in .3s ease-out; }
+@keyframes result-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (max-width: 360px) { .popup { width: 100%; } .result-heading { gap: 4px; } h1 { font-size: 21px; } }

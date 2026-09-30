@@ -1,78 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Phisang</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@300..700&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="theme.css" />
-    <link rel="stylesheet" href="popup.css" />
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="animations.css">
   </head>
-  <body class="is-idle">
-    <div id="hazard" class="hazard-rule" aria-hidden="true"></div>
+  <body class="popup">
+    <main class="panel">
+      <header class="brand"><svg class="brand-mark" viewBox="48 2 64 192" width="15" height="44" aria-hidden="true"><path d="M80 38 C 78 27 76 20 74 12" fill="none" stroke="#467235" stroke-width="9" stroke-linecap="round"/><path d="M80 34 C 66 44 56 84 56 120 C 56 152 66 174 80 184 C 75 150 71 100 76 40 Z" fill="#FFBF00"/><path d="M76 40 C 71 100 75 150 80 184 C 85 186 89 184 91 178 C 87 148 87 96 84 40 Z" fill="#FFBF00"/><ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill="#8A5A0F"/><path d="M84 40 C 87 96 87 148 91 178 C 101 168 104 146 104 120 C 104 84 94 44 80 34 Z" fill="#FFBF00"/></svg><strong>Phisang</strong></header>
 
-    <div class="wrap">
-      <header>
-        <div class="brand">
-          <svg class="brand-mark" viewBox="48 2 64 192" width="13" height="39" aria-hidden="true"><path d="M80 38 C 78 27 76 20 74 12" fill="none" stroke="#467235" stroke-width="9" stroke-linecap="round"/><path d="M80 34 C 66 44 56 84 56 120 C 56 152 66 174 80 184 C 75 150 71 100 76 40 Z" fill="#FFBF00"/><path d="M76 40 C 71 100 75 150 80 184 C 85 186 89 184 91 178 C 87 148 87 96 84 40 Z" fill="#FFBF00"/><ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill="#8A5A0F"/><path d="M84 40 C 87 96 87 148 91 178 C 101 168 104 146 104 120 C 104 84 94 44 80 34 Z" fill="#FFBF00"/></svg>
-          <strong>Phisang</strong>
-        </div>
-        <span id="badge" class="badge">Idle</span>
-      </header>
-
-      <section class="verdict">
-        <div id="banana" class="banana-slot" aria-hidden="false"></div>
-        <div class="verdict-text">
-          <h1 class="verdict-title">
-            <span id="verdict">No result</span>
-            <span id="ripeness" class="ripeness"></span>
-          </h1>
-          <p id="hint" class="verdict-hint">
-            Open an http(s) page while the Phisang API is running on localhost:8000.
-          </p>
-          <p id="risk" class="verdict-hint hidden"></p>
-        </div>
-      </section>
-
-      <p id="caveat" class="caveat hidden"></p>
-      <ul id="history" class="notes hidden"></ul>
-
-      <p class="section-label">The peel</p>
-      <ul id="peel" class="peel"></ul>
-
-      <section id="page" class="hidden">
-        <p class="section-label">The page we opened</p>
-        <p id="reasoning" class="reasoning"></p>
-        <dl id="page-facts" class="facts"></dl>
-      </section>
-
-      <p id="signals-label" class="section-label hidden">Signals</p>
-      <ul id="signals" class="signals"></ul>
-
-      <button id="rescan" type="button" class="rescan hidden">Scan again</button>
-      <p id="rescan-status" class="fine hidden" role="status"></p>
-
-      <label class="toggle" for="enabled">
-        <span>Check pages before they load</span>
-        <input type="checkbox" id="enabled" checked />
-      </label>
-
-      <details>
-        <summary>Technical details</summary>
-        <dl id="tech" class="facts"></dl>
-      </details>
-
-      <p class="fine">A low risk score is not a guarantee · URLhaus data by abuse.ch</p>
-    </div>
-
-    <script src="peel.js"></script>
+        <p id="address" class="address"></p>
+        <p id="status" class="error" role="status"></p>
+        <div id="scanning" hidden></div>
+        <div id="progress" hidden></div>
+        <div id="result"><p>Loading the last scan?</p></div>
+        <button id="rescan" class="secondary" type="button" hidden>Rescan</button><label class="toggle" for="enabled"><span>Protect navigations</span><input type="checkbox" id="enabled" checked></label>
+      <footer>A low risk score is not a guarantee of safety. Threat information from URLhaus / abuse.ch.</footer>
+    </main>
     <script src="banana.js"></script>
     <script src="verdicts.js"></script>
-    <script src="popup.js"></script>
+    <script src="stream.js"></script>
+    <script src="api.js"></script>
+    <script src="result-ui.js"></script>
+    <script src="result-page.js"></script>
   </body>
 </html>

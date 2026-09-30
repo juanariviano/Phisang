@@ -1,6 +1,6 @@
 """Download the Tranco popularity ranking and keep its top domains.
 
-Run from backend/:  python scripts/update_tranco.py [--top 100000]
+Run from backend/:  python scripts/update_tranco.py [--top 10000]
 Writes data/tranco_top.txt, which the analyzer reads at startup (restart the API
 after refreshing). Tranco ranks registrable domains by aggregated traffic and is
 far harder for a fresh phishing domain to enter than a hand-kept list.
@@ -24,7 +24,7 @@ TRANCO_URL = "https://tranco-list.eu/top-1m.csv.zip"
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--top", type=int, default=100_000)
+    parser.add_argument("--top", type=int, default=10_000)
     args = parser.parse_args()
 
     response = httpx.get(TRANCO_URL, follow_redirects=True, timeout=120)

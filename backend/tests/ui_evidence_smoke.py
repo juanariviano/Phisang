@@ -179,6 +179,35 @@ async def run():
             assert await page.locator(".banana-fly").count() == 0
             assert [c[1] for c in calls if c[0] == "scan"][-1]["rescan"] is False
             assert not errors, errors
+            # A saved popularity shortcut offers a genuine page inspection.
+            result = dict(result, scan_id="tranco", normalized_url="https://example.org/",
+                          classification="benign", risk_score=0, verdict="safe", error_code=None,
+                          page={"status": "skipped"}, page_shortcut={"source": "tranco", "top_count": 10000},
+                          served_from_history=True, explanation={"summary": "Address-only explanation.",
+                          "reasons": ["The page was skipped."], "advice": ["Check independently."]})
+            await page.get_by_label("URL to peel").fill("https://example.org/")
+            await page.get_by_role("button", name="Peel URL", exact=True).click()
+            await page.get_by_role("heading", name="Listed in Tranco’s top 10,000", exact=True).wait_for()
+            await page.screenshot(path=str(OUTPUT / f"tranco-option-{width}.png"), full_page=True)
+            result = dict(result, scan_id="inspected", evidence_scan_id="inspected", page_shortcut=None,
+                          served_from_history=False, page={"status": "ok"}, explanation=None)
+            # Editing the form must not make the old result's Continue scan a different URL.
+            await page.get_by_label("URL to peel").fill("https://another.example/")
+            await page.get_by_role("button", name="Continue with page scan", exact=True).click()
+            await page.get_by_role("button", name="Explain this result", exact=True).wait_for()
+            assert [c[1] for c in calls if c[0] == "scan"][-1] == {
+                "url": "https://example.org/", "client": "web", "rescan": True, "inspect_page": True}
+            assert await page.get_by_label("URL to peel").input_value() == "https://example.org/"
+            assert await page.get_by_text("Address-only explanation.", exact=True).count() == 0
+            assert await page.get_by_role("button", name="Continue with page scan", exact=True).count() == 0
+            await page.get_by_role("button", name="Rescan", exact=True).click()
+            await page.get_by_role("button", name="Explain this result", exact=True).wait_for()
+            assert [c[1] for c in calls if c[0] == "scan"][-1]["inspect_page"] is True
+            await page.get_by_label("URL to peel").fill("https://new.example/")
+            await page.get_by_role("button", name="Peel URL", exact=True).click()
+            await page.get_by_role("button", name="Explain this result", exact=True).wait_for()
+            assert [c[1] for c in calls if c[0] == "scan"][-1]["inspect_page"] is False
+            assert not errors, errors
             await context.close()
         await browser.close()
     print("Desktop/mobile passed: static Peel button, no examples, risk percentage, rotten high-risk banana/flies (including benign classification), unavailable score omitted, streaming, stacked layout, Rescan, reduced motion.")

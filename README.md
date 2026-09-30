@@ -162,7 +162,20 @@ Open **http://localhost:8000**. For UI work, `cd web && npm run dev` runs Vite w
 5. Leave **Protect navigations** on in the toolbar popup while demoing; turn it off when you need to browse normally
 6. After UI changes, reload the unpacked extension
 
-The extension intercepts `http(s)` navigations (except the scanner itself). The popup and the block page both show the risk level.
+The extension intercepts `http(s)` navigations (except the local scanner). Its
+popup and warning page show the estimated risk, captured preview, registration
+details, and saved AI explanation. Explain streams a new answer only when one
+has not been saved for that scan; Rescan requests fresh findings. The checking
+screen and Rescan show live progress. A benign scan no longer skips later checks
+for the entire domain; repeat URLs use the API's scan archive, and failed checks
+can retry.
+
+The extension ships as plain JavaScript with no runtime build step. After editing
+the website's shared verdict wording, stream reader, or banana artwork, run
+`node extension/scripts/sync-web-assets.mjs` (requires `npm install` in `web/`),
+then reload the unpacked extension. Run `node --test extension/tests/*.test.cjs`
+for worker checks, or `backend/.venv/Scripts/python backend/tests/ui_extension_smoke.py`
+for an isolated unpacked-extension browser check with mocked API traffic.
 
 </details>
 
@@ -194,10 +207,18 @@ ai/markuplm/artifacts/laya_v2/
 
 ```bash
 cd backend
-python scripts/update_tranco.py --top 100000
+python scripts/update_tranco.py --top 10000
 ```
 
 This downloads the Tranco ranking into `backend/data/tranco_top.txt`. Restart the API afterwards. Without the file, only the built-in well-known list in [`backend/app/reputation.py`](backend/app/reputation.py) skips the page fetch.
+
+When that shortcut skips page inspection, the website identifies the list used
+and offers **Continue with page scan**. This starts a new observation with
+`inspect_page: true`, bypassing both scan-history reuse and the reputation
+shortcut. Threat-database checks and destination safety restrictions still apply.
+The page scan gets its own preview and explanation; the skipped scan's explanation
+is not carried over. Tranco notices show the size of the downloaded list, not an
+assumed rank, and older saved results omit the size when it was not recorded.
 
 </details>
 

@@ -16,6 +16,8 @@ class AnalyzeRequest(BaseModel):
     client: ClientName = "web"
     # A known URL is answered from history unless the caller insists on a fresh look.
     rescan: bool = False
+    # Bypass history and reputation shortcuts, while retaining threat checks.
+    inspect_page: bool = False
 
 
 Verdict = Literal["malicious", "safe", "potentially_unsafe", "unknown"]
@@ -108,6 +110,11 @@ class Explanation(BaseModel):
     included_screenshot: bool = False
 
 
+class PageShortcut(BaseModel):
+    source: Literal["tranco", "well_known"]
+    top_count: Optional[int] = None
+
+
 class AnalyzeResponse(BaseModel):
     scan_id: str
     normalized_url: str
@@ -132,6 +139,7 @@ class AnalyzeResponse(BaseModel):
     evidence_scan_id: Optional[str] = None
     scanned_at: Optional[str] = None
     explanation: Optional[Explanation] = None
+    page_shortcut: Optional[PageShortcut] = None
 
 
 class HealthResponse(BaseModel):

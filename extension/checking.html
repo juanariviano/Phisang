@@ -1,57 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#16210F" />
-    <title>Phisang is peeling this address</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&amp;family=JetBrains+Mono:wght@400;500&amp;family=Public+Sans:wght@300..700&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="theme.css" />
-    <link rel="stylesheet" href="pages.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checking this website</title>
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="animations.css">
   </head>
-  <body class="shell is-checking bench-grid">
+  <body class="full-page">
     <main class="panel">
-      <div class="body">
-        <div class="masthead">
-          <svg class="brand-mark" viewBox="48 2 64 192" width="13" height="39" aria-hidden="true"><path d="M80 38 C 78 27 76 20 74 12" fill="none" stroke="#467235" stroke-width="9" stroke-linecap="round"/><path d="M80 34 C 66 44 56 84 56 120 C 56 152 66 174 80 184 C 75 150 71 100 76 40 Z" fill="#FFBF00"/><path d="M76 40 C 71 100 75 150 80 184 C 85 186 89 184 91 178 C 87 148 87 96 84 40 Z" fill="#FFBF00"/><ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill="#8A5A0F"/><path d="M84 40 C 87 96 87 148 91 178 C 101 168 104 146 104 120 C 104 84 94 44 80 34 Z" fill="#FFBF00"/></svg>
-          <strong>Phisang</strong>
-        </div>
-
-        <div class="gauge" aria-hidden="true"><div class="ripening"></div></div>
-
-        <div class="verdict-head">
-          <div id="banana" class="banana-slot"></div>
-          <div>
-            <p class="eyebrow">Three gates</p>
-            <h1>Peeling this address</h1>
-          </div>
-        </div>
-        <p class="summary">
-          Phisang is reading the parts below. Only if they are inconclusive is the page opened —
-          on Phisang's server, in a locked-down browser, never in this tab.
-        </p>
-
-        <p class="section-label">The peel</p>
-        <ul id="peel" class="peel"></ul>
-
-        <ol class="steps">
-          <li><span>1</span> URLhaus — exact address, then the related host path</li>
-          <li><span>2</span> Lexical model — clears well-known hosts on the address alone</li>
-          <li><span>3</span> Page markup — opened server-side when the address is inconclusive</li>
-        </ol>
-
-        <p id="status" class="fine" role="status">Contacting the Phisang API</p>
-      </div>
+      <header class="brand"><svg class="brand-mark" viewBox="48 2 64 192" width="15" height="44" aria-hidden="true"><path d="M80 38 C 78 27 76 20 74 12" fill="none" stroke="#467235" stroke-width="9" stroke-linecap="round"/><path d="M80 34 C 66 44 56 84 56 120 C 56 152 66 174 80 184 C 75 150 71 100 76 40 Z" fill="#FFBF00"/><path d="M76 40 C 71 100 75 150 80 184 C 85 186 89 184 91 178 C 87 148 87 96 84 40 Z" fill="#FFBF00"/><ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill="#8A5A0F"/><path d="M84 40 C 87 96 87 148 91 178 C 101 168 104 146 104 120 C 104 84 94 44 80 34 Z" fill="#FFBF00"/></svg><strong>Phisang</strong></header>
+      <div class="result-heading"><div id="banana"></div><div><h1>Checking the link</h1><p>Checking for threats and gathering information about the website.</p></div></div>
+        <p id="address" class="address"></p>
+        <div id="progress"></div>
+        <p id="status" class="error" role="status"></p>
+      <footer>A low risk score is not a guarantee of safety. Threat information from URLhaus / abuse.ch.</footer>
     </main>
-
-    <script src="peel.js"></script>
     <script src="banana.js"></script>
     <script src="verdicts.js"></script>
+    <script src="stream.js"></script>
+    <script src="api.js"></script>
+    <script src="result-ui.js"></script>
     <script src="checking.js"></script>
   </body>
 </html>

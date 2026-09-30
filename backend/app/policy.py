@@ -9,10 +9,10 @@ from urllib.parse import urlsplit
 from . import evidence, heuristics, history, page_stage, registration, urlhaus
 from .config import settings
 from .inventory import new_scan_id, remember
-from .models import AnalyzeResponse, PageResult, PriorScan, ThreatIntel
+from .models import AnalyzeResponse, PageResult, PageShortcut, PriorScan, ThreatIntel
 from .normalize import UrlError, hostname_of, normalize_url, redact_url
 from .page_stage import PageStageError
-from .reputation import is_popular_host, is_well_known_host
+from .reputation import is_popular_host, is_well_known_host, popular_domain_count
 from .risk import MALICIOUS_FROM, risk_level
 from .scan_progress import report, step
 from .url_guard import UrlRejected, check_static
@@ -20,7 +20,7 @@ from .urlhaus import UrlhausError
 
 logger = logging.getLogger("phisang")
 
-POLICY_VERSION = "poc-flowchart-v2.4"
+POLICY_VERSION = "poc-flowchart-v2.5"
 
 # Retain the existing policy's lower confidence for an uncorroborated model call.
 UNCORROBORATED_BENIGN_CONFIDENCE = 50
@@ -133,6 +133,15 @@ def _from_history(scan_id: str, normalized: str, row: dict, prior: PriorScan) ->
     result.domain_info = saved.domain_info if saved else None
     result.scanned_at = saved.scanned_at if saved else _format_when(row.get("LastScannedAt"))
     result.evidence_scan_id = (saved.evidence_scan_id or saved.scan_id) if saved else row.get("LastScanRef")
+    if saved:
+        result.page_shortcut = saved.page_shortcut
+        # Older stored scans predate the structured shortcut field. Their signals
+        # establish the source, but not how many domains were in that old list.
+        if not result.page_shortcut and saved.page and saved.page.status == "skipped":
+            if "Host is on the Tranco top-domain ranking" in saved.signals:
+                result.page_shortcut = PageShortcut(source="tranco")
+            elif "Host is on the well-known domain list" in saved.signals:
+                result.page_shortcut = PageShortcut(source="well_known")
     return result
 
 
@@ -200,7 +209,7 @@ def _unavailable(
     )
 
 
-async def analyze(raw_url: str, client: str, rescan: bool = False) -> AnalyzeResponse:
+async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page: bool = False) -> AnalyzeResponse:
     started = time.monotonic()
     scan_id = new_scan_id()
     normalized = normalize_url(raw_url)
@@ -214,8 +223,8 @@ async def analyze(raw_url: str, client: str, rescan: bool = False) -> AnalyzeRes
     except UrlRejected as exc:
         raise UrlError("unsupported_target", str(exc)) from None
 
-    logger.info("analyze start scan_id=%s client=%s rescan=%s url=%s",
-                scan_id, client, rescan, redact_url(normalized))
+    logger.info("analyze start scan_id=%s client=%s rescan=%s inspect_page=%s url=%s",
+                scan_id, client, rescan, inspect_page, redact_url(normalized))
 
     # Stage 0. A URL somebody already scanned is answered from the archive, which
     # is the only stage that costs neither a URLhaus token nor a page fetch. The
@@ -223,13 +232,13 @@ async def analyze(raw_url: str, client: str, rescan: bool = False) -> AnalyzeRes
     async with step("history", "Checking saved scans", "Looking for an earlier result for this address."):
         prior_row = await asyncio.to_thread(history.lookup, normalized)
     prior = _prior_from_row(prior_row) if prior_row else None
-    if prior_row is not None and not rescan and history.reusable(prior_row):
+    if prior_row is not None and not rescan and not inspect_page and history.reusable(prior_row):
         # Returning an existing result is not another scan: no database write.
         await report("result", "Loading saved result", "This address already has a completed scan.")
         return _from_history(scan_id, normalized, prior_row, prior)
 
     result, domain_info = await asyncio.gather(
-        _analyze_fresh(scan_id, normalized), _registration_with_progress(hostname_of(normalized)))
+        _analyze_fresh(scan_id, normalized, inspect_page=inspect_page), _registration_with_progress(hostname_of(normalized)))
     # One place records every fresh scan, so no return path can quietly skip it.
     result.prior = prior
     result.domain_info = domain_info
@@ -253,7 +262,7 @@ async def _registration_with_progress(host):
     return result
 
 
-async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
+async def _analyze_fresh(scan_id: str, normalized: str, inspect_page: bool = False) -> AnalyzeResponse:
     """URLhaus, then the lexical gate, then the page model."""
     try:
         async with step("threats", "Checking known threats", "Checking the address against the threat database."):
@@ -298,12 +307,13 @@ async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
     # confidence 100. Only well-known or top-ranked hosts may skip the page fetch;
     # everything else has its markup read.
     host = urlsplit(normalized).hostname or ""
-    reputation = ("well-known domain list" if is_well_known_host(host)
-                  else "Tranco top-domain ranking" if is_popular_host(host) else None)
-    if (heuristic.label == "benign"
+    popular = is_popular_host(host)
+    reputation = ("Tranco top-domain ranking" if popular
+                  else "well-known domain list" if is_well_known_host(host) else None)
+    if (not inspect_page and heuristic.label == "benign"
             and heuristic.confidence > settings.heuristic_benign_threshold
             and reputation):
-        return _base(
+        result = _base(
             scan_id=scan_id,
             normalized_url=normalized,
             classification="benign",
@@ -321,6 +331,9 @@ async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
                 "The destination page was not fetched during this scan",
             ],
         )
+        result.page_shortcut = PageShortcut(source="tranco" if popular else "well_known",
+                                            top_count=(popular_domain_count() or None) if popular else None)
+        return result
 
     # Inconclusive on the URL alone, so the page itself gets fetched and read.
     try:
@@ -339,7 +352,8 @@ async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
         )
 
     signals = list(heuristic.signals)
-    signals.append("URL checks were inconclusive, so the destination was fetched server-side")
+    signals.append("You requested page inspection, so the destination was fetched server-side"
+                   if inspect_page else "URL checks were inconclusive, so the destination was fetched server-side")
     signals.append(f"Markup classifier read the fetched page as {page_result.label}")
 
     classification = page_result.label or "unavailable"

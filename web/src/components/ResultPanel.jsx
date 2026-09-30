@@ -84,7 +84,7 @@ function Preview({ result }) {
   </figure>;
 }
 
-export function ResultPanel({ busy, result, progress = [] }) {
+export function ResultPanel({ busy, result, progress = [], onInspectPage }) {
   const reducedMotion = useReducedMotion();
   if (!busy && !result) return null;
   const meta = busy ? CLASS_META.checking : verdictMeta(result, result.classification);
@@ -121,6 +121,25 @@ export function ResultPanel({ busy, result, progress = [] }) {
         <p className="mt-5 break-all font-mono text-xs text-leaf">{result.normalized_url}</p>
         {result.served_from_history && <p className="mt-2 text-xs text-leaf">Saved result{result.scanned_at && <> from <DateValue value={result.scanned_at} /></>}. Use Rescan for a fresh check.</p>}
         {result.classification === "unavailable" && <p className="mt-3 text-sm">This result will not be reused. Your next scan will try again.</p>}
+        {result.page_shortcut && result.page?.status === "skipped" && onInspectPage && <section
+          className="mt-5 rounded-lg border border-leaf/30 bg-flesh/35 p-4" aria-label="Page scan skipped">
+          <h3 className="font-display text-lg font-extrabold text-ink">
+            {result.page_shortcut.source === "tranco"
+              ? `Listed in Tranco${result.page_shortcut.top_count ? `’s top ${result.page_shortcut.top_count.toLocaleString()}` : "’s domain ranking"}`
+              : "Recognized domain"}
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed">
+            {result.page_shortcut.source === "tranco"
+              ? "This domain appears in the popularity list used for this scan."
+              : "This domain is on Phisang’s built-in known-domain list."}{" "}
+            The address checks found no strong warning, so the page content was not inspected. This does not guarantee it is safe.
+          </p>
+          <button type="button" onClick={onInspectPage}
+            className="mt-4 w-full cursor-pointer rounded-lg border-2 border-ink bg-peel px-4 py-3 font-bold text-ink transition-colors hover:bg-flesh">
+            Continue with page scan
+          </button>
+          <p className="mt-2 text-xs text-leaf">Opens and checks the page on our server. This may take a little longer.</p>
+        </section>}
         <Preview key={`preview-${result.scan_id}`} result={result} />
         <Explanation key={`explain-${result.scan_id}`} result={result} />
         <DomainDetails info={result.domain_info} />

@@ -14,11 +14,13 @@ export default function App() {
   const layoutTransition = reducedMotion ? { duration: 0 } : { type: "spring", stiffness: 110, damping: 24 };
   const [url, setUrl] = useState("");
   const [rescanTarget, setRescanTarget] = useState(null);
+  const [pageInspection, setPageInspection] = useState(false);
   const editVersion = useRef(0);
   function changeUrl(value) {
     editVersion.current += 1;
     setUrl(value);
     setRescanTarget(null);
+    setPageInspection(false);
   }
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState([]);
@@ -44,11 +46,12 @@ export default function App() {
 
   async function onSubmit(event) {
     event.preventDefault();
-    await runScan(rescanTarget || url.trim(), Boolean(rescanTarget));
+    await runScan(rescanTarget || url.trim(), Boolean(rescanTarget), pageInspection);
   }
 
-  async function runScan(value, rescan = false) {
+  async function runScan(value, rescan = false, inspectPage = false) {
     if (!value || busy) return;
+    setPageInspection(inspectPage);
     const submittedVersion = editVersion.current;
     setBusy(true);
     setError("");
@@ -60,7 +63,7 @@ export default function App() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
         signal: scanController.current.signal,
-        body: JSON.stringify({ url: value, client: "web", rescan }),
+        body: JSON.stringify({ url: value, client: "web", rescan, inspect_page: inspectPage }),
       });
       let data;
       await readScanStream(res, {
@@ -129,7 +132,11 @@ export default function App() {
 
           <motion.aside layout="position" transition={{ layout: layoutTransition }} className="min-w-0" data-result-region>
             {busy || result ? (
-              <ResultPanel busy={busy} result={result} progress={progress} />
+              <ResultPanel busy={busy} result={result} progress={progress} onInspectPage={() => {
+                const target = result.normalized_url;
+                changeUrl(target);
+                runScan(target, true, true);
+              }} />
             ) : (
               <Pipeline url={url} />
             )}

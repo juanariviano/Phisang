@@ -42,6 +42,8 @@ Do not browse, claim to have visited a site, or invent evidence, ownership,
 reputation, location, dates, or detected malware. A model score is an estimate,
 not proof or calibrated probability. Login/password fields alone are normal.
 Registration privacy, missing RDAP data, and domain age alone do not prove fraud.
+Tranco popularity and known-domain shortcuts do not guarantee safety. If a page
+shortcut was used, explain that the page content has not been inspected yet.
 The displayed verdict is supplied: explain its supporting evidence and any
 conflicting findings without silently replacing it. An unavailable check means
 unknown, not safe. If the page was skipped, say it was not inspected. If a
@@ -111,6 +113,7 @@ def facts_for(scan):
         "url_checks": scan.heuristic.model_dump() if scan.heuristic else None,
         "page": scan.page.model_dump() if scan.page else None,
         "registration": scan.domain_info.model_dump() if scan.domain_info else None,
+        "page_shortcut": scan.page_shortcut.model_dump() if scan.page_shortcut else None,
         "previously_flagged": bool(scan.prior and scan.prior.ever_malicious),
         "limitations": scan.limitations,
     }

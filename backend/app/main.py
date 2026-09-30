@@ -89,7 +89,7 @@ async def analyze_url(body: AnalyzeRequest, request: Request):
 
 
 async def _analyze_with_explanation(body):
-    result = await analyze(body.url, body.client, rescan=body.rescan)
+    result = await analyze(body.url, body.client, rescan=body.rescan, inspect_page=body.inspect_page)
     return await asyncio.to_thread(_with_saved_explanation, result)
 
 

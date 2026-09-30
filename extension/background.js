@@ -1,5 +1,5 @@
-const API_BASE = "http://localhost:8000";
-const allowedRoots = new Set();
+importScripts('stream.js', 'api.js', 'verdicts.js');
+const { analyzeUrl, savedExplanation, verdictMeta } = self.Phisang;
 const continueAnywayHosts = new Set();
 const skipOnce = new Map();
 const lastByTab = new Map();
@@ -73,8 +73,9 @@ function isIgnored(url) {
   }
   try {
     const parsed = new URL(url);
+    if (!["http:", "https:"].includes(parsed.protocol)) return true;
     const local = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
-    return local && parsed.port === "8000";
+    return local && ["8000", "5173"].includes(parsed.port);
   } catch {
     return true;
   }
@@ -82,28 +83,26 @@ function isIgnored(url) {
 
 function isAllowed(host) {
   if (!host) return false;
-  if (continueAnywayHosts.has(host) || continueAnywayHosts.has(rootHost(host))) return true;
-  const root = rootHost(host);
-  return allowedRoots.has(root) || allowedRoots.has(host);
+  return continueAnywayHosts.has(host);
 }
 
 function isTrusted(host) {
   return TRUSTED_ROOTS.has(rootHost(host));
 }
 
-function setBadge(tabId, classification, riskLevel) {
+function setBadge(tabId, classification, riskLevel, result) {
   // Palette-native badges. The toolbar icon is 16px, so the word carries the
   // state and the colour only reinforces it.
   const map = {
     malware: { text: "STOP", color: "#FFBF00" },
-    phishing: { text: "SPOT", color: "#E0A526" },
+    phishing: { text: "RISK", color: "#E0A526" },
     benign: { text: "OK", color: "#467235" },
     unavailable: { text: "?", color: "#8AA37E" },
     checking: { text: "..", color: "#6FA355" },
   };
   let spec = map[classification] || { text: "", color: "#467235" };
   // Allowed through, but scored risky enough that "OK" would be misleading.
-  if (classification === "benign" && riskLevel && riskLevel !== "SAFE") {
+  if (classification === "benign" && result && verdictMeta(result, classification).bananaState !== "benign") {
     spec = { text: "!", color: "#E0A526" };
   }
   chrome.action.setBadgeText({ tabId, text: spec.text });
@@ -127,22 +126,18 @@ function blockedUrl() {
 
 async function analyzeQuietly(tabId, url) {
   try {
-    const res = await fetch(`${API_BASE}/api/v1/analyze`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url, client: "extension" }),
-    });
-    const result = await res.json();
-    if (!res.ok) return;
+    const result = await analyzeUrl(url);
+    const tab = await chrome.tabs.get(tabId);
+    if ((tab.pendingUrl || tab.url) !== url) return;
     await remember(tabId, url, result);
-    setBadge(tabId, result.classification, result.risk_level);
+    setBadge(tabId, result.classification, result.risk_level, result);
     if (result.classification === "malware" || result.classification === "phishing") {
       skipOnce.set(tabId, blockedUrl());
       await chrome.tabs.update(tabId, { url: blockedUrl() });
       return;
     }
     if (result.classification === "benign") {
-      allowedRoots.add(rootHost(hostOf(url)));
+      lastSafeUrl.set(tabId, url);
     }
   } catch {
     // Trusted navigations continue even if the API is down.
@@ -182,16 +177,18 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 chrome.tabs.onRemoved.addListener((tabId) => {
   lastByTab.delete(tabId);
   skipOnce.delete(tabId);
+  lastSafeUrl.delete(tabId);
+  chrome.storage.session.remove(`tab:${tabId}`);
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  const tabId = message.tabId || sender.tab?.id;
+  const tabId = message.tabId ?? sender.tab?.id;
   const handle = async () => {
     if (message.type === "ANALYSIS_RESULT") {
       const result = message.result;
       const url = message.url;
       await remember(tabId, url, result);
-      setBadge(tabId, result.classification, result.risk_level);
+      setBadge(tabId, result.classification, result.risk_level, result);
 
       if (result.classification === "malware" || result.classification === "phishing") {
         skipOnce.set(tabId, blockedUrl());
@@ -201,7 +198,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
       skipOnce.set(tabId, url);
       if (result.classification === "benign") {
-        allowedRoots.add(rootHost(hostOf(url)));
+        lastSafeUrl.set(tabId, url);
       }
       await chrome.tabs.update(tabId, { url });
       return { ok: true };
@@ -229,29 +226,37 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       // Same as the web scanner's rescan: skip the scan archive and run every gate.
       const url = message.url;
       try {
-        const res = await fetch(`${API_BASE}/api/v1/analyze`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url, client: "extension", rescan: true }),
+        const result = await analyzeUrl(url, {
+          rescan: true,
+          onProgress: progress => {
+            chrome.runtime.sendMessage({ type: "SCAN_PROGRESS", tabId, progress }).catch(() => {});
+          },
         });
-        const result = await res.json();
-        if (!res.ok) return { ok: false };
         await remember(tabId, url, result);
-        setBadge(tabId, result.classification, result.risk_level);
+        setBadge(tabId, result.classification, result.risk_level, result);
         // A page that now reads as a threat is taken away from the user, as on first visit.
         if (result.classification === "malware" || result.classification === "phishing") {
-          skipOnce.set(tabId, blockedUrl());
-          await chrome.tabs.update(tabId, { url: blockedUrl() });
+          const tab = await chrome.tabs.get(tabId);
+          if (tab.url !== blockedUrl()) {
+            skipOnce.set(tabId, blockedUrl());
+            await chrome.tabs.update(tabId, { url: blockedUrl() });
+          }
         }
         return { ok: true, payload: { url, result } };
-      } catch {
-        return { ok: false };
+      } catch (error) {
+        return { ok: false, message: error.message || "The scan could not finish. Try again." };
       }
     }
 
     if (message.type === "GET_TAB_RESULT") {
       const stored = await chrome.storage.session.get(`tab:${tabId}`);
-      return stored[`tab:${tabId}`] || lastByTab.get(tabId) || null;
+      const payload = stored[`tab:${tabId}`] || lastByTab.get(tabId) || null;
+      if (payload?.result?.scan_id) {
+        try {
+          payload.result.explanation = await savedExplanation(payload.result);
+        } catch { /* The last result remains readable while the API is offline. */ }
+      }
+      return payload ? { ...payload, tabId } : null;
     }
 
     if (message.type === "CONTINUE_ANYWAY") {
@@ -263,7 +268,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message.type === "GO_BACK") {
-      const previous = lastSafeUrl.get(tabId) || "chrome://newtab/";
+      // A rescan can flag the same page that was previously allowed through.
+      const candidate = lastSafeUrl.get(tabId);
+      const previous = candidate && candidate !== message.url ? candidate : "chrome://newtab/";
       skipOnce.set(tabId, previous);
       await chrome.tabs.update(tabId, { url: previous });
       return { ok: true };
@@ -272,6 +279,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return { ok: false };
   };
 
-  handle().then(sendResponse);
+  handle().then(sendResponse).catch(() => sendResponse({ ok: false, message: "The request could not finish. Try again." }));
   return true;
 });

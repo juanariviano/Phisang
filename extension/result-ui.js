@@ -119,6 +119,12 @@
       if (result.explanation) { draw(result.explanation, true); button.hidden = true; note.hidden = true; }
       box.append(button, note, error, answer); container.append(box);
     }
+    if (meta.bananaState === 'rotten' || meta.bananaState === 'phishing') {
+      const report = node('button', 'Report false positive', 'secondary');
+      report.type = 'button';
+      // UI only: connect to the reporting flow when it is implemented.
+      container.append(report);
+    }
     const info = result.domain_info;
     container.append(details('About this domain', info?.status === 'ok' ? [rows([
       ['Domain', info.domain], ['Registered', formatDate(info.registered_at)], ['Expires', formatDate(info.expires_at)],

@@ -142,6 +142,11 @@ export function ResultPanel({ busy, result, progress = [], onInspectPage }) {
         </section>}
         <Preview key={`preview-${result.scan_id}`} result={result} />
         <Explanation key={`explain-${result.scan_id}`} result={result} />
+        {(meta.bananaState === "rotten" || meta.bananaState === "phishing") && <button
+          type="button"
+          className="mt-4 w-full cursor-pointer rounded-lg border-2 border-ink px-4 py-3 font-semibold text-ink transition-colors hover:bg-leaf/10">
+          Report false positive
+        </button>}
         <DomainDetails info={result.domain_info} />
         <details className="mt-4 border-t border-leaf/30 pt-4">
           <summary className="cursor-pointer font-semibold text-ink">Scan details</summary>

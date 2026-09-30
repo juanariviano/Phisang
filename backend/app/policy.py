@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import time
+from datetime import datetime, timezone
 from urllib.parse import urlsplit
 
-from . import heuristics, history, page_stage, urlhaus
+from . import evidence, heuristics, history, page_stage, registration, urlhaus
 from .config import settings
 from .inventory import new_scan_id, remember
 from .models import AnalyzeResponse, PageResult, PriorScan, ThreatIntel
@@ -12,24 +14,23 @@ from .normalize import UrlError, hostname_of, normalize_url, redact_url
 from .page_stage import PageStageError
 from .reputation import is_popular_host, is_well_known_host
 from .risk import MALICIOUS_FROM, risk_level
+from .scan_progress import report, step
 from .url_guard import UrlRejected, check_static
 from .urlhaus import UrlhausError
 
 logger = logging.getLogger("phisang")
 
-POLICY_VERSION = "poc-flowchart-v2.3"
+POLICY_VERSION = "poc-flowchart-v2.4"
 
-# Reported for a page the markup model flagged with nothing else behind it. The
-# v1 model scores ordinary sites (wikipedia.org 0.97, monkeytype.com 0.99) as
-# high as real phishing, so its call alone is too weak to block on, and the
-# benign verdict that replaces it should not look certain either.
+# Retain the existing policy's lower confidence for an uncorroborated model call.
 UNCORROBORATED_BENIGN_CONFIDENCE = 50
 
 LIMITATIONS = [
-    "The destination is fetched server-side unless the host is a well-known or top-ranked domain",
+    "Some scans can be decided without fetching the destination page",
     "A markup-model phishing call blocks only when the URL or a password field backs it up",
-    "Heuristic scoring is a placeholder, not a trained model",
-    "The markup classifier is a demo artifact and misreads ordinary login pages",
+    "URL checks use hand-written rules, not a trained model",
+    "Automated checks can miss threats or flag legitimate pages",
+    "Domain registration details are context, not proof of safety",
     "A benign / not-listed result is not a guarantee of safety",
 ]
 
@@ -110,12 +111,13 @@ def _from_history(scan_id: str, normalized: str, row: dict, prior: PriorScan) ->
                       "phishing" if verdict == "malicious" else
                       "benign" if verdict == "safe" else "unavailable")
     score = saved.risk_score if saved else row.get("LastScore")
-    return _base(
+    result = _base(
         scan_id=scan_id,
         normalized_url=normalized,
         classification=classification,
         confidence=saved.confidence if saved else 0,
         risk_score=score,
+        level=_HISTORY_LEVELS.get(verdict),
         page_result=saved.page if saved else None,
         heuristic=saved.heuristic if saved else None,
         error_code=saved.error_code if saved else None,
@@ -123,11 +125,15 @@ def _from_history(scan_id: str, normalized: str, row: dict, prior: PriorScan) ->
         threat_intel=saved.threat_intel if saved else ThreatIntel(matched=False, source="PhisangDB", feed_status="skipped"),
         signals=(list(saved.signals) if saved else []) + [prior.message,
                  "Served from the scan archive; no URLhaus token spent and no page fetched",
-                 "Send rescan=true to run the full pipeline again"],
+                 "The verdict is based on the last scan's result and the site's history"],
         prior=prior,
         served_from_history=True,
         verdict=verdict,
     )
+    result.domain_info = saved.domain_info if saved else None
+    result.scanned_at = saved.scanned_at if saved else _format_when(row.get("LastScannedAt"))
+    result.evidence_scan_id = (saved.evidence_scan_id or saved.scan_id) if saved else row.get("LastScanRef")
+    return result
 
 
 def _base(
@@ -213,27 +219,45 @@ async def analyze(raw_url: str, client: str, rescan: bool = False) -> AnalyzeRes
 
     # Stage 0. A URL somebody already scanned is answered from the archive, which
     # is the only stage that costs neither a URLhaus token nor a page fetch. The
-    # caller has to ask for a rescan to get past it.
-    prior_row = history.lookup(normalized)
+    # caller can request a rescan; incomplete previous scans retry automatically.
+    async with step("history", "Checking saved scans", "Looking for an earlier result for this address."):
+        prior_row = await asyncio.to_thread(history.lookup, normalized)
     prior = _prior_from_row(prior_row) if prior_row else None
-    if prior_row is not None and not rescan:
+    if prior_row is not None and not rescan and history.reusable(prior_row):
         # Returning an existing result is not another scan: no database write.
+        await report("result", "Loading saved result", "This address already has a completed scan.")
         return _from_history(scan_id, normalized, prior_row, prior)
 
-    result = await _analyze_fresh(scan_id, normalized)
+    result, domain_info = await asyncio.gather(
+        _analyze_fresh(scan_id, normalized), _registration_with_progress(hostname_of(normalized)))
     # One place records every fresh scan, so no return path can quietly skip it.
     result.prior = prior
+    result.domain_info = domain_info
+    result.evidence_scan_id = scan_id
+    result.scanned_at = datetime.now(timezone.utc).isoformat()
     result.verdict = history.verdict_for(result)  # type: ignore[assignment]
-    history.record(result, client=client, host=hostname_of(normalized),
-                   duration_ms=int((time.monotonic() - started) * 1000),
-                   is_rescan=prior_row is not None, served_from_history=False)
+    async with step("result", "Preparing your result", "Putting the scan findings together."):
+        await asyncio.to_thread(history.record, result, client=client, host=hostname_of(normalized),
+                       duration_ms=int((time.monotonic() - started) * 1000),
+                       is_rescan=prior_row is not None, served_from_history=False)
+        if result.page:
+            await asyncio.to_thread(evidence.persist_preview, scan_id, result.page._screenshot)
+            result.page._screenshot = None
+    return result
+
+
+async def _registration_with_progress(host):
+    await report("domain", "Looking up domain details", "Checking public registration information.")
+    result = await registration.lookup(host)
+    await report("domain", "Domain registration lookup", status="complete" if result.status == "ok" else "unavailable")
     return result
 
 
 async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
     """URLhaus, then the lexical gate, then the page model."""
     try:
-        intel = await urlhaus.lookup(normalized)
+        async with step("threats", "Checking known threats", "Checking the address against the threat database."):
+            intel = await urlhaus.lookup(normalized)
     except UrlhausError as exc:
         logger.warning("urlhaus failed scan_id=%s err=%s", scan_id, exc)
         return _unavailable(
@@ -266,7 +290,8 @@ async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
             signals=signals,
         )
 
-    heuristic = heuristics.score(normalized)
+    async with step("address", "Reviewing the address", "Looking for suspicious patterns in the website address."):
+        heuristic = heuristics.score(normalized)
 
     # A clean URL string is only an absence of lexical red flags, not evidence the
     # page is safe: an unknown short domain such as zkic.com scores risk 0 and so
@@ -292,14 +317,15 @@ async def _analyze_fresh(scan_id: str, normalized: str) -> AnalyzeResponse:
             + [
                 "Not listed in URLhaus",
                 f"Host is on the {reputation}",
-                f"Placeholder ML confidence {heuristic.confidence}% exceeded the {settings.heuristic_benign_threshold}% allow threshold",
-                "The destination was not fetched — the URL checks were conclusive",
+                "The URL rules found no strong warning signs on this known domain",
+                "The destination page was not fetched during this scan",
             ],
         )
 
     # Inconclusive on the URL alone, so the page itself gets fetched and read.
     try:
-        page_result = await page_stage.classify(normalized)
+        async with step("page", "Inspecting the website", "Opening the page on our server."):
+            page_result = await page_stage.classify(normalized)
     except PageStageError as exc:
         logger.warning("page stage failed scan_id=%s err=%s", scan_id, exc)
         return _unavailable(

@@ -6,6 +6,8 @@ from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, Comment
 
+from .config import settings
+from .scan_progress import report
 from .url_guard import UrlRejected, check_static, classify_ip, resolve_public, validate
 
 REDIRECT_STATUSES = frozenset({301, 302, 303, 307, 308})
@@ -15,7 +17,7 @@ CHROME_UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
              "(KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36")
 
 STRIP_TAGS = ["script", "style", "svg", "template", "noscript"]
-BLOCKED_RESOURCE_TYPES = frozenset({"image", "media", "font"})
+BLOCKED_RESOURCE_TYPES = frozenset({"media"})
 
 CHROMIUM_ARGS = [
     "--disable-blink-features=AutomationControlled",
@@ -93,7 +95,8 @@ class Fetcher:
     async def _guard_route(self, route, request):
         """Vet every request the page makes, including each redirect hop."""
         try:
-            if request.resource_type in BLOCKED_RESOURCE_TYPES:
+            if (request.resource_type in BLOCKED_RESOURCE_TYPES or
+                    (not settings.page_preview_enabled and request.resource_type in {"image", "font"})):
                 await route.abort()
                 return
             host, port = check_static(request.url)
@@ -158,14 +161,22 @@ class Fetcher:
                 return await asyncio.wait_for(self._fetch_once(url), self.total_timeout)
             except asyncio.TimeoutError:
                 raise FetchFailed("fetch exceeded the time budget") from None
+            except UrlRejected:
+                raise
+            except FetchFailed:
+                raise
+            except Exception as exc:
+                # Includes disconnected Chromium/new_context failures.
+                raise FetchFailed(_safe_reason(exc)) from None
 
     async def _fetch_once(self, url: str) -> dict:
         from playwright.async_api import Error as PlaywrightError
 
+        started = time.monotonic()
         context = await self._browser.new_context(
             user_agent=CHROME_UA, viewport={"width": 1440, "height": 900},
             locale="en-US", ignore_https_errors=True, accept_downloads=False,
-            java_script_enabled=True)
+            java_script_enabled=True, service_workers="block")
         try:
             target = await self._resolve_redirects(context, url)
             await context.route("**/*", self._guard_route)
@@ -191,8 +202,19 @@ class Fetcher:
             if len(html.encode("utf-8", "ignore")) > self.max_html_bytes:
                 raise FetchFailed("page is larger than the size limit")
 
+            screenshot = None
+            preview_budget = min(3.0, self.total_timeout - (time.monotonic() - started) - 1.0)
+            if settings.page_preview_enabled and 200 <= response.status < 300 and preview_budget > 0:
+                try:
+                    await report("page", "Inspecting the website", "Capturing a preview of the page.")
+                    screenshot = await asyncio.wait_for(page.screenshot(type="jpeg", quality=60,
+                        full_page=False, animations="disabled", timeout=preview_budget * 1000), preview_budget)
+                    if len(screenshot) > 600_000:
+                        screenshot = None
+                except (PlaywrightError, asyncio.TimeoutError):
+                    pass  # A preview failure must not discard a valid reading.
             return {"status": response.status, "final_url": page.url,
-                    "title": title, "html": html}
+                    "title": title, "html": html, "screenshot": screenshot}
         finally:
             await context.close()
 

@@ -81,12 +81,23 @@ const STATES = {
     fleshSpots: "#1C1508",
     rotHeavy: true,
   },
+  rotten: {
+    open: 36,
+    peel: "#74602D",
+    stem: "#40371F",
+    tip: "#231C13",
+    peelSpots: "#30271A",
+    flesh: "#A69662",
+    fleshSpots: "#3A3020",
+    rotHeavy: true,
+    flies: true,
+  },
 };
 
-function Spots({ points, fill, opacity = 0.85 }) {
+function Spots({ points, fill, opacity = 0.85, scale = 1 }) {
   if (!fill) return null;
   return points.map(([cx, cy, r]) => (
-    <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} fill={fill} opacity={opacity} />
+    <ellipse key={`${cx}-${cy}`} cx={cx} cy={cy} rx={r * scale} ry={r * scale * 1.35} fill={fill} opacity={opacity} />
   ));
 }
 
@@ -104,8 +115,9 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
   const [engaged, setEngaged] = useState(false);
   useEffect(() => {
     setEngaged(false);
-    const id = requestAnimationFrame(() => requestAnimationFrame(() => setEngaged(true)));
-    return () => cancelAnimationFrame(id);
+    let second;
+    const id = requestAnimationFrame(() => { second = requestAnimationFrame(() => setEngaged(true)); });
+    return () => { cancelAnimationFrame(id); cancelAnimationFrame(second); };
   }, [state]);
 
   const angle = engaged ? cfg.open : 0;
@@ -118,7 +130,7 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
     <g key="left" {...flap(angle)}>
       <path d={PEEL_LEFT} fill={cfg.peel} />
       {cfg.hatch && <path d={PEEL_LEFT} fill={`url(#${hatchId})`} />}
-      <Spots points={LEFT_SPOTS} fill={cfg.peelSpots} />
+      <Spots points={LEFT_SPOTS} fill={cfg.peelSpots} scale={cfg.rotHeavy ? 1.6 : 1} />
     </g>
   );
 
@@ -126,7 +138,7 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
     <g key="right" {...flap(-angle)}>
       <path d={PEEL_RIGHT} fill={cfg.peel} />
       {cfg.hatch && <path d={PEEL_RIGHT} fill={`url(#${hatchId})`} />}
-      <Spots points={RIGHT_SPOTS} fill={cfg.peelSpots} />
+      <Spots points={RIGHT_SPOTS} fill={cfg.peelSpots} scale={cfg.rotHeavy ? 1.6 : 1} />
     </g>
   );
 
@@ -134,7 +146,7 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
     <g key="center" {...flap(open && engaged ? 5 : 0)}>
       <path d={PEEL_CENTER} fill={cfg.peel} />
       {cfg.hatch && <path d={PEEL_CENTER} fill={`url(#${hatchId})`} />}
-      <Spots points={CENTER_SPOTS} fill={cfg.peelSpots} />
+      <Spots points={CENTER_SPOTS} fill={cfg.peelSpots} scale={cfg.rotHeavy ? 1.6 : 1} />
       {/* Blossom tip: the small dark nub that says "banana" louder than the
           silhouette does. It rides the centre strip. */}
       <ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill={cfg.tip} />
@@ -144,7 +156,7 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
   const Fruit = cfg.flesh ? (
     <g key="flesh" className="peel-fruit" style={{ opacity: engaged ? 1 : 0 }}>
       <path d={FLESH} fill={cfg.flesh} />
-      <Spots points={FLESH_SPOTS} fill={cfg.fleshSpots} opacity={cfg.rotHeavy ? 0.8 : 0.5} />
+      <Spots points={FLESH_SPOTS} fill={cfg.fleshSpots} scale={cfg.rotHeavy ? 1.5 : 1} opacity={cfg.rotHeavy ? 0.9 : 0.5} />
     </g>
   ) : null;
 
@@ -153,9 +165,9 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
       viewBox={box.viewBox}
       width={w}
       height={h}
-      className={`${cfg.pulse ? "banana-pulse" : ""} ${className}`}
+      className={`${cfg.pulse ? "banana-scanning" : ""} ${className}`}
       role="img"
-      aria-label={`${state}: peel ${open ? "opened" : "intact"}`}
+      aria-label={state === "rotten" ? "High risk: rotten banana" : `${state}: peel ${open ? "opened" : "intact"}`}
     >
       <defs>
         <pattern
@@ -169,6 +181,15 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
         </pattern>
       </defs>
 
+      {cfg.pulse && <>
+        <ellipse className="banana-scan-shadow" cx="82" cy="195" rx="27" ry="4" fill="#467235" opacity="0.18" />
+        <g className="banana-scan-sparks" fill="#FFBF00" aria-hidden="true">
+          <circle cx="36" cy="75" r="3" /><circle cx="130" cy="105" r="2.5" />
+          <path d="M124 43v12m-6-6h12" stroke="#467235" strokeWidth="2" strokeLinecap="round" />
+        </g>
+      </>}
+      <g className={cfg.pulse ? "banana-scan-fruit" : cfg.flies ? "banana-rot-fruit" : undefined}>
+
       {/* Stem stays put while the peel swings away from it. */}
       <path
         d="M80 38 C 78 27 76 20 74 12"
@@ -181,6 +202,21 @@ export function Banana({ state = "benign", width, height, frame = "full", classN
       {/* Order is the depth cue we have in 2D: sealed, the centre strip covers
           the fruit; opened, it falls behind it. */}
       {open ? [Center, Fruit, Left, Right] : [Fruit, Left, Center, Right]}
+      </g>
+      {cfg.flies && <g aria-hidden="true">
+        {[[23, 73], [143, 100], [113, 24]].map(([x, y], i) => (
+          <g key={i} transform={`translate(${x} ${y})`}>
+            <g className="banana-fly" style={{ animationDelay: `${i * -1.3}s`, animationDuration: `${3.2 + i * 0.6}s` }}>
+              <g className="banana-fly-wings" fill="#D3D9C8" stroke="#5C6B4F" strokeWidth="0.7">
+                <ellipse cx="-4" cy="-3" rx="4" ry="2.5" transform="rotate(25 -4 -3)" />
+                <ellipse cx="4" cy="-3" rx="4" ry="2.5" transform="rotate(-25 4 -3)" />
+              </g>
+              <ellipse rx="2.5" ry="4" fill="#231C13" />
+              <circle cy="-4" r="2" fill="#231C13" />
+            </g>
+          </g>
+        ))}
+      </g>}
     </svg>
   );
 }

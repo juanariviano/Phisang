@@ -22,7 +22,7 @@ export function InventoryRail({ scans, onRefresh }) {
 
       {!scans.length ? (
         <p className="mt-7 max-w-[46ch] text-sm leading-relaxed text-leaf">
-          Nothing here yet. Peel an address and the verdict lands here for this API session.
+          Your recent checks will appear here.
         </p>
       ) : (
         <ul className="mt-5">

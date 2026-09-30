@@ -5,6 +5,7 @@ python-dotenv>=1.0.0
 pydantic>=2.12.0
 pydantic-settings>=2.9.0
 idna>=3.10
+tldextract>=5.3.0
 google-genai>=1.16.0
 
 # Page-analysis stage. After installing, fetch the browser:

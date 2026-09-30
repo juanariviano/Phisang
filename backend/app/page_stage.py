@@ -14,6 +14,7 @@ from .models import PageResult, PageSignals
 from .page_fetch import FetchFailed, Fetcher, clean_html, page_signals
 from .page_model import Classifier, LayaClassifier, ModelUnavailable, load_classifier
 from .risk import MALICIOUS_FROM, risk_level
+from .scan_progress import report
 from .url_guard import UrlRejected
 
 logger = logging.getLogger("phisang")
@@ -101,6 +102,7 @@ async def classify(url: str) -> PageResult:
             f"Destination answered HTTP {page['status']}, so its markup was not read")
 
     try:
+        await report("page", "Inspecting the website", "Reading the page content for signs of phishing.")
         verdict = await asyncio.to_thread(_classifier.predict, page["html"])
     except ValueError as exc:
         raise PageStageError(f"Page held nothing to classify: {exc}") from None
@@ -110,7 +112,7 @@ async def classify(url: str) -> PageResult:
     score = verdict["phishing_score"]
     is_phishing = score >= MALICIOUS_FROM
     signals = page_signals(clean_html(page["html"]))
-    return PageResult(
+    result = PageResult(
         label="phishing" if is_phishing else "benign",
         confidence=round((score if is_phishing else 1 - score) * 100),
         phishing_score=score,
@@ -124,7 +126,10 @@ async def classify(url: str) -> PageResult:
         model_name=model_name(),
         model_accuracy=model_accuracy(),
         status="ok",
+        preview_available=bool(page.get("screenshot")),
     )
+    result._screenshot = page.get("screenshot")
+    return result
 
 
 def _reasoning(score: float, signals: dict) -> str:

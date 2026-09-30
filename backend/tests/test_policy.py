@@ -10,7 +10,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app import policy
-from app.models import PageResult, ThreatIntel
+from app.models import PageResult, PageSignals, ThreatIntel
 from app.page_stage import PageStageError
 from app.urlhaus import UrlhausError
 
@@ -31,6 +31,7 @@ def test_plain_url_requires_page_verdict(stages, label, score, confidence):
     classify.return_value = PageResult(
         label=label, confidence=confidence, phishing_score=score,
         model_name="phishing-html-classifier-v1", status="ok",
+        page_signals=PageSignals(password_inputs=1),
     )
     result = asyncio.run(policy.analyze("https://example.org/", "web"))
     assert result.heuristic.confidence == 100
@@ -43,7 +44,7 @@ def test_plain_url_requires_page_verdict(stages, label, score, confidence):
     assert result.page.phishing_score == score
     assert result.page.status == "ok"
     assert result.error_code is None
-    assert result.policy_version == "poc-flowchart-v2.1"
+    assert result.policy_version == policy.POLICY_VERSION
 
 
 @pytest.mark.parametrize("reason", ["Page analysis is not available", "Destination could not be fetched: timeout"])

@@ -253,6 +253,87 @@ body {
   color: color-mix(in srgb, var(--color-flesh) 60%, transparent);
 }
 
+.banana-scan-fruit {
+  transform-box: view-box;
+  transform-origin: 80px 175px;
+  animation: banana-scan-sway 1.4s ease-in-out infinite;
+}
+
+.banana-scan-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: banana-scan-shadow 1.4s ease-in-out infinite;
+}
+
+.banana-scan-sparks {
+  animation: banana-scan-sparks 1.4s ease-in-out infinite;
+}
+
+.writing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-leaf);
+  animation: banana-scan-sparks 1s ease-in-out infinite;
+}
+
+@keyframes banana-scan-sway {
+  0%, 100% { transform: translateY(0) rotate(-9deg); }
+  50% { transform: translateY(-10px) rotate(9deg); }
+}
+
+@keyframes banana-scan-shadow {
+  0%, 100% { transform: scaleX(1); opacity: 0.18; }
+  50% { transform: scaleX(0.65); opacity: 0.09; }
+}
+
+@keyframes banana-scan-sparks {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.banana-rot-fruit {
+  transform-box: view-box;
+  transform-origin: 80px 175px;
+  animation: banana-rot-sway 4s ease-in-out infinite;
+}
+
+.banana-fly {
+  animation: banana-fly-drift 3.2s ease-in-out infinite;
+}
+
+.banana-fly-wings {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: banana-fly-wings 0.16s ease-in-out infinite alternate;
+}
+
+@keyframes banana-rot-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes banana-fly-drift {
+  0%, 100% { transform: translate(0, 0) rotate(-12deg); }
+  25% { transform: translate(10px, -8px) rotate(20deg); }
+  50% { transform: translate(5px, 8px) rotate(-20deg); }
+  75% { transform: translate(-7px, 3px) rotate(12deg); }
+}
+
+@keyframes banana-fly-wings {
+  from { transform: scaleX(0.7); }
+  to { transform: scaleX(1.2); }
+}
+
+.scan-progress-fill {
+  animation: scan-progress 1.6s ease-in-out infinite;
+}
+
+@keyframes scan-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -268,6 +349,14 @@ body {
 
   .peel-flap,
   .peel-fruit,
+  .banana-scan-fruit,
+  .banana-scan-shadow,
+  .banana-scan-sparks,
+  .banana-rot-fruit,
+  .banana-fly,
+  .banana-fly-wings,
+  .writing-dot,
+  .scan-progress-fill,
   .banana-pulse {
     transition: none;
     animation: none;

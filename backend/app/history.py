@@ -77,6 +77,7 @@ def _cursor():
         return
 
     conn = None
+    yielded = False
     try:
         conn = pymssql.connect(
             server=settings.db_host, port=str(settings.db_port),
@@ -85,6 +86,7 @@ def _cursor():
             login_timeout=settings.db_timeout_seconds, autocommit=False,
         )
         cursor = conn.cursor(as_dict=True)
+        yielded = True
         yield cursor
         conn.commit()
         _unavailable_logged = False
@@ -97,7 +99,8 @@ def _cursor():
         if not _unavailable_logged:
             logger.warning("scan history unavailable: %s", exc)
             _unavailable_logged = True
-        yield None
+        if not yielded:
+            yield None
     finally:
         if conn is not None:
             try:
@@ -114,6 +117,21 @@ def ready() -> bool:
             return False
         cur.execute("SELECT 1 AS ok")
         return cur.fetchone() is not None
+
+
+def reusable(row: dict) -> bool:
+    """Incomplete scans are audit events, never reusable safety decisions."""
+    raw = row.get("RawResponseJson")
+    if raw:
+        try:
+            result = AnalyzeResponse.model_validate_json(raw)
+        except ValueError:
+            return False
+        return (result.classification != "unavailable" and not result.error_code
+                and (result.page is None or result.page.status != "unavailable"))
+    return (row.get("LastClassification") in {"benign", "phishing", "malware"}
+            and row.get("LastVerdict") != "unknown"
+            and row.get("LastDecisionStage") != "error")
 
 
 def verdict_for(result: AnalyzeResponse) -> str:

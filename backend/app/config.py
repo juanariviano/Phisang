@@ -19,6 +19,13 @@ class Settings(BaseSettings):
     urlhaus_auth_key: str = ""
     gemini_api_key: str = ""
     gemini_model: str = "gemini-2.0-flash"
+    explanation_base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai"
+    explanation_api_key: str = ""
+    explanation_model: str = "gemini-3.5-flash-lite"
+    explanation_timeout_seconds: float = 35.0
+    explanation_include_screenshot: bool = True
+    rdap_enabled: bool = True
+    rdap_timeout_seconds: float = 8.0
     urlhaus_timeout_seconds: float = 15.0
     cache_ttl_seconds: int = 900
     heuristic_benign_threshold: int = 80
@@ -33,6 +40,7 @@ class Settings(BaseSettings):
     page_fetch_timeout_seconds: float = 20.0
     page_fetch_budget_seconds: float = 45.0
     page_fetch_proxy: str = ""
+    page_preview_enabled: bool = True
 
     # Scan history in SQL Server. The pipeline consults this before URLhaus, so a
     # repeat URL costs no rate-limit token and no browser fetch. Credentials come

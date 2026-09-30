@@ -1,230 +1,139 @@
-import { AnimatePresence, motion } from "framer-motion";
+﻿import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { CLASS_META, verdictMeta } from "../lib/copy.js";
 import { Banana } from "./Banana.jsx";
-import { PeelStrips } from "./PeelStrips.jsx";
+import { readExplanationStream } from "../lib/explanationStream.js";
+import { ScanProgress } from "./ScanProgress.jsx";
 
-/** Verdict word, ripeness chip, and the one-line reading of the state. */
-function Verdict({ cls, meta }) {
-  return (
-    <div className="flex items-center gap-5">
-      <Banana state={cls} width={116} className="shrink-0" />
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-          <h2
-            className={`font-display text-[1.75rem] font-extrabold leading-none tracking-tight ${
-              meta.rots ? "text-peel" : meta.tone
-            }`}
-          >
-            {meta.verdict}
-          </h2>
-          <span
-            className={`text-[10px] font-bold uppercase tracking-[0.2em] ${
-              meta.rots ? "off-rot" : "text-leaf"
-            }`}
-          >
-            {meta.ripeness}
-          </span>
-          {meta.score != null && (
-            <span
-              className={`font-mono text-xs font-semibold ${meta.rots ? "text-flesh" : "text-ink"}`}
-            >
-              risk {meta.score.toFixed(2)}
-            </span>
-          )}
-        </div>
-        <p
-          className={`mt-2 max-w-[34ch] text-sm leading-relaxed ${
-            meta.rots ? "text-flesh" : "text-forest"
-          }`}
-        >
-          {meta.hint}
-        </p>
-      </div>
-    </div>
-  );
+function DateValue({ value }) {
+  const date = value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString(undefined, {
+    year: "numeric", month: "short", day: "numeric",
+  }) : "Not available";
 }
 
-function Peeling({ url }) {
-  return (
-    <div className="space-y-6">
-      <Verdict cls="checking" meta={CLASS_META.checking} />
-      {/* The sweep runs over the strips themselves, so the loading state shows
-          the work being done rather than an abstract bar filling. */}
-      <div className="sweep rounded">
-        <PeelStrips url={url} dense />
-      </div>
-    </div>
-  );
+function DomainDetails({ info }) {
+  return <details className="mt-5 border-t border-leaf/30 pt-4">
+    <summary className="cursor-pointer font-semibold text-ink">About this domain</summary>
+    {info?.status === "ok" ? <>
+      <dl className="mt-3 grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 gap-y-2 text-sm">
+        <dt className="text-leaf">Domain</dt><dd className="break-all">{info.domain}</dd>
+        <dt className="text-leaf">Registered</dt><dd><DateValue value={info.registered_at} /></dd>
+        <dt className="text-leaf">Expires</dt><dd><DateValue value={info.expires_at} /></dd>
+        <dt className="text-leaf">Registrar</dt><dd className="break-words">{info.registrar || "Not available"}</dd>
+        {!!info.nameservers?.length && <><dt className="text-leaf">Name servers</dt><dd className="break-all">{info.nameservers.join(", ")}</dd></>}
+      </dl>
+      <p className="mt-3 text-xs text-leaf">Public registration information from RDAP. Domain age and registration details do not prove a site is safe or harmful.</p>
+    </> : <p className="mt-3 text-sm text-leaf">
+      {info?.status === "not_applicable" ? "No domain registration record applies to this address." : "Registration information is unavailable. This does not change the scan result."}
+    </p>}
+  </details>;
 }
 
-function Metric({ label, value }) {
-  return (
-    <div className="rule-rot border-t border-leaf/30 py-2.5">
-      <span className="off-rot block text-[10px] font-bold uppercase tracking-[0.14em] text-leaf">
-        {label}
-      </span>
-      <strong className="on-rot mt-0.5 block break-all font-mono text-[13px] font-medium text-ink">
-        {value}
-      </strong>
-    </div>
-  );
+function Explanation({ result }) {
+  const [answer, setAnswer] = useState(null);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+  const controller = useRef(null);
+  useEffect(() => () => controller.current?.abort(), []);
+  async function explain() {
+    if (pending) return;
+    controller.current = new AbortController();
+    setPending(true);
+    setError("");
+    setAnswer(null);
+    try {
+      const response = await fetch(`/api/v1/scans/${encodeURIComponent(result.scan_id)}/explain`, {
+        method: "POST", headers: { Accept: "text/event-stream" }, signal: controller.current.signal,
+      });
+      await readExplanationStream(response, { onSnapshot: setAnswer, onDone: setAnswer });
+    } catch (err) {
+      if (err.name !== "AbortError") setError(err.message || "The explanation could not be loaded. Try again.");
+    } finally { setPending(false); }
+  }
+  return <div className="mt-5">
+    {(!answer || error) && <>
+      <button type="button" onClick={explain} disabled={pending}
+        className="w-full cursor-pointer rounded-lg border-2 border-ink bg-peel px-4 py-3 font-bold text-ink transition-colors hover:bg-flesh disabled:cursor-wait disabled:opacity-60">
+        {pending ? "Starting explanation…" : error ? "Try Explain again" : "Explain this result"}
+      </button>
+      <p className="mt-2 text-xs leading-relaxed text-leaf">The explanation is generated by an AI model based on the scan results and the site's history.</p>
+    </>}
+    {error && <p role="alert" className="mt-3 text-sm text-rot">{error}</p>}
+    {answer && <section className="rounded-lg border border-leaf/30 bg-flesh/35 p-4" aria-label="Explanation" aria-live="off" aria-busy={pending}>
+      <h3 className="font-display text-lg font-extrabold text-ink">Why this result?</h3>
+      <p className="mt-2 text-sm leading-relaxed">{answer.summary}</p>
+      <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed">{answer.reasons.map((reason, i) => <li key={i}>{reason}</li>)}</ul>
+      {!!answer.advice.length && <h4 className="mt-4 text-sm font-bold">What you can do</h4>}
+      <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed">{answer.advice.map((advice, i) => <li key={i}>{advice}</li>)}</ul>
+      <p className="mt-4 text-xs text-leaf">{error ? "This explanation is incomplete. Try again for the full answer." : <>AI-generated from this scan{answer.included_screenshot ? " and its preview" : ""}. It may make mistakes.</>}</p>
+    </section>}
+  </div>;
 }
 
-export function ResultPanel({ busy, result, url }) {
+function Preview({ result }) {
+  const [failed, setFailed] = useState(false);
+  if (!result.page?.preview_available || failed) return <p className="mt-5 rounded-lg bg-flesh/40 p-3 text-sm text-leaf">
+    {result.page?.status === "skipped" || !result.page ? "No preview — the page was not opened during this scan." : "A preview is not available for this scan."}
+  </p>;
+  return <figure className="mt-5 overflow-hidden rounded-lg border border-leaf/35">
+    <img src={`/api/v1/scans/${encodeURIComponent(result.evidence_scan_id || result.scan_id)}/preview`}
+      alt="Website preview captured during this scan" onError={() => setFailed(true)}
+      className="block aspect-[8/5] w-full bg-white object-contain" />
+    <figcaption className="border-t border-leaf/20 px-3 py-2 text-xs leading-relaxed text-leaf">Captured during this scan. Some page content may not have loaded.</figcaption>
+  </figure>;
+}
+
+export function ResultPanel({ busy, result, progress = [] }) {
+  const reducedMotion = useReducedMotion();
   if (!busy && !result) return null;
-
-  const cls = busy && !result ? "checking" : result?.classification || "unavailable";
-  const meta = busy && !result ? CLASS_META.checking : verdictMeta(result, cls);
-  const intel = result?.threat_intel || {};
-  const heuristic = result?.heuristic || {};
-  const blocked = cls === "malware" || cls === "phishing";
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.section
-        key={busy && !result ? "checking" : result.scan_id || "result"}
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ type: "spring", stiffness: 140, damping: 20 }}
-        className={`overflow-hidden rounded-xl border-[2.5px] border-ink ${
-          meta.rots ? "rotted" : "bg-paper"
-        }`}
-        aria-live="polite"
-      >
-        {/* Caution tape belongs to malware alone. */}
-        {meta.rots && <div className="hazard-rule" />}
-
-        <div className="p-6 md:p-7">
-          {busy && !result ? (
-            <Peeling url={url} />
-          ) : (
-            <>
-              <Verdict cls={cls} meta={meta} />
-              {result.served_from_history && (
-                <p className="mt-4 text-sm on-rot text-forest">
-                  Saved result ? this request did not fetch the page again.
-                  {result.prior?.last_scanned_at && ` Last scan: ${result.prior.last_scanned_at}.`}
-                </p>
-              )}
-              {result.verdict === "potentially_unsafe" && (
-                <p className="mt-4 font-semibold text-rot">Potentially unsafe ? review the scan history before proceeding.</p>
-              )}
-
-
-              {blocked && (
-                <p
-                  className={`mt-6 border-l-4 py-2 pl-4 text-sm font-semibold leading-relaxed ${
-                    meta.rots ? "border-peel text-peel" : "border-rot text-rot"
-                  }`}
-                >
-                  Do not open this address in a normal tab.
-                </p>
-              )}
-              {cls === "benign" && result.decision_stage !== "page" && !result.served_from_history && (
-                <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
-                  A low risk score is not a guarantee. Phisang did not visit this page — it cleared
-                  a well-known host on the address string alone.
-                </p>
-              )}
-              {cls === "benign" && result.decision_stage === "page" && (
-                <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
-                  A low risk score is not a guarantee. Phisang opened this page on its own server
-                  and scored its markup with a demo-grade model that can misread ordinary pages.
-                </p>
-              )}
-              {cls === "unavailable" && (
-                <p className="mt-6 border-l-4 border-leaf py-2 pl-4 text-sm leading-relaxed text-forest">
-                  Degraded result. A feed or model check failed, so Phisang will not call this
-                  address clean.
-                </p>
-              )}
-
-              <div className="mt-7">
-                <p className="off-rot mb-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-leaf">
-                  The peel
-                </p>
-                <PeelStrips url={result.normalized_url} dense />
-              </div>
-
-              <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-6">
-                <Metric label="Classification" value={cls} />
-                <Metric label="Confidence" value={`${result.confidence}%`} />
-                <Metric
-                  label="Risk score"
-                  value={result.risk_score != null ? result.risk_score.toFixed(2) : "—"}
-                />
-                <Metric label="Decision stage" value={result.decision_stage} />
-                <Metric label="Scan ID" value={result.scan_id} />
-                <Metric label="URLhaus" value={intel.feed_status === "skipped" ? "Not checked" : intel.matched ? "Match" : "No match"} />
-                <Metric label="Threat" value={intel.threat_type || intel.feed_status || "—"} />
-                <Metric
-                  label="Heuristic"
-                  value={`${heuristic.label || "skipped"} · ${heuristic.confidence ?? "—"}%`}
-                />
-                <Metric label="Policy" value={result.policy_version} />
-              </div>
-
-              {result.page?.status === "ok" && (
-                <div className="mt-7">
-                  <p className="off-rot mb-2.5 text-[10px] font-bold uppercase tracking-[0.18em] text-leaf">
-                    The page we opened
-                  </p>
-                  <blockquote
-                    className={`border-l-4 py-1 pl-4 ${meta.rots ? "border-peel" : "border-ink"}`}
-                  >
-                    <p className="on-rot text-[15px] leading-relaxed text-forest">
-                      {result.page.reasoning}
-                    </p>
-                  </blockquote>
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-6">
-                    {/* page_title comes from the fetched page, so it is rendered as
-                        text only — never as markup. */}
-                    <Metric label="Page title" value={result.page.page_title || "—"} />
-                    <Metric label="HTTP status" value={result.page.http_status ?? "—"} />
-                    <Metric
-                      label="Phishing score"
-                      value={`${result.page.phishing_score?.toFixed(3) ?? "—"} / ${
-                        result.page.threshold ?? "—"
-                      }`}
-                    />
-                    <Metric
-                      label="Password fields"
-                      value={`${result.page.page_signals?.password_inputs ?? "—"} in ${
-                        result.page.page_signals?.forms ?? "—"
-                      } form(s)`}
-                    />
-                    {result.page.final_url !== result.normalized_url && (
-                      <Metric label="Redirected to" value={result.page.final_url || "—"} />
-                    )}
-                    <Metric label="Markup model" value={result.page.model_name || "—"} />
-                  </div>
-                </div>
-              )}
-
-              {result.signals?.length > 0 && (
-                <div className="mt-7">
-                  <p className="off-rot mb-1 text-[10px] font-bold uppercase tracking-[0.18em] text-leaf">
-                    Signals
-                  </p>
-                  <ul>
-                    {result.signals.map((signal) => (
-                      <li
-                        key={signal}
-                        className="rule-rot on-rot border-t border-leaf/30 py-2.5 text-sm leading-relaxed text-forest"
-                      >
-                        {signal}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </>
-          )}
+  const meta = busy ? CLASS_META.checking : verdictMeta(result, result.classification);
+  const riskPercent = !busy && result.classification !== "unavailable" && Number.isFinite(result.risk_score)
+    && result.risk_score >= 0 && result.risk_score <= 1 ? result.risk_score * 100 : null;
+  return <motion.section key={busy ? "checking" : result.scan_id}
+    initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }} animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: reducedMotion ? 0 : 0.28 }}
+    className="overflow-hidden rounded-xl border-[2.5px] border-ink bg-paper text-forest" aria-live="polite">
+    {meta.rots && <div className="hazard-rule" />}
+    <div className="p-5 sm:p-7">
+      <div className="flex items-center gap-4">
+        <div className="shrink-0" data-scanning={busy ? "true" : undefined}>
+          <Banana state={meta.bananaState} width={104} />
         </div>
-
-        {meta.rots && <div className="hazard-rule" />}
-      </motion.section>
-    </AnimatePresence>
-  );
+        <div>
+          <h2 className={`font-display text-2xl font-extrabold leading-tight tracking-tight ${meta.tone}`}>{meta.verdict}</h2>
+          <p className="mt-2 text-sm leading-relaxed">{meta.hint}</p>
+        </div>
+      </div>
+      {busy && <ScanProgress stages={progress} />}
+      {!busy && <>
+        {riskPercent !== null && <div className="mt-5 rounded-lg border border-leaf/25 px-4 py-3" aria-label="Scan risk score">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="text-sm font-semibold">Risk score</span>
+            <strong className={`font-display text-2xl font-extrabold tabular-nums ${meta.tone}`}>{riskPercent.toLocaleString(undefined, { maximumFractionDigits: 1 })}%</strong>
+          </div>
+          <div role="meter" aria-label="Estimated risk" aria-valuemin={0} aria-valuemax={100} aria-valuenow={riskPercent}
+            className="mt-2 h-1.5 overflow-hidden rounded-full bg-leaf/15">
+            <div className={`h-full rounded-full ${meta.bananaState === "rotten" ? "bg-bruise" : meta.bananaState === "phishing" ? "bg-rot" : "bg-leaf"}`} style={{ width: `${riskPercent}%` }} />
+          </div>
+          <p className="mt-2 text-xs text-leaf">Higher means more risk. This is an estimate, not a certainty.</p>
+        </div>}
+        <p className="mt-5 break-all font-mono text-xs text-leaf">{result.normalized_url}</p>
+        {result.served_from_history && <p className="mt-2 text-xs text-leaf">Saved result{result.scanned_at && <> from <DateValue value={result.scanned_at} /></>}. Use Rescan for a fresh check.</p>}
+        {result.classification === "unavailable" && <p className="mt-3 text-sm">This result will not be reused. Your next scan will try again.</p>}
+        <Preview key={`preview-${result.scan_id}`} result={result} />
+        <Explanation key={`explain-${result.scan_id}`} result={result} />
+        <DomainDetails info={result.domain_info} />
+        <details className="mt-4 border-t border-leaf/30 pt-4">
+          <summary className="cursor-pointer font-semibold text-ink">Scan details</summary>
+          <dl className="mt-3 space-y-2 break-words">
+            <div><dt className="inline font-semibold">Threat database: </dt><dd className="inline">{result.threat_intel?.matched ? "Listed in URLhaus" : result.threat_intel?.feed_status === "ok" ? "Not listed in URLhaus" : "Not checked or unavailable"}</dd></div>
+            {result.page?.page_title && <div><dt className="inline font-semibold">Page title: </dt><dd className="inline">{result.page.page_title}</dd></div>}
+            <div><dt className="inline font-semibold">Scan ID: </dt><dd className="inline">{result.scan_id}</dd></div>
+          </dl>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-leaf">{result.signals?.map((signal, i) => <li key={i}>{signal}</li>)}</ul>
+        </details>
+      </>}
+    </div>
+  </motion.section>;
 }

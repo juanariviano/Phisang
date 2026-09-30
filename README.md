@@ -20,6 +20,12 @@
 > [!WARNING]
 > Phisang is a proof of concept, not production protection. A `benign` result means nothing suspicious was found. It does **not** mean the site is safe.
 
+Registration details, captured page previews and on-demand AI explanations are
+documented in [Scan evidence setup](docs/scan-evidence.md), including the SQL
+migration and configurable OpenAI-compatible provider settings. Failed scans are
+logged but automatically retried on the next Peel; they are never reused as a
+completed result.
+
 ## 🍌 How it works
 
 Every URL passes through up to four gates. It stops at the first gate that can decide.

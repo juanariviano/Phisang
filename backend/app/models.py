@@ -1,6 +1,6 @@
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 
 from .risk import RiskLevel
 
@@ -84,6 +84,28 @@ class PageResult(BaseModel):
     model_name: Optional[str] = None
     model_accuracy: Optional[float] = None
     status: Literal["ok", "skipped", "unavailable"] = "skipped"
+    preview_available: bool = False
+    _screenshot: bytes | None = PrivateAttr(default=None)
+
+
+class DomainInfo(BaseModel):
+    status: Literal["ok", "unavailable", "not_applicable"] = "unavailable"
+    domain: Optional[str] = None
+    source: str = "RDAP"
+    registrar: Optional[str] = None
+    registered_at: Optional[str] = None
+    expires_at: Optional[str] = None
+    nameservers: list[str] = Field(default_factory=list)
+    checked_at: Optional[str] = None
+
+
+class Explanation(BaseModel):
+    summary: str = Field(min_length=1, max_length=1600)
+    reasons: list[str] = Field(min_length=1, max_length=6)
+    advice: list[str] = Field(min_length=1, max_length=5)
+    model: str = ""
+    generated_at: str = ""
+    included_screenshot: bool = False
 
 
 class AnalyzeResponse(BaseModel):
@@ -105,6 +127,10 @@ class AnalyzeResponse(BaseModel):
     limitations: list[str] = Field(default_factory=list)
     policy_version: str
     error_code: Optional[str] = None
+    domain_info: Optional[DomainInfo] = None
+    # A replay has a new request ID but keeps the original evidence identity.
+    evidence_scan_id: Optional[str] = None
+    scanned_at: Optional[str] = None
 
 
 class HealthResponse(BaseModel):

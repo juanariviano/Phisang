@@ -96,7 +96,7 @@ test('popup reload retrieves the SQL-backed explanation using the durable eviden
   w.respond(() => Response.json({ explanation: answer }));
   const loaded = await w.message({ type: 'GET_TAB_RESULT' });
   assert.deepEqual(loaded.result.explanation, answer);
-  assert.equal(w.requests[0].url, 'http://localhost:8000/api/v1/scans/original');
+  assert.equal(w.requests[0].url, 'https://phisang.kennethsunjaya.com/api/v1/scans/original');
   assert.equal(w.requests.length, 1);
 });
 
@@ -110,6 +110,7 @@ test('Rescan streams real progress, sends rescan true, and replaces an old expla
   assert.equal(reply.payload.result.explanation, null);
   assert.equal(w.events[0].type, 'SCAN_PROGRESS');
   assert.equal(w.events[0].progress.stage, 'page');
+  assert.equal(w.requests[0].url, 'https://phisang.kennethsunjaya.com/api/v1/analyze');
   assert.deepEqual(JSON.parse(w.requests[0].options.body), { url: 'https://example.org/', client: 'extension', rescan: true });
   assert.equal(w.badges.at(-1).text, 'STOP');
   assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
@@ -151,6 +152,18 @@ test('non-web pages and the local scanner are not intercepted', () => {
   const w = worker();
   for (const url of ['file:///test', 'http://localhost:5173/', 'http://localhost:8000/', 'chrome://extensions/']) w.navigate(url);
   assert.equal(w.navigations.length, 0);
+});
+
+test('the public scanner is exempt, without exempting lookalikes or sibling hosts', () => {
+  const w = worker();
+  for (const url of ['https://phisang.kennethsunjaya.com/', 'https://phisang.kennethsunjaya.com/api/v1/health',
+    'http://phisang.kennethsunjaya.com/']) w.navigate(url);
+  assert.equal(w.navigations.length, 0);
+  for (const url of ['https://phisang.kennethsunjaya.com.evil.example/',
+    'https://kennethsunjaya.com/', 'https://other.kennethsunjaya.com/']) {
+    w.navigate(url);
+    assert.match(w.navigations.at(-1), /checking.html/);
+  }
 });
 
 test('Go back never releases the same address after a rescan flags it', async () => {

@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = 'http://localhost:8000';
+  const API_BASE = 'https://phisang.kennethsunjaya.com';
   async function analyzeUrl(url, { rescan = false, onProgress = () => {}, signal } = {}) {
     const response = await fetch(`${API_BASE}/api/v1/analyze`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },

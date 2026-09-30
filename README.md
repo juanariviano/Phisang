@@ -158,17 +158,23 @@ Open **http://localhost:8000**. For UI work, `cd web && npm run dev` runs Vite w
 1. Open `chrome://extensions`
 2. Enable **Developer mode**
 3. **Load unpacked** → select the `extension/` folder
-4. Keep the API running on port 8000
+4. The extension connects to `https://phisang.kennethsunjaya.com`; no local API is required
 5. Leave **Protect navigations** on in the toolbar popup while demoing; turn it off when you need to browse normally
 6. After UI changes, reload the unpacked extension
 
-The extension intercepts `http(s)` navigations (except the local scanner). Its
+The extension intercepts `http(s)` navigations (except the public and local scanners). Its
 popup and warning page show the estimated risk, captured preview, registration
 details, and saved AI explanation. Explain streams a new answer only when one
 has not been saved for that scan; Rescan requests fresh findings. The checking
 screen and Rescan show live progress. A benign scan no longer skips later checks
 for the entire domain; repeat URLs use the API's scan archive, and failed checks
 can retry.
+
+Scan requests, saved results, previews, and explanations all use the public
+HTTPS API origin defined in `extension/api.js`. The remote reverse proxy forwards
+`/api/v1/*` to the backend on that server's `localhost:8000`; extension users never
+connect to that loopback address. Keep response buffering disabled for streaming
+scan and explanation routes.
 
 Known domains now pass through the checking screen too. **Continue anyway**
 releases only that exact URL for one visit in that tab; it does not exempt the

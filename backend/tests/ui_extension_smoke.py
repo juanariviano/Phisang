@@ -53,6 +53,7 @@ async def run():
 
         async def route(request_route):
             if request_route.request.url.endswith('/preview'):
+                assert request_route.request.url.startswith('https://phisang.kennethsunjaya.com/api/v1/scans/')
                 await request_route.fulfill(content_type='image/jpeg', body=jpeg)
             else:
                 await request_route.abort()
@@ -63,6 +64,7 @@ async def run():
           window.__explainCalls = 0;
           window.fetch = async (url, options) => {
             if (!String(url).endsWith('/explain')) return original(url, options);
+            if (!String(url).startsWith('https://phisang.kennethsunjaya.com/api/v1/scans/')) throw new Error('Wrong explanation API origin');
             window.__explainCalls++;
             const encoder = new TextEncoder();
             const frame = (event, data) => encoder.encode(`event: ${event}\\ndata: ${JSON.stringify(data)}\\n\\n`);
@@ -126,6 +128,7 @@ async def run():
         assert await page.locator('.explanation').get_attribute('aria-busy') == 'false'
         assert await page.evaluate('window.__explainCalls') == 2
         calls = await worker.evaluate('self.__calls')
+        assert all(call['url'].startswith('https://phisang.kennethsunjaya.com/api/v1/') for call in calls)
         scans = [json.loads(call['options']['body']) for call in calls if call['url'].endswith('/analyze')]
         assert scans == [{'url': 'https://example.org/', 'client': 'extension', 'rescan': True}]
         await worker.evaluate('answer => { self.__answers.fresh = answer; }', answer)

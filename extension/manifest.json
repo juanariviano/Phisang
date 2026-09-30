@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Phisang",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Check links for known threats and phishing, with website previews, domain details, and explanations of scan findings.",
   "action": {
     "default_title": "Phisang",
@@ -27,8 +27,7 @@
     "scripting"
   ],
   "host_permissions": [
-    "http://localhost:8000/*",
-    "http://127.0.0.1:8000/*",
+    "https://phisang.kennethsunjaya.com/*",
     "http://*/*",
     "https://*/*"
   ],
@@ -37,6 +36,10 @@
       "matches": [
         "http://*/*",
         "https://*/*"
+      ],
+      "exclude_matches": [
+        "https://phisang.kennethsunjaya.com/*",
+        "http://phisang.kennethsunjaya.com/*"
       ],
       "js": [
         "content.js"

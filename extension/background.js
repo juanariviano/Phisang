@@ -1,5 +1,5 @@
 importScripts('stream.js', 'api.js', 'verdicts.js');
-const { analyzeUrl, savedExplanation, verdictMeta, isHighRisk } = self.Phisang;
+const { API_BASE, analyzeUrl, savedExplanation, verdictMeta, isHighRisk } = self.Phisang;
 const skipOnce = new Map();
 const lastByTab = new Map();
 const lastSafeUrl = new Map();
@@ -28,6 +28,9 @@ function isIgnored(url) {
   try {
     const parsed = new URL(url);
     if (!["http:", "https:"].includes(parsed.protocol)) return true;
+    // Exempt only the scanner's exact origin (and its HTTP-to-HTTPS entry point),
+    // never sibling domains or a lookalike hostname containing the same text.
+    if (parsed.origin === API_BASE || parsed.origin === API_BASE.replace(/^https:/, "http:")) return true;
     const local = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
     return local && ["8000", "5173"].includes(parsed.port);
   } catch {

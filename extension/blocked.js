@@ -1,16 +1,23 @@
-const { verdictMeta, renderBanana, renderPeel, escapeHtml } = self.Phisang;
+const {
+  verdictMeta, historyNotes, recordRows, pageRows, renderRows, renderBanana, renderPeel,
+} = self.Phisang;
 
 const TITLES = {
   malware: "This address serves malware",
   phishing: "This address is shaped like a trap",
 };
 
-const SUMMARIES = {
-  malware:
-    "URLhaus or Phisang classified this destination as malware. The page was never fetched — everything below comes from reading the address itself.",
-  phishing:
-    "Phisang stopped the navigation so you can read why this address looks unsafe. The page was never fetched.",
-};
+// Whether the page was opened decides the second sentence: only the page stage
+// fetched it, and then on Phisang's server, never in this tab.
+function summaryFor(cls, result) {
+  const lead = cls === "malware"
+    ? "URLhaus or Phisang classified this destination as malware."
+    : "Phisang stopped the navigation so you can read why this address looks unsafe.";
+  const how = result.decision_stage === "page"
+    ? "Phisang opened the page on its own server, in a locked-down browser — never in this tab."
+    : "The page was never fetched — the verdict comes from the address and the threat feed.";
+  return lead + " " + how;
+}
 
 function show(id, text) {
   document.getElementById(id).textContent = text || "";
@@ -30,40 +37,41 @@ chrome.runtime.sendMessage({ type: "GET_TAB_RESULT" }, (payload) => {
   show("ripeness", meta.ripeness);
   show("eyebrow", "Navigation stopped");
   show("title", TITLES[cls]);
-  show("summary", SUMMARIES[cls]);
+  show("summary", summaryFor(cls, result));
+
+  const notes = historyNotes(result);
+  const history = document.getElementById("history");
+  history.replaceChildren(...notes.map((note) => {
+    const li = document.createElement("li");
+    li.textContent = note;
+    return li;
+  }));
+  history.classList.toggle("hidden", !notes.length);
 
   renderPeel(document.getElementById("peel"), url);
 
-  if (result.page && result.page.reasoning) {
-    const box = document.getElementById("reasoning");
-    box.classList.remove("hidden");
-    box.innerHTML = "<h2>Why this matters</h2><p>" + escapeHtml(result.page.reasoning) + "</p>";
+  const facts = pageRows(result);
+  if (facts) {
+    document.getElementById("page").classList.remove("hidden");
+    show("reasoning", result.page.reasoning);
+    renderRows(document.getElementById("page-facts"), facts);
   }
 
   const signals = result.signals || [];
   if (signals.length) {
-    document.getElementById("signals").innerHTML = signals
-      .map((item) => "<li>" + escapeHtml(item) + "</li>")
-      .join("");
+    document.getElementById("signals").replaceChildren(...signals.map((item) => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      return li;
+    }));
   } else {
     document.getElementById("signals-label").classList.add("hidden");
   }
 
   const intel = result.threat_intel || {};
-  const rows = [
-    ["Classification", cls],
-    ["Decision stage", result.decision_stage || "—"],
-    ["Confidence", result.confidence != null ? result.confidence + "%" : "—"],
-    ["Risk score", result.risk_score != null ? result.risk_score.toFixed(2) : "—"],
-    ["Scan ID", result.scan_id || "—"],
-    ["URLhaus match", intel.matched ? (intel.match_kind || "yes") + " " + (intel.id || "") : "no"],
-    ["Threat type", intel.threat_type || "—"],
+  renderRows(document.getElementById("tech"), recordRows(result, cls).concat([
     ["First seen", intel.first_seen || "—"],
-    ["Policy", result.policy_version || "poc-flowchart-v1"],
-  ];
-  document.getElementById("tech").innerHTML = rows
-    .map(([k, v]) => "<div><dt>" + escapeHtml(k) + "</dt><dd>" + escapeHtml(v) + "</dd></div>")
-    .join("");
+  ]));
 
   document.getElementById("go-back").addEventListener("click", () => {
     chrome.runtime.sendMessage({ type: "GO_BACK", url });

@@ -21,7 +21,8 @@ async function run() {
     if (!res.ok) {
       throw new Error(result.message || result.error_code || "analyze failed");
     }
-    statusEl.textContent = `${result.classification} · decided at ${result.decision_stage}`;
+    const meta = self.Phisang.verdictMeta(result, result.classification);
+    statusEl.textContent = `${meta.verdict} · decided at ${result.decision_stage}`;
     await chrome.runtime.sendMessage({ type: "ANALYSIS_RESULT", tabId, url, result });
   } catch (error) {
     statusEl.textContent = "Backend unreachable — continuing with a degraded warning.";

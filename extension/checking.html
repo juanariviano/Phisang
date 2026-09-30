@@ -32,16 +32,17 @@
           </div>
         </div>
         <p class="summary">
-          Phisang is reading the parts below. The page they point at is not being opened.
+          Phisang is reading the parts below. Only if they are inconclusive is the page opened —
+          on Phisang's server, in a locked-down browser, never in this tab.
         </p>
 
         <p class="section-label">The peel</p>
         <ul id="peel" class="peel"></ul>
 
         <ol class="steps">
-          <li><span>1</span> URLhaus known-malware lookup</li>
-          <li><span>2</span> Placeholder lexical model</li>
-          <li><span>3</span> Gemini, only when confidence is low</li>
+          <li><span>1</span> URLhaus — exact address, then the related host path</li>
+          <li><span>2</span> Lexical model — clears well-known hosts on the address alone</li>
+          <li><span>3</span> Page markup — opened server-side when the address is inconclusive</li>
         </ol>
 
         <p id="status" class="fine" role="status">Contacting the Phisang API</p>
@@ -50,6 +51,7 @@
 
     <script src="peel.js"></script>
     <script src="banana.js"></script>
+    <script src="verdicts.js"></script>
     <script src="checking.js"></script>
   </body>
 </html>

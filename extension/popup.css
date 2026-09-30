@@ -197,6 +197,109 @@ body.is-malware .signals li {
   border-top-color: color-mix(in srgb, var(--peel) 28%, transparent);
 }
 
+/* --- History notes, page, facts, rescan (mirror the web result panel) --- */
+
+.notes {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--forest);
+}
+
+.notes li + li {
+  margin-top: 4px;
+}
+
+body.is-malware .notes {
+  color: var(--peel);
+}
+
+.reasoning {
+  margin: 0 0 6px;
+  border-left: 4px solid var(--ink);
+  padding: 4px 0 4px 12px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--forest);
+}
+
+body.is-malware .reasoning {
+  border-left-color: var(--peel);
+  color: var(--peel);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 14px;
+  margin: 0;
+  padding: 0;
+}
+
+.facts div {
+  border-top: 1px solid color-mix(in srgb, var(--leaf) 35%, transparent);
+  padding: 6px 0;
+  min-width: 0;
+}
+
+.facts dt {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--leaf);
+}
+
+.facts dd {
+  margin: 2px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+body.is-malware .facts div {
+  border-top-color: color-mix(in srgb, var(--peel) 28%, transparent);
+}
+body.is-malware .facts dt {
+  color: color-mix(in srgb, var(--flesh) 62%, transparent);
+}
+body.is-malware .facts dd {
+  color: var(--peel);
+}
+
+.rescan {
+  margin-top: 14px;
+  width: 100%;
+  cursor: pointer;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 12px;
+}
+
+.rescan:hover {
+  background: var(--ink);
+  color: var(--peel);
+}
+
+.rescan:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+body.is-malware .rescan {
+  border-color: var(--peel);
+  background: transparent;
+  color: var(--peel);
+}
+
 /* --- Toggle ------------------------------------------------------------ */
 
 .toggle {

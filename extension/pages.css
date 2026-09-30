@@ -299,6 +299,11 @@ body.is-malware .tech dd {
   color: var(--forest);
 }
 
+/* Under its own section label, so no gap above and a little room before the facts. */
+#page .reasoning {
+  margin: 0 0 12px;
+}
+
 body.is-malware .reasoning {
   border-left-color: var(--peel);
 }

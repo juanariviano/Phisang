@@ -17,7 +17,7 @@ def result(classification="phishing", score=0.91):
         classification=classification, confidence=91, risk_score=score,
         risk_level="High Risk", decision_stage="page",
         page=PageResult(label="phishing", confidence=91, phishing_score=score,
-                        threshold=0.6, model_name="laya_v2", status="ok"),
+                        threshold=0.6, model_name="laya_v3", status="ok"),
         threat_intel=ThreatIntel(matched=False, source="URLhaus"),
         policy_version="test", signals=["Original evidence"],
     )

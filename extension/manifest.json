@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Phisang",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Check links for known threats and phishing, with website previews, domain details, and explanations of scan findings.",
   "action": {
     "default_title": "Phisang",

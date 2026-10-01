@@ -1,5 +1,5 @@
-importScripts('stream.js', 'api.js', 'verdicts.js');
-const { API_BASE, analyzeUrl, savedExplanation, verdictMeta, isHighRisk } = self.Phisang;
+importScripts('stream.js', 'api.js', 'verdicts.js', 'cache.js');
+const { API_BASE, analyzeUrl, savedExplanation, verdictMeta, isHighRisk, rememberResult } = self.Phisang;
 const skipOnce = new Map();
 const lastByTab = new Map();
 const lastSafeUrl = new Map();
@@ -124,6 +124,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const result = message.result;
       const url = message.url;
       await remember(tabId, url, result);
+      // A result that came back out of the local cache must not keep renewing its
+      // own lifetime, or an address scanned once would never be checked again.
+      if (!result.served_from_local_cache) await rememberResult(url, result);
       setBadge(tabId, result.classification, result);
 
       if (isHighRisk(result)) {
@@ -152,6 +155,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         error_code: "threat_intel_unavailable",
       };
       await remember(tabId, url, result);
+      // An address we can no longer check does not stay released locally.
+      await rememberResult(url, result);
       setBadge(tabId, "unavailable");
       skipOnce.set(tabId, url);
       await chrome.tabs.update(tabId, { url });
@@ -169,6 +174,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           },
         });
         await remember(tabId, url, result);
+        // Rescan always asks the server, so its answer replaces the local entry —
+        // including removing one for a page that no longer reads as safe.
+        await rememberResult(url, result);
         setBadge(tabId, result.classification, result);
         // A page that now reads as a threat is taken away from the user, as on first visit.
         if (isHighRisk(result)) {

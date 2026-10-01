@@ -17,5 +17,20 @@
     if (!response.ok) return result.explanation || null;
     return (await response.json()).explanation || null;
   }
-  Object.assign(self.Phisang ||= {}, { API_BASE, analyzeUrl, savedExplanation });
+  async function reportFalsePositive(result, reason = '') {
+    // Reported against the durable evidence ID, so the report still points at the
+    // observation the reporter saw after the request ID is gone.
+    const id = result?.evidence_scan_id || result?.scan_id;
+    if (!id) throw new Error('This result has no saved scan to report.');
+    const response = await fetch(`${API_BASE}/api/v1/scans/${encodeURIComponent(id)}/report`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client: 'extension', reason }),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      throw new Error(body.message || 'The report could not be saved. Try again.');
+    }
+    return response.json();
+  }
+  Object.assign(self.Phisang ||= {}, { API_BASE, analyzeUrl, savedExplanation, reportFalsePositive });
 })();

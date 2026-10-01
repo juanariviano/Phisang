@@ -142,6 +142,19 @@ class AnalyzeResponse(BaseModel):
     page_shortcut: Optional[PageShortcut] = None
 
 
+class FalsePositiveReportRequest(BaseModel):
+    client: ClientName = "web"
+    # Free text from the reporter. Stored and reviewed by hand, never rendered as
+    # markup and never fed back into a verdict.
+    reason: Optional[str] = Field(default=None, max_length=1000)
+
+
+class FalsePositiveReportResponse(BaseModel):
+    status: Literal["recorded"] = "recorded"
+    report_id: int
+    scan_id: str
+
+
 class HealthResponse(BaseModel):
     status: Literal["ok", "degraded"]
     policy_version: str

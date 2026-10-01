@@ -1,6 +1,6 @@
 /* Popup and warning page share the same scan/evidence behavior. */
 (async function () {
-  const { resultView, scanProgress, renderBanana } = self.Phisang;
+  const { resultView, scanProgress, renderBanana, clearCache, cacheSize } = self.Phisang;
   const container = document.getElementById('result');
   const status = document.getElementById('status');
   const rescan = document.getElementById('rescan');
@@ -11,6 +11,32 @@
   if (enabled) {
     chrome.storage.local.get({ protectionEnabled: true }, stored => { enabled.checked = stored.protectionEnabled !== false; });
     enabled.addEventListener('change', () => chrome.storage.local.set({ protectionEnabled: enabled.checked }));
+  }
+  // Popup only: the local cache is shared by every tab, so it is cleared from the
+  // toolbar rather than from a page's own warning.
+  const clear = document.getElementById('clear-cache');
+  const cacheStatus = document.getElementById('cache-status');
+  if (clear) {
+    const showCount = async () => {
+      const count = await cacheSize();
+      clear.disabled = !count;
+      cacheStatus.textContent = count === 0
+        ? 'No addresses are saved on this device. Every website is scanned before it opens.'
+        : count === 1
+          ? '1 address is saved as safe on this device. Visiting it again needs no scan.'
+          : `${count} addresses are saved as safe on this device. Visiting them again needs no scan.`;
+    };
+    clear.addEventListener('click', async () => {
+      clear.disabled = true;
+      try {
+        await clearCache();
+        cacheStatus.textContent = 'Local cache cleared. The next visit to each address is scanned again.';
+      } catch {
+        clear.disabled = false;
+        cacheStatus.textContent = 'The local cache could not be cleared. Try again.';
+      }
+    });
+    showCount();
   }
   function render(payload) {
     dispose?.();

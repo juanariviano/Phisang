@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -34,7 +35,7 @@ class Settings(BaseSettings):
 
     # Page-analysis stage: fetches the destination in a locked-down headless
     # browser and classifies its markup with the Laya phishing model.
-    page_model_dir: str = str(ROOT_DIR / "ai/markuplm/artifacts/laya_v2")
+    page_model_dir: str = str(ROOT_DIR / "ai/markuplm/artifacts/laya_v3")
     page_stage_enabled: bool = True
     page_fetch_concurrency: int = 2
     page_fetch_timeout_seconds: float = 20.0
@@ -54,6 +55,17 @@ class Settings(BaseSettings):
     db_timeout_seconds: int = 10
     # A URLhaus listing stays true far longer than a "not listed" answer does.
     db_urlhaus_match_ttl_seconds: int = 86_400
+
+    @field_validator("page_model_dir")
+    @classmethod
+    def _resolve_model_dir(cls, value: str) -> str:
+        """Let PAGE_MODEL_DIR be written relative to the repository root.
+
+        The API is started from backend/ as often as from the root, and a bare
+        relative path would otherwise resolve against whichever one was used.
+        """
+        path = Path(value).expanduser()
+        return str(path if path.is_absolute() else (ROOT_DIR / path).resolve())
 
 
 settings = Settings()

@@ -18,10 +18,16 @@
         <div id="progress" hidden></div>
         <div id="result"><p>Loading the last scan?</p></div>
         <button id="rescan" class="secondary" type="button" hidden>Rescan</button><label class="toggle" for="enabled"><span>Protect navigations</span><input type="checkbox" id="enabled" checked></label>
+        <section class="local-cache" aria-label="Local cache">
+          <p class="eyebrow">Local cache</p>
+          <p id="cache-status" class="fine" role="status"></p>
+          <button id="clear-cache" class="secondary" type="button">Clear local cache</button>
+        </section>
       <footer>A low risk score is not a guarantee of safety. Threat information from URLhaus / abuse.ch.</footer>
     </main>
     <script src="banana.js"></script>
     <script src="verdicts.js"></script>
+    <script src="cache.js"></script>
     <script src="stream.js"></script>
     <script src="api.js"></script>
     <script src="result-ui.js"></script>

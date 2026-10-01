@@ -2,7 +2,7 @@
 
 Two artifact layouts are understood. A MarkupLM folder mirrors the inference
 contract of ai/markuplm/smoke_test.ipynb; a Laya folder (one holding
-rl_agent_config.json, e.g. laya_v2) mirrors finetune_laya_phishing_kaggle.ipynb.
+rl_agent_config.json, e.g. laya_v3) mirrors finetune_laya_phishing_kaggle.ipynb.
 Either way the same preprocessing metadata is applied, so API scores match the
 notebooks'.
 """

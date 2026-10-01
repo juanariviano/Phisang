@@ -11,10 +11,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import evidence, explanations, history, inventory, page_stage, scan_progress
+from . import evidence, explanations, history, inventory, page_stage, reports, scan_progress
 from .cache import cache_ready, init_cache
 from .config import WEB_DIR, settings
-from .models import AnalyzeRequest, ErrorBody, HealthResponse, MetaResponse
+from .models import (AnalyzeRequest, ErrorBody, FalsePositiveReportRequest,
+                     FalsePositiveReportResponse, HealthResponse, MetaResponse)
 from .normalize import UrlError
 from .policy import LIMITATIONS, POLICY_VERSION, analyze, map_url_error
 
@@ -176,6 +177,25 @@ async def explain_scan(scan_id: str, request: Request):
         return await explanations.explain(item)
     except explanations.ExplanationError as exc:
         return JSONResponse(status_code=exc.status, content={"message": str(exc)})
+
+
+@app.post("/api/v1/scans/{scan_id}/report")
+async def report_false_positive(scan_id: str, body: FalsePositiveReportRequest | None = None):
+    """File a report that this scan's unsafe verdict looks wrong.
+
+    Stored for review. The scan keeps the verdict it was given, so a report can
+    never be used to clear a page the gates decided against.
+    """
+    item = await asyncio.to_thread(evidence.get_scan, scan_id)
+    if item is None:
+        return JSONResponse(status_code=404, content={"message": "Scan not found. Please scan the address again."})
+    request_body = body or FalsePositiveReportRequest()
+    try:
+        report_id = await asyncio.to_thread(reports.save, item, client=request_body.client,
+                                           reason=request_body.reason)
+    except reports.ReportError as exc:
+        return JSONResponse(status_code=exc.status, content={"message": str(exc)})
+    return FalsePositiveReportResponse(report_id=report_id, scan_id=item.evidence_scan_id or item.scan_id)
 
 
 if WEB_DIR.exists():

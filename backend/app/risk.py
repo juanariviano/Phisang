@@ -22,8 +22,20 @@ RISK_BANDS: list[tuple[float, RiskLevel]] = [
 # level never disagree.
 MALICIOUS_FROM = 0.6
 
+# A plain-HTTP address can be read and rewritten in transit, so it adds to
+# whatever the gates found instead of replacing it. The sum is capped, so the
+# penalty can never take a score past the top of the scale (100 as a percentage).
+HTTP_RISK_PENALTY = 0.1
+
 
 def risk_level(score: float) -> RiskLevel:
     if not 0.0 <= score <= 1.0:
         raise ValueError(f"risk score must be within [0, 1], got {score}")
     return next(level for bound, level in RISK_BANDS if score >= bound)
+
+
+def with_http_penalty(score: float, scheme: str) -> float:
+    """Raise a plain-HTTP address's risk score, never above 1.0."""
+    if scheme != "http":
+        return score
+    return min(1.0, round(score + HTTP_RISK_PENALTY, 4))

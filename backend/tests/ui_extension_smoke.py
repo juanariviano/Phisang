@@ -51,10 +51,21 @@ async def run():
         jpeg = await fixture.screenshot(type='jpeg')
         await fixture.close()
 
+        reports = []
+
         async def route(request_route):
             if request_route.request.url.endswith('/preview'):
                 assert request_route.request.url.startswith('https://phisang.kennethsunjaya.com/api/v1/scans/')
                 await request_route.fulfill(content_type='image/jpeg', body=jpeg)
+            elif request_route.request.url == 'https://example.org/':
+                # The one destination allowed to load, so releasing a tab from the
+                # local cache can be observed. Nothing else reaches the network.
+                await request_route.fulfill(content_type='text/html', body='<h1>Example destination</h1>')
+            elif request_route.request.url.endswith('/report'):
+                assert request_route.request.method == 'POST'
+                reports.append((request_route.request.url, json.loads(request_route.request.post_data)))
+                await request_route.fulfill(content_type='application/json',
+                    body=json.dumps({'status': 'recorded', 'report_id': 7, 'scan_id': 'original'}))
             else:
                 await request_route.abort()
         await context.route('http://**/*', route)
@@ -183,9 +194,50 @@ async def run():
           return (await chrome.action.getBadgeText({tabId:tab.id})) === 'STOP';
         }""")
         assert await worker.evaluate('chrome.action.getBadgeText({tabId:self.__tabId})') == 'STOP'
+
+        # Reporting a false positive is filed against the durable evidence ID and
+        # leaves the warning's verdict exactly where it is.
+        await page.get_by_role('button', name='Report false positive', exact=True).click()
+        await page.get_by_text('Thanks — your report was saved for review. The verdict above does not change.',
+                               exact=True).wait_for()
+        assert reports == [('https://phisang.kennethsunjaya.com/api/v1/scans/original/report',
+                            {'client': 'extension', 'reason': ''})], reports
+        await page.get_by_role('heading', name='High risk', exact=True).wait_for()
+        assert await page.get_by_role('button', name='Report false positive', exact=True).count() == 0
+
+        # A safe scan is kept on this device, so the next visit to that address is
+        # released without reaching the scanner at all.
+        safe = dict(result, classification='benign', risk_score=.1, verdict='safe', served_from_history=False,
+                    scan_id='safe', evidence_scan_id='safe', explanation=None)
+        await page.add_init_script('self.__checkingResult = ' + json.dumps(safe) + ';')
+        checking = f'chrome-extension://{extension_id}/checking.html?url=https%3A%2F%2Fexample.org%2F&tabId={tab_id}'
+        await page.goto(checking)
+        await page.get_by_role('progressbar').wait_for()
+        await page.evaluate('self.__finishScan()')
+        await page.wait_for_url('https://example.org/')
+        assert await worker.evaluate('self.Phisang.cacheSize()') == 1
+        # The scan fixture resolves only when the test releases it, so reaching the
+        # destination without releasing it proves no scan request was made.
+        await page.goto(checking)
+        await page.wait_for_url('https://example.org/')
+        # Asked of the worker: the tab is now an ordinary website, with no extension APIs.
+        assert await worker.evaluate('chrome.action.getBadgeText({tabId:self.__tabId})') == 'OK'
+
+        # The popup says what is held locally, and empties it on request.
+        await page.goto(f'chrome-extension://{extension_id}/popup.html')
+        await page.get_by_text('1 address is saved as safe on this device. Visiting it again needs no scan.',
+                               exact=True).wait_for()
+        await page.screenshot(path=str(OUTPUT / 'popup-local-cache.png'), full_page=True)
+        await page.get_by_role('button', name='Clear local cache', exact=True).click()
+        await page.get_by_text('Local cache cleared. The next visit to each address is scanned again.',
+                               exact=True).wait_for()
+        assert await worker.evaluate('self.Phisang.cacheSize()') == 0
+        assert await page.get_by_role('button', name='Clear local cache', exact=True).is_disabled()
+
         assert not errors, errors
         await context.close()
-    print('Unpacked extension passed: cached explanation, preview, domain, redirects, safe text, risk, banana, Rescan progress, partial streaming/retry, mobile, reduced motion.')
+    print('Unpacked extension passed: cached explanation, preview, domain, redirects, safe text, risk, banana, '
+          'Rescan progress, partial streaming/retry, mobile, reduced motion, false-positive report, local cache.')
 
 
 if __name__ == '__main__':

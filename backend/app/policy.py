@@ -13,7 +13,7 @@ from .models import AnalyzeResponse, PageResult, PageShortcut, PriorScan, Threat
 from .normalize import UrlError, hostname_of, normalize_url, redact_url
 from .page_stage import PageStageError
 from .reputation import is_popular_host, is_well_known_host, popular_domain_count
-from .risk import MALICIOUS_FROM, risk_level
+from .risk import HTTP_RISK_PENALTY, MALICIOUS_FROM, risk_level, with_http_penalty
 from .scan_progress import report, step
 from .url_guard import UrlRejected, check_static
 from .urlhaus import UrlhausError
@@ -163,6 +163,16 @@ def _base(
     served_from_history: bool = False,
     verdict: str | None = None,
 ) -> AnalyzeResponse:
+    # One place adds the plain-HTTP penalty, so no decision stage can forget it.
+    # A replay is excluded: its stored score already carries the penalty.
+    scheme = urlsplit(normalized_url).scheme
+    if risk_score is not None and not served_from_history and scheme == "http":
+        raised = with_http_penalty(risk_score, scheme)
+        signals = [*signals, (
+            f"Address uses plain HTTP, so the estimated risk was raised by "
+            f"{round(HTTP_RISK_PENALTY * 100)} to {round(raised * 100)}%" if raised > risk_score
+            else "Address uses plain HTTP; the estimated risk is already at its 100% maximum")]
+        risk_score = raised
     result = AnalyzeResponse(
         scan_id=scan_id,
         normalized_url=normalized_url,

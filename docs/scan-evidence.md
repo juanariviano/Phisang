@@ -5,10 +5,13 @@ then restart the API process:
 
 ```powershell
 .\backend\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
-.\backend\.venv\Scripts\python.exe backend/scripts/migrate_scan_evidence.py
+.\backend\.venv\Scripts\python.exe backend/scripts/migrate.py
 cd web
 npm.cmd run build
 ```
+
+`migrate.py` applies every migration in `backend/migrations`, including this
+one; `migrate_scan_evidence.py` applies this one alone.
 
 The migration adds three nullable columns to `dbo.Scans` and can be run again.
 It preserves existing rows. A new scan is needed to capture an image for an old

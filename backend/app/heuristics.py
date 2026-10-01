@@ -148,9 +148,9 @@ def score(normalized_url: str) -> HeuristicResult:
         risk += 10
         signals.append("URL contains heavy percent-encoding that can hide the path")
 
-    if parts.scheme == "http":
-        risk += 5
-        signals.append("Connection is not HTTPS — treated only as a weak signal")
+    # The scheme is deliberately not scored here: app.risk applies the plain-HTTP
+    # penalty to the final risk score at every decision stage, including the ones
+    # this lexical gate never reaches (see policy._base).
 
     host_entropy = _entropy(host.replace(".", ""))
     if host_entropy >= 3.8 and len(host) >= 18:

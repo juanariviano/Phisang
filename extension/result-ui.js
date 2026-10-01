@@ -1,6 +1,6 @@
 /* Shared, text-only result UI for the popup and navigation warning. */
 (function () {
-  const { API_BASE, readExplanationStream, renderBanana, verdictMeta } = self.Phisang;
+  const { API_BASE, readExplanationStream, renderBanana, verdictMeta, reportFalsePositive } = self.Phisang;
   function node(tag, text, className) {
     const el = document.createElement(tag);
     if (text != null) el.textContent = text;
@@ -70,7 +70,11 @@
       risk.append(node('strong', `${percent}%`), node('span', ' Estimated risk · an estimate, not a guarantee'));
       container.append(risk);
     }
-    if (result.served_from_history) container.append(node('p', 'Saved result. Rescan to check the website again.', 'fine'));
+    if (result.served_from_local_cache) {
+      container.append(node('p', 'Saved on this device from an earlier visit, so this visit needed no scan. Rescan to check the website again.', 'fine'));
+    } else if (result.served_from_history) {
+      container.append(node('p', 'Saved result. Rescan to check the website again.', 'fine'));
+    }
     if (result.classification === 'unavailable' || result.error_code || result.page?.status === 'unavailable') {
       container.append(node('p', 'This result will not be reused. Your next scan will try again.', 'fine'));
     }
@@ -119,11 +123,29 @@
       if (result.explanation) { draw(result.explanation, true); button.hidden = true; note.hidden = true; }
       box.append(button, note, error, answer); container.append(box);
     }
-    if (meta.bananaState === 'rotten' || meta.bananaState === 'phishing') {
+    if ((meta.bananaState === 'rotten' || meta.bananaState === 'phishing') && id) {
+      const box = node('div', null, 'report');
       const report = node('button', 'Report false positive', 'secondary');
       report.type = 'button';
-      // UI only: connect to the reporting flow when it is implemented.
-      container.append(report);
+      const note = node('p', null, 'fine');
+      report.addEventListener('click', async () => {
+        report.disabled = true;
+        report.textContent = 'Sending report…';
+        note.className = 'fine';
+        note.textContent = '';
+        try {
+          await reportFalsePositive(result);
+          // The verdict stands: a report is filed for review, not applied here.
+          report.hidden = true;
+          note.textContent = 'Thanks — your report was saved for review. The verdict above does not change.';
+        } catch (error) {
+          note.className = 'error';
+          note.textContent = error.message || 'The report could not be saved. Try again.';
+          report.textContent = 'Try reporting again';
+        } finally { report.disabled = false; }
+      });
+      box.append(report, note);
+      container.append(box);
     }
     const info = result.domain_info;
     container.append(details('About this domain', info?.status === 'ok' ? [rows([

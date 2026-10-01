@@ -10,7 +10,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React_19-scanner-61DAFB?logo=react&logoColor=black)
 ![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest_V3-4285F4?logo=googlechrome&logoColor=white)
-![Model](https://img.shields.io/badge/page_model-laya__v2-8A2BE2)
+![Model](https://img.shields.io/badge/page_model-laya__v3-8A2BE2)
 ![Status](https://img.shields.io/badge/status-proof_of_concept-orange)
 
 [How it works](#-how-it-works) · [Risk levels](#-risk-levels) · [Quick start](#-quick-start) · [Try it](#-try-it) · [API](#-api) · [Layout](#-project-layout)
@@ -22,7 +22,9 @@
 
 Registration details, captured page previews and on-demand AI explanations are
 documented in [Scan evidence setup](docs/scan-evidence.md), including the SQL
-migration and configurable OpenAI-compatible provider settings. Failed scans are
+migration and configurable OpenAI-compatible provider settings. The extension's
+local cache and false-positive reports are documented in
+[Local cache and reports](docs/local-cache-and-reports.md). Failed scans are
 logged but automatically retried on the next Peel; they are never reused as a
 completed result.
 
@@ -40,7 +42,7 @@ flowchart LR
     D -->|yes| S([benign<br/>not fetched])
     D -->|no| E[Fetch page in<br/>headless Chromium]
     E -->|fetch fails| U([unavailable<br/>never benign])
-    E --> F[laya_v2 scores<br/>the markup]
+    E --> F[laya_v3 scores<br/>the markup]
     F --> G{Corroborated?}
     G -->|URL doubtful or<br/>password field| P([phishing])
     G -->|model alone| W([benign<br/>+ warning])
@@ -59,7 +61,7 @@ flowchart LR
 1. **Normalize** the URL and refuse local or private-network targets.
 2. **URLhaus lookup** ([abuse.ch](https://urlhaus.abuse.ch/)). An exact URL match (or the same path on that host, or any listing on a malware IP) blocks immediately as `malware`. A few unrelated rows on a large site such as `www.google.com` do **not** block every page on that host.
 3. **Lexical heuristic** on the URL string (hand-written rules, not a trained model). If it looks clearly benign (confidence above 80%) **and** the host is on the well-known list or the [Tranco](https://tranco-list.eu) top-domain ranking, the URL is cleared without being visited.
-4. **Page analysis** for everything else. The destination is fetched in a locked-down headless Chromium, and its cleaned markup is scored by **laya_v2** (ModernBERT-large, fine-tuned from [`convaiinnovations/laya`](https://huggingface.co/convaiinnovations/laya)).
+4. **Page analysis** for everything else. The destination is fetched in a locked-down headless Chromium, and its cleaned markup is scored by **laya_v3** (ModernBERT-large, fine-tuned from [`convaiinnovations/laya`](https://huggingface.co/convaiinnovations/laya)).
    - A benign-looking page does not clear a URL that itself looks like phishing. Phishing kits often serve a clean landing page first.
    - The API's `phishing` classification requires a doubtful URL or a password field to corroborate the model. The extension also stops any result the website displays as **High risk**, even if the API classification remains `benign`.
    - A dead host, a non-2xx status or a timeout gives `unavailable`, so a taken-down phishing site is never reported clean.
@@ -102,8 +104,9 @@ Every result carries a `risk_score` from 0 to 1 and a `risk_level`. Each band in
 |---|---|
 | URLhaus match | always 1.0 |
 | Heuristic (popular host cleared) | heuristic risk (0–100) ÷ 100 |
-| Page analysis | laya_v2's phishing score. A page scoring 0.6 or more is labelled `phishing`. |
+| Page analysis | laya_v3's phishing score. A page scoring 0.6 or more is labelled `phishing`. |
 | URL alone forces a block | raised to at least 0.6 |
+| Address is plain HTTP | **+0.1 on top of whichever row above applied**, capped at 1.0 — the score can never exceed 100% |
 | `unavailable` | `null` |
 
 > [!NOTE]
@@ -113,7 +116,7 @@ Every result carries a `risk_score` from 0 to 1 and a `risk_level`. Each band in
 
 ## 🚀 Quick start
 
-**You need:** Python 3.10+ (3.14 works), Node.js, Google Chrome, a free [`URLHAUS_AUTH_KEY`](https://auth.abuse.ch/), and the laya_v2 model folder ([how to get it](#the-page-model)).
+**You need:** Python 3.10+ (3.14 works), Node.js, Google Chrome, a free [`URLHAUS_AUTH_KEY`](https://auth.abuse.ch/), and the laya_v3 model folder ([how to get it](#the-page-model)).
 
 **1. Configure**
 
@@ -176,6 +179,15 @@ HTTPS API origin defined in `extension/api.js`. The remote reverse proxy forward
 connect to that loopback address. Keep response buffering disabled for streaming
 scan and explanation routes.
 
+An address this browser already saw cleared is answered from a local cache in
+`chrome.storage.local`, so ordinary repeat browsing reaches neither the API nor
+its SQL server. Only plainly safe results are kept, entries expire after six
+hours, and a rescan that finds anything else removes the entry. **Clear local
+cache** in the popup empties it; the popup also shows how many addresses are
+held. **Report false positive** on a warning files a report for review and
+leaves the verdict where it is. See
+[Local cache and reports](docs/local-cache-and-reports.md).
+
 Known domains now pass through the checking screen too. **Continue anyway**
 releases only that exact URL for one visit in that tab; it does not exempt the
 hostname or later visits. The extension redirects tabs through `webNavigation`;
@@ -191,12 +203,12 @@ for an isolated unpacked-extension browser check with mocked API traffic.
 </details>
 
 <details id="the-page-model">
-<summary><b>🧠 The page model (laya_v2)</b></summary>
+<summary><b>🧠 The page model (laya_v3)</b></summary>
 
-`ai/markuplm/artifacts/` is gitignored, so a fresh clone has no model. laya_v2 is produced by [`finetune_laya_phishing_kaggle.ipynb`](ai/markuplm/finetune_laya_phishing_kaggle.ipynb) on a Kaggle GPU. Download its output folder and place it at:
+`ai/markuplm/artifacts/` is gitignored, so a fresh clone has no model. laya_v3 is produced by [`finetune_laya_phishing_kaggle.ipynb`](ai/markuplm/finetune_laya_phishing_kaggle.ipynb) on a Kaggle GPU. Download its output folder and place it at:
 
 ```
-ai/markuplm/artifacts/laya_v2/
+ai/markuplm/artifacts/laya_v3/
 ├── model.safetensors      (~1.7 GB)
 ├── metadata.json
 ├── rl_agent_config.json
@@ -204,12 +216,13 @@ ai/markuplm/artifacts/laya_v2/
 └── tokenizer/
 ```
 
+- Swap models by editing `PAGE_MODEL_DIR` in `.env` and restarting the API — nothing else needs changing.
 - The model runs on CPU. Allow a few GB of RAM.
 - The backend picks the loader from the folder's contents, so an older MarkupLM artifact still works if you point `PAGE_MODEL_DIR` at it.
 - Without a model the API still starts, but every URL that reaches page analysis comes back `unavailable`. `GET /api/v1/health` reports `page_stage_ready`.
 
 > [!CAUTION]
-> laya_v2 is demo-grade: 63.5% accuracy on its own held-out test split, catching only 28% of phishing pages at its tuned threshold. Treat its score as advisory.
+> laya_v3 is demo-grade. Its `metadata.json` carries no `test_metrics`, so the API reports `page_model_accuracy` as `null` and no held-out accuracy is claimed here. It also ships `"calibrated": false` with temperature 1.0, so its scores are uncalibrated — the 0.4 / 0.6 / 0.8 risk bands are applied to a raw probability. Treat its score as advisory.
 
 </details>
 
@@ -245,7 +258,7 @@ Set these in `.env` at the repository root. Every one except the URLhaus key is 
 | `CACHE_TTL_SECONDS` | `900` | How long verdicts are cached |
 | `HEURISTIC_BENIGN_THRESHOLD` | `80` | Heuristic confidence needed to skip the page fetch |
 | `PAGE_STAGE_ENABLED` | `true` | Turn page analysis off entirely |
-| `PAGE_MODEL_DIR` | `<repo>/ai/markuplm/artifacts/laya_v2` | Absolute path to the model folder |
+| `PAGE_MODEL_DIR` | `ai/markuplm/artifacts/laya_v3` | The model folder. Absolute, `~`, or relative to the repository root. The **only** place the model is chosen: [`smoke_test_laya.ipynb`](ai/markuplm/smoke_test_laya.ipynb) reads the same value, so the notebook measures what the API serves |
 | `PAGE_FETCH_CONCURRENCY` | `2` | Pages fetched at once |
 | `PAGE_FETCH_TIMEOUT_SECONDS` | `20.0` | Navigation timeout |
 | `PAGE_FETCH_BUDGET_SECONDS` | `45.0` | Total time allowed per fetch |
@@ -272,7 +285,7 @@ https://www.google.com/search?q=youtube
 http://77.73.133.113/lego/mine.exe
 ```
 
-**🟠 Typosquat:** the URL rules flag the fake `-com` label as suspicious, so the page is fetched. If laya_v2 scores it 0.6 or more it is blocked as `phishing`; a clean-looking page can still come back `benign`.
+**🟠 Typosquat:** the URL rules flag the fake `-com` label as suspicious, so the page is fetched. If laya_v3 scores it 0.6 or more it is blocked as `phishing`; a clean-looking page can still come back `benign`.
 
 ```text
 https://crocs-com.ru/
@@ -320,6 +333,7 @@ curl -X POST http://localhost:8000/api/v1/analyze \
 | `GET /api/v1/meta` | Policy version, page model name and accuracy, thresholds |
 | `GET /api/v1/scans` | Recent scans (`?limit=` up to 100) |
 | `GET /api/v1/scans/{scan_id}` | One scan by ID |
+| `POST /api/v1/scans/{scan_id}/report` | File a false-positive report against that scan |
 
 - **Classifications:** `malware` · `phishing` · `benign` · `unavailable`
 - **Decision stages:** `urlhaus` · `heuristic` · `page` · `error`
@@ -329,6 +343,7 @@ curl -X POST http://localhost:8000/api/v1/analyze \
 ```bash
 cd backend
 python -m pytest tests -q
+node --test ../extension/tests/*.test.cjs     # Service-worker and local-cache checks
 ```
 
 ## 🔒 Privacy and licensing

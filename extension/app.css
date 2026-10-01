@@ -43,6 +43,10 @@ details ul { padding-left: 20px; font-size: 12px; overflow-wrap: anywhere; }
 .toggle { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #46723540; margin-top: 22px; padding-top: 16px; cursor: pointer; }
 .toggle input { accent-color: var(--leaf); width: 18px; height: 18px; }
 footer { margin-top: 24px; border-top: 1px solid #46723540; padding-top: 14px; }
+.local-cache { border-top: 1px solid #46723540; margin-top: 22px; padding-top: 16px; }
+.local-cache .eyebrow { margin: 0; }
+.report { margin-top: 4px; }
+.report p:empty { display: none; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .actions button { flex: 1; margin-top: 0; }
 .eyebrow { font-size: 11px; font-weight: 700; color: var(--leaf); text-transform: uppercase; letter-spacing: .12em; }

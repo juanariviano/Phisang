@@ -71,6 +71,45 @@ function Explanation({ result }) {
   </div>;
 }
 
+function FalsePositiveReport({ result }) {
+  const [state, setState] = useState("idle");
+  const [error, setError] = useState("");
+  // Reported against the durable evidence ID, so the report keeps pointing at the
+  // observation the reporter saw.
+  const id = result.evidence_scan_id || result.scan_id;
+  if (!id) return null;
+  async function report() {
+    if (state === "sending") return;
+    setState("sending");
+    setError("");
+    try {
+      const response = await fetch(`/api/v1/scans/${encodeURIComponent(id)}/report`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client: "web" }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.message || "The report could not be saved. Try again.");
+      }
+      setState("sent");
+    } catch (err) {
+      setError(err.message || "The report could not be saved. Try again.");
+      setState("error");
+    }
+  }
+  // The verdict stands either way: a report is filed for review, not applied here.
+  if (state === "sent") return <p className="mt-4 rounded-lg border border-leaf/30 bg-flesh/35 px-4 py-3 text-sm leading-relaxed">
+    Thanks — your report was saved for review. The verdict above does not change.
+  </p>;
+  return <div className="mt-4">
+    <button type="button" onClick={report} disabled={state === "sending"}
+      className="w-full cursor-pointer rounded-lg border-2 border-ink px-4 py-3 font-semibold text-ink transition-colors hover:bg-leaf/10 disabled:cursor-wait disabled:opacity-60">
+      {state === "sending" ? "Sending report…" : state === "error" ? "Try reporting again" : "Report false positive"}
+    </button>
+    {error && <p role="alert" className="mt-2 text-sm text-rot">{error}</p>}
+  </div>;
+}
+
 function Preview({ result }) {
   const [failed, setFailed] = useState(false);
   if (!result.page?.preview_available || failed) return <p className="mt-5 rounded-lg bg-flesh/40 p-3 text-sm text-leaf">
@@ -142,11 +181,8 @@ export function ResultPanel({ busy, result, progress = [], onInspectPage }) {
         </section>}
         <Preview key={`preview-${result.scan_id}`} result={result} />
         <Explanation key={`explain-${result.scan_id}`} result={result} />
-        {(meta.bananaState === "rotten" || meta.bananaState === "phishing") && <button
-          type="button"
-          className="mt-4 w-full cursor-pointer rounded-lg border-2 border-ink px-4 py-3 font-semibold text-ink transition-colors hover:bg-leaf/10">
-          Report false positive
-        </button>}
+        {(meta.bananaState === "rotten" || meta.bananaState === "phishing")
+          && <FalsePositiveReport key={`report-${result.scan_id}`} result={result} />}
         <DomainDetails info={result.domain_info} />
         <details className="mt-4 border-t border-leaf/30 pt-4">
           <summary className="cursor-pointer font-semibold text-ink">Scan details</summary>

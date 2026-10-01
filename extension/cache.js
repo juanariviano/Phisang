@@ -1,47 +1,34 @@
-/* Local verdict cache.
-
-   An address this browser already saw cleared is answered from
-   chrome.storage.local, so repeat browsing costs no scan request: no SQL read on
-   the server and no round trip to wait for. Only results the shared verdict rules
-   read as plainly safe are kept, every entry expires, and a scan that finds
-   anything else removes it again. Nothing here can clear an address on its own —
-   a cache hit only repeats a verdict the API already gave this browser. */
+/* Reuse completed verdicts across paths on the exact same hostname. Cached
+   threats still block navigation; failed checks never become reusable verdicts.
+   The original scanned URL and evidence ID remain attached to every result. */
 (function () {
-  const STORE = 'safeCache';
+  // Separate from the old per-URL safeCache: old entries have a different scope.
+  const STORE = 'hostVerdictCache';
   // Long enough to spare the API the repeat traffic of ordinary browsing, short
   // enough that a site compromised today is checked again today.
   const TTL_MS = 6 * 60 * 60 * 1000;
   // chrome.storage.local holds about 10 MB; a scan result is a few KB.
   const MAX_ENTRIES = 200;
 
-  // Close enough to the API's own normalization that one link is one entry:
-  // credentials, the default port and a trailing slash go, and the fragment stays
-  // because the API treats it as part of the address it looked up.
+  // Keep every subdomain distinct. Paths, queries, fragments, schemes and ports
+  // share a verdict for this hostname; this does not change the API's URL key.
   function cacheKey(url) {
     try {
       const parsed = new URL(url);
       if (!['http:', 'https:'].includes(parsed.protocol)) return null;
-      parsed.username = '';
-      parsed.password = '';
-      const path = parsed.pathname.replace(/\/{2,}/g, '/').replace(/(?!^)\/+$/, '');
-      return `${parsed.protocol}//${parsed.host}${path}${parsed.search}${parsed.hash}`;
+      return parsed.hostname.toLowerCase().replace(/\.$/, '');
     } catch {
       return null;
     }
   }
 
-  function isSafeResult(result) {
-    const { verdictMeta, isHighRisk } = self.Phisang;
-    if (!result || result.classification !== 'benign') return false;
+  function isReusableResult(result) {
+    if (!result || !['benign', 'phishing', 'malware'].includes(result.classification)) return false;
+    if (self.Phisang.fileUrlMessage(result.normalized_url || '') ||
+        self.Phisang.fileUrlMessage(result.page?.final_url || '')) return false;
     // A degraded check is unknown, never clean, so it is never kept.
     if (result.error_code || result.page?.status === 'unavailable') return false;
-    if (isHighRisk(result)) return false;
-    // An address an earlier scan called malicious is never kept: the API's own
-    // archive reports it as potentially unsafe on the next lookup, and this cache
-    // must never be more permissive than the server it stands in for.
-    if (result.prior?.ever_malicious) return false;
-    // Mixed signals read as "Be cautious", which is not a safe result either.
-    return verdictMeta(result, result.classification).bananaState === 'benign';
+    return result.decision_stage !== 'error' && result.verdict !== 'unknown';
   }
 
   async function entries() {
@@ -56,6 +43,7 @@
 
   /* The stored result for this address, or null when it must be scanned. */
   async function cachedResult(url) {
+    if (self.Phisang.fileUrlMessage(url)) return null;
     const key = cacheKey(url);
     if (!key) return null;
     const stored = await entries();
@@ -63,7 +51,7 @@
     if (!entry) return null;
     // Re-checked on the way out as well as in, so an entry written by an older
     // version of these rules cannot release an address today.
-    if (Date.now() - entry.at >= TTL_MS || !isSafeResult(entry.result)) {
+    if (!Number.isFinite(entry.at) || Date.now() - entry.at >= TTL_MS || !isReusableResult(entry.result)) {
       delete stored[key];
       await chrome.storage.local.set({ [STORE]: stored });
       return null;
@@ -71,12 +59,13 @@
     return { ...entry.result, served_from_local_cache: true };
   }
 
-  /* Keep a safe result, or drop the address once it reads as anything else. */
+  /* A fresh verdict replaces this hostname's entry; a failure invalidates it. */
   async function rememberResult(url, result) {
+    if (self.Phisang.fileUrlMessage(url)) return;
     const key = cacheKey(url);
     if (!key) return;
     const stored = await entries();
-    if (isSafeResult(result)) {
+    if (isReusableResult(result)) {
       const saved = { ...result };
       delete saved.served_from_local_cache;
       stored[key] = { at: Date.now(), url, result: saved };
@@ -90,13 +79,14 @@
     } else if (key in stored) {
       delete stored[key];
     } else {
-      return; // Nothing safe to keep and nothing stale to drop.
+      return; // Nothing completed to keep and nothing stale to drop.
     }
     await chrome.storage.local.set({ [STORE]: stored });
   }
 
   async function clearCache() {
     await chrome.storage.local.remove(STORE);
+    await chrome.storage.local.remove('safeCache');
   }
 
   async function cacheSize() {

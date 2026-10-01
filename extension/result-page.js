@@ -21,10 +21,10 @@
       const count = await cacheSize();
       clear.disabled = !count;
       cacheStatus.textContent = count === 0
-        ? 'No addresses are saved on this device. Every website is scanned before it opens.'
+        ? 'No website results are saved on this device.'
         : count === 1
-          ? '1 address is saved as safe on this device. Visiting it again needs no scan.'
-          : `${count} addresses are saved as safe on this device. Visiting them again needs no scan.`;
+          ? '1 hostname has a saved result. Other paths reuse it; subdomains are checked separately.'
+          : `${count} hostnames have saved results. Other paths reuse them; subdomains are checked separately.`;
     };
     clear.addEventListener('click', async () => {
       clear.disabled = true;

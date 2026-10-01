@@ -44,6 +44,18 @@ function worker() {
 const result = (changes = {}) => ({ scan_id: 'request', evidence_scan_id: 'original', normalized_url: 'https://example.org/',
   classification: 'benign', verdict: 'safe', risk_score: .1, page: { status: 'ok' }, ...changes });
 
+async function checkNavigation(w, url) {
+  const context = vm.createContext({
+    URLSearchParams, AbortController,
+    location: { search: '?' + new URLSearchParams({ url, tabId: 7 }) },
+    window: { addEventListener() {} }, document: { getElementById: () => ({}), querySelector: () => ({}) },
+    chrome: { runtime: { sendMessage: w.message } },
+    self: { Phisang: { ...w.context.Phisang, renderBanana() {},
+      scanProgress: () => ({ update() {}, stop() {} }) } },
+  });
+  await vm.runInContext(fs.readFileSync(path.join(root, 'checking.js'), 'utf8'), context);
+}
+
 test('every website High risk verdict blocks the initial navigation, even with a benign classification', async () => {
   for (const changes of [
     { risk_score: .994 }, { risk_score: .6 }, { verdict: 'malicious', risk_score: null },
@@ -128,20 +140,22 @@ test('a failed Rescan keeps the previous result and can be retried', async () =>
   const w = worker();
   const previous = { url: 'https://example.org/', result: result() };
   w.stored['tab:7'] = previous;
+  await w.context.Phisang.rememberResult(previous.url, previous.result);
   w.respond(() => new Response('event: error\ndata: {"message":"Scanner unavailable"}\n\n', { headers: { 'content-type': 'text/event-stream' } }));
   const reply = await w.message({ type: 'RESCAN', tabId: 7, url: previous.url });
   assert.equal(reply.ok, false);
   assert.equal(reply.message, 'Scanner unavailable');
   assert.equal(w.stored['tab:7'], previous);
+  assert.equal(await w.context.Phisang.cachedResult('https://example.org/other'), null);
 });
 
-test('benign and unavailable results do not bypass later scans of a URL or its sibling path', async () => {
+test('later visits still enter the checking screen to resolve cached or fresh results', async () => {
   for (const classification of ['benign', 'unavailable']) {
     const w = worker();
     await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url: 'https://example.org/', result: result({ classification }) });
     w.navigate('https://example.org/'); // One navigation released by checking.html.
     const before = w.navigations.length;
-    w.navigate('https://example.org/'); // Explicitly visiting it again checks the archive.
+    w.navigate('https://example.org/'); // The checking screen resolves local reuse.
     w.navigate('https://example.org/other');
     assert.equal(w.navigations.length, before + 2);
     assert.match(w.navigations.at(-1), /checking.html/);
@@ -193,13 +207,100 @@ test('extension uses the website verdict and artwork state even when classificat
 
 /* --- Local verdict cache ------------------------------------------------- */
 
-const safeEntries = w => w.local.safeCache || {};
+const hostEntries = w => w.local.hostVerdictCache || {};
+
+test('file URLs cannot inherit a hostname verdict or call the scanner', async () => {
+  const w = worker();
+  await w.context.Phisang.rememberResult('https://example.org/home', result());
+  for (const path of ['SETUP.EXE?token=abc', 'report%2Epdf', '%FFreport%2Epdf', 'data.zip', 'music.mp3', 'picture.png']) {
+    const url = `https://example.org/${path}`;
+    assert.equal(await w.context.Phisang.cachedResult(url), null);
+    await checkNavigation(w, url);
+    assert.equal(w.stored['tab:7'].result.error_code, 'unsupported_content');
+    await assert.rejects(() => w.context.Phisang.analyzeUrl(url, { rescan: true }), /webpages, not files/);
+  }
+  assert.equal(w.requests.length, 0);
+  assert.equal(w.navigations.length, 0); // Do not automatically open/download it.
+  assert.ok(await w.context.Phisang.cachedResult('https://example.org/login'));
+});
+
+test('a backend file-destination error keeps navigation paused and never caches a verdict', async () => {
+  for (const streaming of [false, true]) {
+    const w = worker();
+    const error = { error_code: 'unsupported_content', message: 'Phisang scans webpages, not files.' };
+    w.respond(() => streaming
+      ? new Response('event: error\ndata: ' + JSON.stringify(error) + '\n\n', { headers: { 'content-type': 'text/event-stream' } })
+      : Response.json(error, { status: 400 }));
+    await checkNavigation(w, 'https://example.org/download');
+    assert.equal(w.requests.length, 1);
+    assert.equal(w.navigations.length, 0);
+    assert.deepEqual(hostEntries(w), {});
+    assert.equal(w.stored['tab:7'].result.error_code, 'unsupported_content');
+  }
+});
+
+test('page extensions and dots outside the final path are not mistaken for files', () => {
+  const w = worker();
+  for (const url of ['https://example.com', 'https://example.zip/', 'example.org/index.html',
+    'https://example.org/login.php', 'https://example.org/login.aspx',
+    'https://example.org/file.pdf/view', 'https://example.org/?next=file.exe#report.pdf']) {
+    assert.equal(w.context.Phisang.fileUrlMessage(url), '', url);
+  }
+});
+
+test('older cached results pointing to file destinations cannot release a page', async () => {
+  const w = worker();
+  await w.context.Phisang.rememberResult('https://example.org/home', result());
+  hostEntries(w)['example.org'].result.page.final_url = 'https://example.org/file.pdf';
+  assert.equal(await w.context.Phisang.cachedResult('https://example.org/home'), null);
+});
+
+test('navigation scans the hostname once across paths and scans a different subdomain separately', async () => {
+  const w = worker();
+  w.respond((_, options) => Response.json(result({ normalized_url: JSON.parse(options.body).url })));
+  for (const pathname of ['home', 'login', 'inventory']) {
+    const url = `https://test.com/${pathname}`;
+    await checkNavigation(w, url);
+    assert.equal(w.navigations.at(-1), url);
+    assert.equal(w.stored['tab:7'].url, url);
+    assert.equal(w.stored['tab:7'].result.normalized_url, 'https://test.com/home');
+  }
+  assert.equal(w.requests.length, 1);
+  await checkNavigation(w, 'https://dev.test.com/home');
+  assert.equal(w.requests.length, 2);
+  await checkNavigation(w, 'https://dev.test.com/login');
+  assert.equal(w.requests.length, 2);
+});
+
+test('cached threats block sibling paths without another API request', async () => {
+  const w = worker();
+  w.respond(() => Response.json(result({ classification: 'phishing' })));
+  await checkNavigation(w, 'https://example.org/home');
+  await checkNavigation(w, 'https://example.org/login');
+  assert.equal(w.requests.length, 1);
+  assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
+  assert.equal(w.badges.at(-1).text, 'STOP');
+});
+
+test('failed or incomplete checks are never reused across paths', async () => {
+  for (const changes of [
+    { classification: 'unavailable' }, { error_code: 'page_unavailable' },
+    { page: { status: 'unavailable' } }, { verdict: 'unknown' }, { decision_stage: 'error' },
+  ]) {
+    const w = worker();
+    w.respond(() => Response.json(result(changes)));
+    await checkNavigation(w, 'https://example.org/home');
+    await checkNavigation(w, 'https://example.org/login');
+    assert.equal(w.requests.length, 2);
+    assert.deepEqual(hostEntries(w), {});
+  }
+});
 
 test('a safe result is kept locally so the same address needs no second scan', async () => {
   const w = worker();
   const url = 'https://example.org/';
   await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url, result: result() });
-  assert.deepEqual(Object.keys(safeEntries(w)), [url]);
+  assert.deepEqual(Object.keys(hostEntries(w)), ['example.org']);
   // The next visit answers from storage: the tab still waits on the checking
   // screen, but no scan request reaches the API.
   const cached = await w.context.Phisang.cachedResult(url);
@@ -208,61 +309,70 @@ test('a safe result is kept locally so the same address needs no second scan', a
   assert.equal(w.requests.length, 0);
 });
 
-test('only a plainly safe verdict is cached', async () => {
+test('completed verdicts are cached without changing their risk or evidence', async () => {
   for (const changes of [
     { classification: 'phishing' }, { classification: 'malware' }, { risk_score: .994 },
-    { classification: 'unavailable', risk_score: null }, { verdict: 'malicious', risk_score: null },
+    { verdict: 'malicious', risk_score: null },
     { risk_score: .45 },                                        // "Be cautious".
-    { classification: 'benign', error_code: 'page_unavailable' },
-    { classification: 'benign', page: { status: 'unavailable' } },
     { prior: { ever_malicious: true } },                        // Flagged before.
   ]) {
     const w = worker();
     await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url: 'https://example.org/', result: result(changes) });
-    assert.deepEqual(safeEntries(w), {}, JSON.stringify(changes));
-    assert.equal(await w.context.Phisang.cachedResult('https://example.org/'), null);
+    const cached = await w.context.Phisang.cachedResult('https://example.org/another');
+    assert.equal(cached.classification, result(changes).classification);
+    assert.equal(cached.risk_score, result(changes).risk_score);
+    assert.equal(cached.evidence_scan_id, 'original');
+    assert.equal(cached.normalized_url, 'https://example.org/');
   }
 });
 
-test('one address is one entry, and a sibling path is still its own scan', async () => {
+test('paths share a hostname entry while every subdomain stays separate', async () => {
   const w = worker();
   const { cacheKey } = w.context.Phisang;
   assert.equal(cacheKey('https://example.org'), cacheKey('https://EXAMPLE.org:443/'));
   assert.equal(cacheKey('https://example.org/a/'), cacheKey('https://user:pw@example.org/a'));
-  assert.notEqual(cacheKey('https://example.org/a'), cacheKey('https://example.org/b'));
-  assert.notEqual(cacheKey('https://example.org/'), cacheKey('http://example.org/'));
+  assert.equal(cacheKey('https://example.org/a'), cacheKey('https://example.org/b?x=1#part'));
+  assert.equal(cacheKey('https://example.org/'), cacheKey('http://example.org:8080/'));
+  assert.equal(cacheKey('https://example.org./'), cacheKey('https://example.org/'));
+  for (const host of ['dev.example.org', 'www.example.org', 'example.org.evil.test']) {
+    assert.notEqual(cacheKey(`https://${host}/`), cacheKey('https://example.org/'));
+  }
   assert.equal(cacheKey('file:///test'), null);
   await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url: 'https://example.org/', result: result() });
-  assert.equal(await w.context.Phisang.cachedResult('https://example.org/other'), null);
+  assert.ok(await w.context.Phisang.cachedResult('https://example.org/other'));
+  assert.equal(await w.context.Phisang.cachedResult('https://dev.example.org/other'), null);
 });
 
 test('a cache hit does not renew its own lifetime', async () => {
   const w = worker();
   const url = 'https://example.org/';
   await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url, result: result() });
-  const first = safeEntries(w)[url].at;
+  const first = hostEntries(w)['example.org'].at;
   const cached = await w.context.Phisang.cachedResult(url);
   await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url, result: cached });
-  assert.equal(safeEntries(w)[url].at, first);
+  assert.equal(hostEntries(w)['example.org'].at, first);
 });
 
 test('an entry past its lifetime is dropped instead of released', async () => {
   const w = worker();
   const url = 'https://example.org/';
   await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url, result: result() });
-  safeEntries(w)[url].at = Date.now() - 7 * 60 * 60 * 1000;
+  hostEntries(w)['example.org'].at = Date.now() - 7 * 60 * 60 * 1000;
   assert.equal(await w.context.Phisang.cachedResult(url), null);
-  assert.deepEqual(safeEntries(w), {});
+  assert.deepEqual(hostEntries(w), {});
 });
 
-test('a rescan that flags the page removes it from the local cache', async () => {
+test('a rescan that flags a sibling path replaces the hostname verdict and blocks later visits', async () => {
   const w = worker();
   const url = 'https://example.org/';
   await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url, result: result() });
-  assert.deepEqual(Object.keys(safeEntries(w)), [url]);
+  assert.deepEqual(Object.keys(hostEntries(w)), ['example.org']);
   w.respond(() => Response.json(result({ classification: 'phishing' })));
-  await w.message({ type: 'RESCAN', tabId: 7, url });
-  assert.deepEqual(safeEntries(w), {});
+  await w.message({ type: 'RESCAN', tabId: 7, url: 'https://example.org/login' });
+  const cached = await w.context.Phisang.cachedResult('https://example.org/inventory');
+  assert.equal(cached.classification, 'phishing');
+  await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url: 'https://example.org/inventory', result: cached });
+  assert.equal(w.requests.length, 1);
   assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
 });
 
@@ -271,12 +381,12 @@ test('an unreachable scanner clears any earlier release of that address', async 
   const url = 'https://example.org/';
   await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url, result: result() });
   await w.message({ type: 'ANALYSIS_ERROR', tabId: 7, url });
-  assert.deepEqual(safeEntries(w), {});
+  assert.deepEqual(hostEntries(w), {});
 });
 
 test('the cache holds a bounded number of addresses and evicts the oldest first', async () => {
   const w = worker();
-  const url = i => `https://example.org/page-${i}`;
+  const url = i => `https://host-${i}.example.org/page`;
   for (let i = 0; i < 150; i += 1) await w.context.Phisang.rememberResult(url(i), result());
   assert.equal(await w.context.Phisang.cacheSize(), 150); // Well under the cap: nothing evicted.
   for (let i = 150; i < 205; i += 1) await w.context.Phisang.rememberResult(url(i), result());

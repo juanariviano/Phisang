@@ -1,4 +1,4 @@
-importScripts('stream.js', 'api.js', 'verdicts.js', 'cache.js');
+importScripts('content-guard.js', 'stream.js', 'api.js', 'verdicts.js', 'cache.js');
 const { API_BASE, analyzeUrl, savedExplanation, verdictMeta, isHighRisk, rememberResult } = self.Phisang;
 const skipOnce = new Map();
 const lastByTab = new Map();
@@ -120,6 +120,15 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const tabId = message.tabId ?? sender.tab?.id;
   const handle = async () => {
+    if (message.type === "ANALYSIS_UNSUPPORTED") {
+      const result = {
+        classification: "unavailable", normalized_url: message.url,
+        error_code: "unsupported_content", signals: [self.Phisang.FILE_MESSAGE],
+      };
+      await remember(tabId, message.url, result);
+      await setBadge(tabId, "unavailable", result);
+      return { ok: true }; // Leave the checking screen paused; do not open a file.
+    }
     if (message.type === "ANALYSIS_RESULT") {
       const result = message.result;
       const url = message.url;
@@ -174,8 +183,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           },
         });
         await remember(tabId, url, result);
-        // Rescan always asks the server, so its answer replaces the local entry —
-        // including removing one for a page that no longer reads as safe.
+        // Rescan always asks the server and replaces the hostname's verdict.
         await rememberResult(url, result);
         setBadge(tabId, result.classification, result);
         // A page that now reads as a threat is taken away from the user, as on first visit.
@@ -188,6 +196,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         return { ok: true, payload: { url, result } };
       } catch (error) {
+        // Keep the last result visible, but retry automatically on the next visit.
+        await rememberResult(url, null);
         return { ok: false, message: error.message || "The scan could not finish. Try again." };
       }
     }

@@ -71,7 +71,8 @@
       container.append(risk);
     }
     if (result.served_from_local_cache) {
-      container.append(node('p', 'Saved on this device from an earlier visit, so this visit needed no scan. Rescan to check the website again.', 'fine'));
+      container.append(node('p', 'Using an earlier result for this hostname. This page was not scanned again. Rescan to check this address.', 'fine'));
+      if (result.normalized_url) container.append(rows([['Previously scanned URL', result.normalized_url]]));
     } else if (result.served_from_history) {
       container.append(node('p', 'Saved result. Rescan to check the website again.', 'fine'));
     }

@@ -114,6 +114,47 @@ Incomplete scans remain in the audit log but cannot be reused. This includes DNS
 browser, non-2xx page responses and threat-feed failures. A normal subsequent Peel
 tries again. Successful history reads still create no additional database row.
 
+When a configured SQL history lookup fails, a normal Peel stops before contacting
+scan providers. JSON requests return HTTP 503 with `history_unavailable`; streaming
+requests emit an `error` event with the same code. A database outage is not treated
+as an address that has never been scanned. Explicit Rescan and Continue requests
+can still run fresh checks, with best-effort logging. Once SQL recovers, ordinary
+requests reuse saved results again. Installations with history disabled remain
+stateless. `/api/v1/health` reports `degraded` when database history is enabled but
+unavailable; check SQL connectivity and the configured `DB_HOST`/`DB_PORT` before
+investigating the reuse policy.
+
+## File URL restrictions
+
+Known file links (executables, archives, documents, media and data files) are
+rejected before the scan archive or threat providers are consulted. The website,
+extension and backend share `backend/app/file_types.json`. Webpage suffixes such
+as `.html`, `.php` and `.aspx` remain allowed. Checks use the decoded final path
+segment, ignoring the query and fragment; a hostname ending in `.com` or `.zip`
+is not a file extension.
+
+When fetching a page, the backend checks each preflight redirect URL using HEAD,
+then the actual browser navigation URL and response. Attachments and documents
+without an HTML/XHTML content type are refused before model inference. Servers
+that reject HEAD can still reach the browser check. This is a webpage-content
+filter, not file malware scanning. File errors use `unsupported_content` (HTTP
+400 or an SSE error) and create no reusable scan result. The extension keeps
+navigation paused with an explanation and a Go back button; a file URL cannot
+inherit a cached hostname verdict. Existing reuse/early-exit rules still apply
+to extensionless URLs: their new destination/content type can only be discovered
+when a fresh page fetch occurs.
+
+After changing the extension rules, run `node extension/scripts/sync-web-assets.mjs`
+and reload the extension. Build and deploy the website and restart the backend
+to apply the server changes. For the isolated browser check:
+
+```powershell
+cd web
+npm.cmd run build -- --outDir ../backend/data/file-guard-web-build
+cd ..
+.\backend\.venv\Scripts\python.exe backend/tests/ui_file_guard_smoke.py
+```
+
 ## Verification
 
 Backend tests use mocked providers and disable live SQL writes. The browser smoke

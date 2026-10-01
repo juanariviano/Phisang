@@ -16,6 +16,7 @@ from .reputation import is_popular_host, is_well_known_host, popular_domain_coun
 from .risk import HTTP_RISK_PENALTY, MALICIOUS_FROM, risk_level, with_http_penalty
 from .scan_progress import report, step
 from .url_guard import UrlRejected, check_static
+from .content_guard import check_page_url
 from .urlhaus import UrlhausError
 
 logger = logging.getLogger("phisang")
@@ -223,6 +224,7 @@ async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page:
     started = time.monotonic()
     scan_id = new_scan_id()
     normalized = normalize_url(raw_url)
+    check_page_url(normalized)
 
     # Judged before any gate runs: an address aimed at the local machine or a
     # private network is never something to call benign, and the heuristic gate
@@ -240,7 +242,13 @@ async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page:
     # is the only stage that costs neither a URLhaus token nor a page fetch. The
     # caller can request a rescan; incomplete previous scans retry automatically.
     async with step("history", "Checking saved scans", "Looking for an earlier result for this address."):
-        prior_row = await asyncio.to_thread(history.lookup, normalized)
+        try:
+            prior_row = await asyncio.to_thread(history.lookup, normalized)
+        except history.HistoryUnavailable:
+            if not rescan and not inspect_page:
+                raise
+            logger.warning("scan history unavailable scan_id=%s; explicit fresh scan requested", scan_id)
+            prior_row = None
     prior = _prior_from_row(prior_row) if prior_row else None
     if prior_row is not None and not rescan and not inspect_page and history.reusable(prior_row):
         # Returning an existing result is not another scan: no database write.

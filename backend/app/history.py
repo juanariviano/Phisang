@@ -28,6 +28,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 from .config import settings
+from .content_guard import UnsupportedContent, check_page_url
 from .models import AnalyzeResponse
 
 logger = logging.getLogger("phisang")
@@ -42,6 +43,10 @@ UNSAFE_BAND_HIGH = 0.6
 
 _pool: Any = None
 _unavailable_logged = False
+
+
+class HistoryUnavailable(RuntimeError):
+    """A failed archive read must never be mistaken for a URL with no history."""
 
 
 def _now() -> datetime:
@@ -60,8 +65,8 @@ def enabled() -> bool:
 def _cursor():
     """Yield a cursor, or None when history is off or the server is unreachable.
 
-    Callers must treat None as "no history available" and carry on: a database
-    outage degrades Phisang to its old stateless behaviour rather than breaking it.
+    Writes are best effort. Reads that distinguish an outage from a missing row
+    must track successful completion; lookup raises HistoryUnavailable on failure.
     """
     global _pool, _unavailable_logged
     if not enabled():
@@ -127,6 +132,11 @@ def reusable(row: dict) -> bool:
             result = AnalyzeResponse.model_validate_json(raw)
         except ValueError:
             return False
+        if result.page and result.page.final_url:
+            try:
+                check_page_url(result.page.final_url)
+            except UnsupportedContent:
+                return False
         return (result.classification != "unavailable" and not result.error_code
                 and (result.page is None or result.page.status != "unavailable"))
     return (row.get("LastClassification") in {"benign", "phishing", "malware"}
@@ -154,24 +164,31 @@ def verdict_for(result: AnalyzeResponse) -> str:
 
 def lookup(normalized_url: str) -> Optional[dict]:
     """Prior record for this URL, or None when it has never been scanned."""
+    if not enabled():
+        return None  # Explicitly unconfigured/stateless installations.
+    completed = False
+    row = None
     with _cursor() as cur:
-        if cur is None:
-            return None
-        cur.execute(
-            """
-            SELECT sites.*, fresh.RawResponseJson
-            FROM dbo.Sites AS sites
-            OUTER APPLY (
-                SELECT TOP 1 scans.RawResponseJson
-                FROM dbo.Scans AS scans
-                WHERE scans.SiteId = sites.SiteId AND scans.ServedFromHistory = 0
-                ORDER BY scans.ScannedAt DESC, scans.ScanRef DESC
-            ) AS fresh
-            WHERE sites.UrlHash = %s
-            """,
-            (url_hash(normalized_url),),
-        )
-        return cur.fetchone()
+        if cur is not None:
+            cur.execute(
+                """
+                SELECT sites.*, fresh.RawResponseJson
+                FROM dbo.Sites AS sites
+                OUTER APPLY (
+                    SELECT TOP 1 scans.RawResponseJson
+                    FROM dbo.Scans AS scans
+                    WHERE scans.SiteId = sites.SiteId AND scans.ServedFromHistory = 0
+                    ORDER BY scans.ScannedAt DESC, scans.ScanRef DESC
+                ) AS fresh
+                WHERE sites.UrlHash = %s
+                """,
+                (url_hash(normalized_url),),
+            )
+            row = cur.fetchone()
+            completed = True
+    if not completed:
+        raise HistoryUnavailable("Saved scans are temporarily unavailable. Please try again later.")
+    return row
 
 
 def record(result: AnalyzeResponse, *, client: str = "web", host: str = "",

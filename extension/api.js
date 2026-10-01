@@ -1,6 +1,8 @@
 (function () {
   const API_BASE = 'https://phisang.kennethsunjaya.com';
   async function analyzeUrl(url, { rescan = false, onProgress = () => {}, signal } = {}) {
+    const message = self.Phisang.fileUrlMessage(url);
+    if (message) throw Object.assign(new Error(message), { code: 'unsupported_content' });
     const response = await fetch(`${API_BASE}/api/v1/analyze`, {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
       body: JSON.stringify({ url, client: 'extension', rescan }), signal,

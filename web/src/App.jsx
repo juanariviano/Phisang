@@ -7,6 +7,7 @@ import { ResultPanel } from "./components/ResultPanel.jsx";
 import { Bench } from "./components/Bench.jsx";
 import { ScanForm } from "./components/ScanForm.jsx";
 import { readScanStream } from "./lib/explanationStream.js";
+import { fileUrlMessage } from "./lib/contentGuard.js";
 
 export default function App() {
   const reducedMotion = useReducedMotion();
@@ -51,6 +52,12 @@ export default function App() {
 
   async function runScan(value, rescan = false, inspectPage = false) {
     if (!value || busy) return;
+    const fileError = fileUrlMessage(value);
+    if (fileError) {
+      setError(fileError);
+      setResult(null);
+      return;
+    }
     setPageInspection(inspectPage);
     const submittedVersion = editVersion.current;
     setBusy(true);

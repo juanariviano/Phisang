@@ -51,14 +51,15 @@ def health() -> HealthResponse:
     urlhaus_ok = bool(settings.urlhaus_auth_key)
     page_ok = page_stage.ready()
     ready = cache_ready()
-    status = "ok" if urlhaus_ok and ready and page_ok else "degraded"
+    history_ok = history.ready()
+    status = "ok" if urlhaus_ok and ready and page_ok and (not settings.db_enabled or history_ok) else "degraded"
     return HealthResponse(
         status=status,
         policy_version=POLICY_VERSION,
         urlhaus_configured=urlhaus_ok,
         page_stage_ready=page_ok,
         cache_ready=ready,
-        history_ready=history.ready(),
+        history_ready=history_ok,
     )
 
 
@@ -81,6 +82,9 @@ async def analyze_url(body: AnalyzeRequest, request: Request):
             "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no"})
     try:
         return await _analyze_with_explanation(body)
+    except history.HistoryUnavailable as exc:
+        return JSONResponse(status_code=503,
+            content=ErrorBody(error_code="history_unavailable", message=str(exc)).model_dump())
     except UrlError as exc:
         status, code, message = map_url_error(exc)
         return JSONResponse(
@@ -111,6 +115,8 @@ async def _scan_events(body):
             try:
                 result = await _analyze_with_explanation(body)
                 await queue.put(("done", result.model_dump(mode="json")))
+            except history.HistoryUnavailable as exc:
+                await queue.put(("error", {"error_code": "history_unavailable", "message": str(exc)}))
             except UrlError as exc:
                 _, code, message = map_url_error(exc)
                 await queue.put(("error", {"error_code": code, "message": message}))

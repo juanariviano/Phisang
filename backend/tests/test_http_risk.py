@@ -59,7 +59,7 @@ def test_heuristic_shortcut_score_is_raised_for_http(stages, monkeypatch):
 def test_urlhaus_match_stays_at_the_maximum(stages):
     lookup, _ = stages
     lookup.return_value = ThreatIntel(matched=True, source="URLhaus", match_kind="url")
-    listed = asyncio.run(policy.analyze("http://77.73.133.113/lego/mine.exe", "web"))
+    listed = asyncio.run(policy.analyze("http://77.73.133.113/lego/start", "web"))
     assert listed.risk_score == 1.0
     assert listed.risk_level == "High Risk"
     assert any("already at its 100% maximum" in signal for signal in listed.signals)

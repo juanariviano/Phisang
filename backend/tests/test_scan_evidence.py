@@ -242,7 +242,7 @@ def test_fetch_captures_jpeg_and_preview_failure_keeps_html(monkeypatch, preview
     from playwright.async_api import Error
     image = b"\xff\xd8\xffimage"
     page = Mock(url="https://example.org/")
-    page.goto = AsyncMock(return_value=Mock(status=200))
+    page.goto = AsyncMock(return_value=Mock(status=200, url=page.url, headers={"content-type": "text/html"}))
     page.content = AsyncMock(return_value="<html>Readable content</html>")
     page.title = AsyncMock(return_value="Example")
     page.screenshot = AsyncMock(side_effect=Error("capture failed") if preview_fails else None, return_value=image)

@@ -4,7 +4,7 @@
 async function readEventStream(response, { onSnapshot = () => {}, onProgress = () => {}, onDone }, subject = "explanation") {
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
-    throw new Error(data.message || `The ${subject} could not be loaded. Try again.`);
+    throw Object.assign(new Error(data.message || `The ${subject} could not be loaded. Try again.`), { code: data.error_code });
   }
   // Allows the new UI to work while an older API process is being restarted.
   if (!response.headers.get("content-type")?.includes("text/event-stream")) {
@@ -22,7 +22,7 @@ async function readEventStream(response, { onSnapshot = () => {}, onProgress = (
     const payload = lines.filter((line) => line.startsWith("data:")).map((line) => line.slice(5).trimStart()).join("\n");
     if (!payload) return;
     const data = JSON.parse(payload);
-    if (event === "error") throw new Error(data.message || `The ${subject} was interrupted. Try again.`);
+    if (event === "error") throw Object.assign(new Error(data.message || `The ${subject} was interrupted. Try again.`), { code: data.error_code });
     if (event === "snapshot") onSnapshot(data);
     if (event === "progress") onProgress(data);
     if (event === "done") { completed = true; onDone(data); }

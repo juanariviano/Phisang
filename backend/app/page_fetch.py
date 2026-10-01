@@ -7,6 +7,7 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup, Comment
 
 from .config import settings
+from .content_guard import UnsupportedContent, check_page_headers, check_page_url
 from .scan_progress import report
 from .url_guard import UrlRejected, check_static, classify_ip, resolve_public, validate
 
@@ -95,6 +96,8 @@ class Fetcher:
     async def _guard_route(self, route, request):
         """Vet every request the page makes, including each redirect hop."""
         try:
+            if request.is_navigation_request():
+                check_page_url(request.url)
             if (request.resource_type in BLOCKED_RESOURCE_TYPES or
                     (not settings.page_preview_enabled and request.resource_type in {"image", "font"})):
                 await route.abort()
@@ -104,7 +107,7 @@ class Fetcher:
                 await resolve_public(host, port)
                 self._host_cache.approve(host)
             await route.continue_()
-        except UrlRejected:
+        except (UrlRejected, UnsupportedContent):
             await route.abort()
         except Exception:
             # A guard that cannot decide must refuse, never fall through.
@@ -123,18 +126,26 @@ class Fetcher:
         """
         current = url
         for _ in range(MAX_REDIRECT_HOPS):
+            check_page_url(current)
             await validate(current)
             try:
-                response = await context.request.get(
+                response = await context.request.head(
                     current, max_redirects=0, timeout=self.nav_timeout * 1000)
             except Exception as exc:
                 raise FetchFailed(_safe_reason(exc)) from None
-            if response.status not in REDIRECT_STATUSES:
-                return current
-            location = response.headers.get("location")
-            if not location:
-                return current
-            current = urljoin(current, location)
+            try:
+                if response.status not in REDIRECT_STATUSES:
+                    # Some sites reject HEAD. The browser response is still
+                    # checked before extracting HTML or running the model.
+                    if 200 <= response.status < 300:
+                        check_page_headers(response.headers)
+                    return current
+                location = response.headers.get("location")
+                if not location:
+                    return current
+                current = urljoin(current, location)
+            finally:
+                await response.dispose()
         raise FetchFailed("too many redirects")
 
     async def _verify_peers(self, response) -> None:
@@ -155,13 +166,14 @@ class Fetcher:
             seen = await request.response() if request else None
 
     async def fetch(self, url: str) -> dict:
+        check_page_url(url)
         await validate(url)
         async with self._semaphore:
             try:
                 return await asyncio.wait_for(self._fetch_once(url), self.total_timeout)
             except asyncio.TimeoutError:
                 raise FetchFailed("fetch exceeded the time budget") from None
-            except UrlRejected:
+            except (UrlRejected, UnsupportedContent):
                 raise
             except FetchFailed:
                 raise
@@ -179,9 +191,34 @@ class Fetcher:
             java_script_enabled=True, service_workers="block")
         try:
             target = await self._resolve_redirects(context, url)
-            await context.route("**/*", self._guard_route)
+            unsupported = []
+
+            async def guard(route, request):
+                if request.is_navigation_request():
+                    try:
+                        check_page_url(request.url)
+                    except UnsupportedContent as exc:
+                        if request.frame == page.main_frame:
+                            unsupported.append(exc)
+                        await route.abort()
+                        return
+                await self._guard_route(route, request)
+
+            await context.route("**/*", guard)
             page = await context.new_page()
             page.on("dialog", lambda dialog: asyncio.ensure_future(dialog.dismiss()))
+
+            def inspect_response(response):
+                if response.request.is_navigation_request() and response.frame == page.main_frame:
+                    try:
+                        check_page_url(response.url)
+                        if 200 <= response.status < 300:
+                            check_page_headers(response.headers)
+                    except UnsupportedContent as exc:
+                        unsupported.append(exc)
+
+            page.on("response", inspect_response)
+            page.on("download", lambda _: unsupported.append(UnsupportedContent()))
 
             # Any Playwright error after navigation (a renderer crash during the
             # settle wait, a page closed mid-read) is a failed fetch, not a 500.
@@ -191,13 +228,23 @@ class Fetcher:
                 if response is None:
                     raise FetchFailed("target returned no response")
 
+                check_page_url(response.url)
+                if 200 <= response.status < 300:
+                    check_page_headers(response.headers)
+
                 await self._verify_peers(response)
                 if self.settle:
                     await page.wait_for_timeout(self.settle * 1000)
 
+                if unsupported:
+                    raise unsupported[0]
+                check_page_url(page.url)
+
                 html = await page.content()
                 title = (await page.title() or "")[:200]
             except PlaywrightError as exc:
+                if unsupported:
+                    raise unsupported[0]
                 raise FetchFailed(_safe_reason(exc)) from None
             if len(html.encode("utf-8", "ignore")) > self.max_html_bytes:
                 raise FetchFailed("page is larger than the size limit")
@@ -213,6 +260,10 @@ class Fetcher:
                         screenshot = None
                 except (PlaywrightError, asyncio.TimeoutError):
                     pass  # A preview failure must not discard a valid reading.
+            # A script can navigate again while the preview is being captured.
+            if unsupported:
+                raise unsupported[0]
+            check_page_url(page.url)
             return {"status": response.status, "final_url": page.url,
                     "title": title, "html": html, "screenshot": screenshot}
         finally:

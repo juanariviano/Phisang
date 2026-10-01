@@ -12,35 +12,36 @@ after a pull. `migrate_scan_evidence.py` still applies `001` on its own.
 
 ## The extension's local cache
 
-An address this browser already saw cleared is answered from
+An exact hostname this browser already checked is answered from
 `chrome.storage.local` instead of the API, so ordinary repeat browsing costs no
 scan request: no round trip to wait for, and no SQL read on the server.
 
 The checking screen still holds the tab, exactly as before — what changes is
 that it resolves from storage rather than from a scan. Navigation interception
-is unchanged, so **Continue anyway** still releases one visit only, and a
-sibling path is still its own address.
+is unchanged, so **Continue anyway** still releases one visit only. Paths, queries,
+fragments, schemes and ports share a hostname entry: `test.com/home`,
+`test.com/login` and `test.com/inventory` reuse one result. `dev.test.com` and
+`www.test.com` each require their own check. The API's SQL lookup remains per URL.
 
 What may be kept (`extension/cache.js`):
 
-- `benign`, with no `error_code` and no failed page check.
-- Not high risk and not "Be cautious" under the shared verdict rules in
-  `verdicts.js` — the same rules the website and the warning page display.
-- Never an address an earlier scan called malicious: the API's own archive
-  reports those as potentially unsafe on the next lookup, and the local cache
-  must not be more permissive than the server it stands in for.
+- Completed `benign`, `phishing` and `malware` results, including caution verdicts.
+- No error code, failed page check, error decision stage or unknown verdict.
+- High-risk cached results still block navigation using the shared verdict rules.
 
 Entries expire after six hours, at most 200 are held (oldest dropped first), and
 the rules are applied again on the way out, so an entry written by an older
 version of the extension cannot release an address today. A rescan always asks
-the server and replaces the entry — including deleting it when the page no
-longer reads as safe. A result served from the cache does not renew its own
+the server and replaces the hostname entry; a failed scan invalidates it.
+A result served from the cache does not renew its own
 lifetime, so an address scanned once is still re-checked within the day.
 
-A cached result is shown with "Saved on this device from an earlier visit". The
-popup reports how many addresses are held and **Clear local cache** empties it;
+A cached result identifies the previously scanned URL; previews and explanations
+retain that scan's evidence ID. It does not claim that every path was inspected.
+The popup reports how many hostnames are held and **Clear local cache** empties it;
 the next visit to each is scanned again. The cache is per browser profile and is
-never uploaded.
+never uploaded. The old per-URL cache is not reused after this update, so the first
+visit to each hostname establishes a new entry.
 
 ## False-positive reports
 

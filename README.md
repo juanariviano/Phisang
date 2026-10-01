@@ -179,12 +179,12 @@ HTTPS API origin defined in `extension/api.js`. The remote reverse proxy forward
 connect to that loopback address. Keep response buffering disabled for streaming
 scan and explanation routes.
 
-An address this browser already saw cleared is answered from a local cache in
-`chrome.storage.local`, so ordinary repeat browsing reaches neither the API nor
-its SQL server. Only plainly safe results are kept, entries expire after six
-hours, and a rescan that finds anything else removes the entry. **Clear local
-cache** in the popup empties it; the popup also shows how many addresses are
-held. **Report false positive** on a warning files a report for review and
+The extension reuses completed results across paths on the exact same hostname
+from `chrome.storage.local`, without another scan API call. Subdomains are checked
+separately. Cached high-risk results still block navigation; failed scans are
+retried. Entries expire after six hours, and Rescan replaces the hostname's result.
+**Clear local cache** in the popup empties it; the popup also shows how many
+hostnames are held. **Report false positive** on a warning files a report for review and
 leaves the verdict where it is. See
 [Local cache and reports](docs/local-cache-and-reports.md).
 

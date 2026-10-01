@@ -26,7 +26,9 @@ migration and configurable OpenAI-compatible provider settings. The extension's
 local cache and false-positive reports are documented in
 [Local cache and reports](docs/local-cache-and-reports.md). Failed scans are
 logged but automatically retried on the next Peel; they are never reused as a
-completed result.
+completed result. Phisang scans webpages only: links to files (executables,
+archives, documents, media, data) are refused with `unsupported_content`, as
+described under [File URL restrictions](docs/scan-evidence.md#file-url-restrictions).
 
 ## 🍌 How it works
 
@@ -36,6 +38,7 @@ Every URL passes through up to four gates. It stops at the first gate that can d
 flowchart LR
     A([URL from scanner<br/>or extension]) --> B[Normalize<br/>no DNS, no visit]
     B -->|local or private target| X([Rejected])
+    B -->|file link, e.g. .exe or .pdf| X
     B --> C{Listed on<br/>URLhaus?}
     C -->|yes| M([malware<br/>High Risk])
     C -->|no| D{URL looks clean<br/>and host is popular?}
@@ -58,13 +61,14 @@ flowchart LR
 <details>
 <summary><b>What each gate does, in detail</b></summary>
 
-1. **Normalize** the URL and refuse local or private-network targets.
+1. **Normalize** the URL and refuse local or private-network targets. Known file links (the extensions in [`backend/app/file_types.json`](backend/app/file_types.json)) are refused here too, before the scan archive or URLhaus is consulted.
 2. **URLhaus lookup** ([abuse.ch](https://urlhaus.abuse.ch/)). An exact URL match (or the same path on that host, or any listing on a malware IP) blocks immediately as `malware`. A few unrelated rows on a large site such as `www.google.com` do **not** block every page on that host.
 3. **Lexical heuristic** on the URL string (hand-written rules, not a trained model). If it looks clearly benign (confidence above 80%) **and** the host is on the well-known list or the [Tranco](https://tranco-list.eu) top-domain ranking, the URL is cleared without being visited.
 4. **Page analysis** for everything else. The destination is fetched in a locked-down headless Chromium, and its cleaned markup is scored by **laya_v3** (ModernBERT-large, fine-tuned from [`convaiinnovations/laya`](https://huggingface.co/convaiinnovations/laya)).
    - A benign-looking page does not clear a URL that itself looks like phishing. Phishing kits often serve a clean landing page first.
    - The API's `phishing` classification requires a doubtful URL or a password field to corroborate the model. The extension also stops any result the website displays as **High risk**, even if the API classification remains `benign`.
    - A dead host, a non-2xx status or a timeout gives `unavailable`, so a taken-down phishing site is never reported clean.
+   - Every redirect hop, the browser navigation and the final response are checked again: a file link, an attachment, or a document that is not HTML/XHTML is refused as `unsupported_content` before model inference.
 
 </details>
 
@@ -188,13 +192,17 @@ hostnames are held. **Report false positive** on a warning files a report for re
 leaves the verdict where it is. See
 [Local cache and reports](docs/local-cache-and-reports.md).
 
+A file link (for example a `.exe`, `.zip` or `.pdf` URL) is neither scanned nor
+opened: the checking screen stays paused with an explanation and **Go back**, and
+it never inherits a cached hostname verdict.
+
 Known domains now pass through the checking screen too. **Continue anyway**
 releases only that exact URL for one visit in that tab; it does not exempt the
 hostname or later visits. The extension redirects tabs through `webNavigation`;
 this is not a network-level guarantee that no initial request reaches a site.
 
 The extension ships as plain JavaScript with no runtime build step. After editing
-the website's shared verdict wording, stream reader, or banana artwork, run
+the website's shared verdict wording, stream reader, file-type guard, or banana artwork, run
 `node extension/scripts/sync-web-assets.mjs` (requires `npm install` in `web/`),
 then reload the unpacked extension. Run `node --test extension/tests/*.test.cjs`
 for worker checks, or `backend/.venv/Scripts/python backend/tests/ui_extension_smoke.py`
@@ -279,7 +287,7 @@ Paste these into the **scanner**. Each code block has a copy button.
 https://www.google.com/search?q=youtube
 ```
 
-**🔴 Known malware:** a URLhaus match. Expect `malware`, `High Risk`.
+**🚫 File link:** URLs ending in a file extension are refused before any check runs. Expect HTTP 400 with `unsupported_content` ("Phisang scans webpages, not files"); the extension keeps the tab paused.
 
 ```text
 http://77.73.133.113/lego/mine.exe
@@ -329,7 +337,7 @@ curl -X POST http://localhost:8000/api/v1/analyze \
 | Endpoint | Purpose |
 |---|---|
 | `POST /api/v1/analyze` | Classify a URL |
-| `GET /api/v1/health` | Readiness of URLhaus, cache and page analysis |
+| `GET /api/v1/health` | Readiness of URLhaus, cache, page analysis and scan history (`degraded` when SQL history is enabled but unreachable) |
 | `GET /api/v1/meta` | Policy version, page model name and accuracy, thresholds |
 | `GET /api/v1/scans` | Recent scans (`?limit=` up to 100) |
 | `GET /api/v1/scans/{scan_id}` | One scan by ID |
@@ -337,6 +345,7 @@ curl -X POST http://localhost:8000/api/v1/analyze \
 
 - **Classifications:** `malware` · `phishing` · `benign` · `unavailable`
 - **Decision stages:** `urlhaus` · `heuristic` · `page` · `error`
+- **Errors:** `unsupported_content` (HTTP 400) for file links and non-HTML pages; `history_unavailable` (HTTP 503) when SQL history is enabled but the lookup fails. A normal scan stops rather than treating the outage as "never scanned"; Rescan and **Continue with page scan** still run fresh checks. Streaming requests emit the same codes as an `error` event.
 
 ## ✅ Tests
 
@@ -344,6 +353,7 @@ curl -X POST http://localhost:8000/api/v1/analyze \
 cd backend
 python -m pytest tests -q
 node --test ../extension/tests/*.test.cjs     # Service-worker and local-cache checks
+python tests/ui_file_guard_smoke.py           # Browser check of the file-URL guard (see docs/scan-evidence.md)
 ```
 
 ## 🔒 Privacy and licensing

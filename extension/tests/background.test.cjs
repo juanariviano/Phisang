@@ -38,7 +38,10 @@ function worker() {
   context.importScripts('background.js');
   return { stored, local, requests, navigations, events, badges, tab, context,
     respond: callback => { response = callback; }, navigate: (url, tabId = 7) => before({ tabId, frameId: 0, url }),
-    message: message => new Promise(resolve => handler(message, { tab: { id: 7 } }, resolve)),
+    message: message => new Promise(resolve =>
+      handler(message, { tab: { id: 7 }, url: 'chrome-extension://test/popup.html' }, resolve)),
+    messageFromPage: message => new Promise(resolve =>
+      handler(message, { tab: { id: 7 }, url: 'https://evil.example/' }, resolve)),
   };
 }
 const result = (changes = {}) => ({ scan_id: 'request', evidence_scan_id: 'original', normalized_url: 'https://example.org/',
@@ -419,4 +422,77 @@ test('a report the server rejects reports its own message', async () => {
   w.respond(() => Response.json({ message: 'Reports are unavailable.' }, { status: 503 }));
   await assert.rejects(() => w.context.Phisang.reportFalsePositive(result({ classification: 'phishing' })),
     /Reports are unavailable\./);
+});
+
+/* --- User allowlist ------------------------------------------------------- */
+
+const allowed = w => w.local.userAllowlist || {};
+
+test('an allowed address opens without a scan, and the badge says the check was skipped', async () => {
+  const w = worker();
+  const url = 'https://intranet.example/report';
+  const reply = await w.message({ type: 'ALLOW_URL', url });
+  assert.equal(reply.ok, true);
+  assert.deepEqual(Object.keys(allowed(w)), [url]);
+  const before = w.navigations.length;
+  w.navigate(url);
+  assert.equal(w.navigations.length, before); // No holding screen, no scan.
+  assert.equal(w.badges.at(-1).text, 'SKIP');
+  assert.equal(w.requests.length, 0);
+});
+
+test('allowing one address does not release the rest of the site', async () => {
+  const w = worker();
+  await w.message({ type: 'ALLOW_URL', url: 'https://intranet.example/report' });
+  w.navigate('https://intranet.example/other');
+  assert.match(w.navigations.at(-1), /checking.html/);
+  w.navigate('https://intranet.example/');
+  assert.match(w.navigations.at(-1), /checking.html/);
+});
+
+test('a page cannot allow itself: only an extension page may write to the allowlist', async () => {
+  const w = worker();
+  const url = 'https://evil.example/';
+  const reply = await w.messageFromPage({ type: 'ALLOW_URL', url });
+  assert.equal(reply.ok, false);
+  assert.deepEqual(allowed(w), {});
+  w.navigate(url);
+  assert.match(w.navigations.at(-1), /checking.html/); // Still scanned.
+  assert.equal((await w.messageFromPage({ type: 'FORGET_ALLOWED', key: url })).ok, false);
+  assert.equal((await w.messageFromPage({ type: 'LIST_ALLOWED' })).entries.length, 0);
+});
+
+test('an allowed address is scanned again once the user removes it', async () => {
+  const w = worker();
+  const url = 'https://intranet.example/report';
+  await w.message({ type: 'ALLOW_URL', url });
+  const listed = await w.message({ type: 'LIST_ALLOWED' });
+  assert.deepEqual(Array.from(listed.entries, entry => entry.url), [url]);
+  assert.equal((await w.message({ type: 'FORGET_ALLOWED', key: listed.entries[0].key })).ok, true);
+  w.navigate(url);
+  assert.match(w.navigations.at(-1), /checking.html/);
+});
+
+test('clearing the verdict cache leaves the user allowlist alone', async () => {
+  const w = worker();
+  const url = 'https://intranet.example/report';
+  await w.message({ type: 'ALLOW_URL', url });
+  await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url: 'https://example.org/', result: result() });
+  await w.context.Phisang.clearCache();
+  assert.equal(await w.context.Phisang.cacheSize(), 0);
+  assert.deepEqual(Object.keys(allowed(w)), [url]); // A decision, not a cache.
+  w.navigate(url);
+  assert.equal(w.badges.at(-1).text, 'SKIP');
+});
+
+test('a malicious verdict is still overridden, which is the whole point and the whole risk', async () => {
+  const w = worker();
+  const url = 'https://known-bad.example/login';
+  await w.message({ type: 'ANALYSIS_RESULT', tabId: 7, url, result: result({ classification: 'malware' }) });
+  assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
+  await w.message({ type: 'ALLOW_URL', url });
+  const before = w.navigations.length;
+  w.navigate(url);
+  assert.equal(w.navigations.length, before);
+  assert.equal(w.badges.at(-1).text, 'SKIP');
 });

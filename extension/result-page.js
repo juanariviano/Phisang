@@ -38,6 +38,33 @@
     });
     showCount();
   }
+  // Popup only: what the user has allowed has to be visible and revocable, or the
+  // allowlist becomes a setting nobody can audit.
+  const allowList = document.getElementById('allow-list');
+  const allowStatus = document.getElementById('allow-status');
+  async function showAllowed() {
+    const reply = await chrome.runtime.sendMessage({ type: 'LIST_ALLOWED' });
+    const allowed = reply?.entries || [];
+    allowStatus.textContent = allowed.length
+      ? `${allowed.length} ${allowed.length === 1 ? 'address opens' : 'addresses open'} without any scan, by your choice.`
+      : 'None. Every address is scanned before it opens.';
+    allowList.replaceChildren(...allowed.map(entry => {
+      const item = document.createElement('li');
+      const label = document.createElement('span');
+      label.textContent = entry.url;
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = 'Remove';
+      remove.addEventListener('click', async () => {
+        remove.disabled = true;
+        await chrome.runtime.sendMessage({ type: 'FORGET_ALLOWED', key: entry.key });
+        await showAllowed();
+      });
+      item.append(label, remove);
+      return item;
+    }));
+  }
+  if (allowList) showAllowed();
   function render(payload) {
     dispose?.();
     current = payload;

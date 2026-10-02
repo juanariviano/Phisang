@@ -250,7 +250,19 @@ async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page:
             logger.warning("scan history unavailable scan_id=%s; explicit fresh scan requested", scan_id)
             prior_row = None
     prior = _prior_from_row(prior_row) if prior_row else None
-    if prior_row is not None and not rescan and not inspect_page and history.reusable(prior_row):
+
+    # An address an admin cleared after reviewing a false-positive report. The
+    # threat feed still runs first: approving your own intranet is a judgement
+    # call, but overriding a live malware listing from abuse.ch is almost always
+    # either a mistake or a sign the site has since been compromised.
+    force_fresh = False
+    if prior_row is not None and prior_row.get("ApprovedAt"):
+        approved, force_fresh = await _approved_result(scan_id, normalized, prior_row, prior)
+        if approved is not None:
+            return approved
+
+    if (prior_row is not None and not rescan and not inspect_page and not force_fresh
+            and history.reusable(prior_row)):
         # Returning an existing result is not another scan: no database write.
         await report("result", "Loading saved result", "This address already has a completed scan.")
         return _from_history(scan_id, normalized, prior_row, prior)
@@ -271,6 +283,47 @@ async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page:
             await asyncio.to_thread(evidence.persist_preview, scan_id, result.page._screenshot)
             result.page._screenshot = None
     return result
+
+
+async def _approved_result(scan_id, normalized, prior_row, prior):
+    """(benign answer for an approved address, must this scan skip the archive).
+
+    A None answer means scan normally. The second value is set when the threat
+    feed lists the address: the approval is ignored, and so is the archive, since
+    a stale benign row would otherwise release what the feed has just flagged.
+    """
+    try:
+        async with step("threats", "Checking known threats", "Checking the address against the threat database."):
+            intel = await urlhaus.lookup(normalized)
+    except UrlhausError:
+        # The approval stands only while the feed can be consulted; without it
+        # this would be an unchecked bypass.
+        logger.warning("approved address not released: threat feed unavailable url=%s", redact_url(normalized))
+        return None, False
+    if intel.matched:
+        logger.warning("approved address is listed in the threat feed; approval ignored url=%s",
+                       redact_url(normalized))
+        return None, True
+
+    await report("result", "Loading saved result", "An administrator cleared this address.")
+    result = _base(
+        scan_id=scan_id,
+        normalized_url=normalized,
+        classification="benign",
+        confidence=100,
+        risk_score=0.0,
+        decision_stage="approved",
+        threat_intel=intel,
+        signals=["An administrator reviewed a report about this address and cleared it",
+                 f"Approved on {_format_when(prior_row.get('ApprovedAt'))} by {prior_row.get('ApprovedBy') or 'an administrator'}",
+                 "Not listed in URLhaus; the threat database is still checked on every visit",
+                 "The destination page was not fetched during this scan"],
+        prior=prior,
+        served_from_history=True,
+        verdict="safe",
+    )
+    result.page = PageResult(status="skipped")
+    return result, False
 
 
 async def _registration_with_progress(host):

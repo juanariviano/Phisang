@@ -1,6 +1,9 @@
 /* Shared, text-only result UI for the popup and navigation warning. */
 (function () {
   const { API_BASE, readExplanationStream, renderBanana, verdictMeta, reportFalsePositive } = self.Phisang;
+  // Matches FalsePositiveReportRequest.reason on the API, so the field cannot
+  // accept text the server would reject.
+  const REASON_LIMIT = 1000;
   function node(tag, text, className) {
     const el = document.createElement(tag);
     if (text != null) el.textContent = text;
@@ -124,28 +127,85 @@
       if (result.explanation) { draw(result.explanation, true); button.hidden = true; note.hidden = true; }
       box.append(button, note, error, answer); container.append(box);
     }
-    if ((meta.bananaState === 'rotten' || meta.bananaState === 'phishing') && id) {
+    if (meta.bananaState === 'rotten' || meta.bananaState === 'phishing') {
+      // Switching protection off for an address is a decision, not a click, so it
+      // takes a second deliberate press and says plainly what it gives up.
       const box = node('div', null, 'report');
-      const report = node('button', 'Report false positive', 'secondary');
-      report.type = 'button';
+      const allow = node('button', 'Mark this address as safe', 'secondary');
+      allow.type = 'button';
+      const note = node('p', 'Future visits to this exact address will open without any scan, even if a scan would call it malicious. Remove it any time from the Phisang popup.', 'fine');
+      let armed = false;
+      allow.addEventListener('click', async () => {
+        if (!armed) {
+          armed = true;
+          allow.textContent = 'Confirm: always open this address';
+          note.className = 'error';
+          return;
+        }
+        allow.disabled = true;
+        try {
+          const reply = await chrome.runtime.sendMessage({ type: 'ALLOW_URL',
+            url: result.normalized_url || location.href });
+          if (!reply?.ok) throw new Error(reply?.message || 'This address could not be allowed.');
+          allow.hidden = true;
+          note.className = 'fine';
+          note.textContent = 'Allowed. This address will open without a scan until you remove it in the popup.';
+        } catch (error) {
+          note.className = 'error';
+          note.textContent = error.message || 'This address could not be allowed.';
+          allow.textContent = 'Try again';
+          armed = false;
+        } finally { allow.disabled = false; }
+      });
+      box.append(allow, note);
+      container.append(box);
+    }
+    if ((meta.bananaState === 'rotten' || meta.bananaState === 'phishing') && id) {
+      // A report a human has to review is only worth filing with a reason, so the
+      // button opens a note first rather than sending an empty one.
+      const box = node('div', null, 'report');
+      const open = node('button', 'Report false positive', 'secondary');
+      open.type = 'button';
+      const form = node('div', null, 'report-form');
+      form.hidden = true;
+      const label = node('label', 'Why do you believe this is wrong?', 'fine');
+      const reason = node('textarea');
+      reason.maxLength = REASON_LIMIT;
+      reason.rows = 3;
+      reason.placeholder = 'For example: this is our own company intranet, and the login page is expected.';
+      label.htmlFor = reason.id = `report-reason-${result.scan_id || 'scan'}`;
+      const send = node('button', 'Send report');
+      send.type = 'button';
+      send.disabled = true;
       const note = node('p', null, 'fine');
-      report.addEventListener('click', async () => {
-        report.disabled = true;
-        report.textContent = 'Sending report…';
+      reason.addEventListener('input', () => {
+        send.disabled = !reason.value.trim();
+        note.textContent = reason.value.length >= REASON_LIMIT ? `Limit of ${REASON_LIMIT} characters reached.` : '';
+      });
+      open.addEventListener('click', () => {
+        open.hidden = true;
+        form.hidden = false;
+        reason.focus();
+      });
+      send.addEventListener('click', async () => {
+        send.disabled = true;
+        send.textContent = 'Sending report…';
         note.className = 'fine';
         note.textContent = '';
         try {
-          await reportFalsePositive(result);
+          await reportFalsePositive(result, reason.value.trim());
           // The verdict stands: a report is filed for review, not applied here.
-          report.hidden = true;
+          form.hidden = true;
           note.textContent = 'Thanks — your report was saved for review. The verdict above does not change.';
         } catch (error) {
           note.className = 'error';
           note.textContent = error.message || 'The report could not be saved. Try again.';
-          report.textContent = 'Try reporting again';
-        } finally { report.disabled = false; }
+          send.textContent = 'Try sending again';
+          send.disabled = false;
+        }
       });
-      box.append(report, note);
+      form.append(label, reason, send);
+      box.append(open, form, note);
       container.append(box);
     }
     const info = result.domain_info;

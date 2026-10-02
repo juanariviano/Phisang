@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, PrivateAttr
 from .risk import RiskLevel
 
 Classification = Literal["malware", "phishing", "benign", "unavailable"]
-DecisionStage = Literal["history", "urlhaus", "heuristic", "page", "error"]
+DecisionStage = Literal["history", "urlhaus", "heuristic", "page", "error", "approved"]
 ClientName = Literal["web", "extension"]
 HeuristicLabel = Literal["benign", "suspicious", "phishing"]
 PageLabel = Literal["phishing", "benign"]
@@ -153,6 +153,23 @@ class FalsePositiveReportResponse(BaseModel):
     status: Literal["recorded"] = "recorded"
     report_id: int
     scan_id: str
+
+
+class AdminSignInRequest(BaseModel):
+    email: str = Field(..., min_length=3, max_length=320)
+    password: str = Field(..., min_length=1, max_length=256)
+    # Six digits from the authenticator app, valid for one 30-second window.
+    code: str = Field(..., min_length=6, max_length=8)
+
+
+class AdminReviewRequest(BaseModel):
+    decision: Literal["approved", "rejected"]
+    note: Optional[str] = Field(default=None, max_length=1000)
+
+
+class AdminBatchReviewRequest(AdminReviewRequest):
+    # Bounded so one call cannot clear an unbounded number of addresses.
+    report_ids: list[int] = Field(..., min_length=1, max_length=200)
 
 
 class HealthResponse(BaseModel):

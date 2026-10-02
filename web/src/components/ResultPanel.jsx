@@ -71,9 +71,14 @@ function Explanation({ result }) {
   </div>;
 }
 
+// Matches FalsePositiveReportRequest.reason on the API.
+const REASON_LIMIT = 1000;
+
 function FalsePositiveReport({ result }) {
   const [state, setState] = useState("idle");
   const [error, setError] = useState("");
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState("");
   // Reported against the durable evidence ID, so the report keeps pointing at the
   // observation the reporter saw.
   const id = result.evidence_scan_id || result.scan_id;
@@ -85,7 +90,7 @@ function FalsePositiveReport({ result }) {
     try {
       const response = await fetch(`/api/v1/scans/${encodeURIComponent(id)}/report`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ client: "web" }),
+        body: JSON.stringify({ client: "web", reason: reason.trim() }),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
@@ -101,10 +106,26 @@ function FalsePositiveReport({ result }) {
   if (state === "sent") return <p className="mt-4 rounded-lg border border-leaf/30 bg-flesh/35 px-4 py-3 text-sm leading-relaxed">
     Thanks — your report was saved for review. The verdict above does not change.
   </p>;
+  // A report a human has to review is only worth filing with a reason, so the
+  // button opens a note first rather than sending an empty one.
+  if (!open) return <div className="mt-4">
+    <button type="button" onClick={() => setOpen(true)}
+      className="w-full cursor-pointer rounded-lg border-2 border-ink px-4 py-3 font-semibold text-ink transition-colors hover:bg-leaf/10">
+      Report false positive
+    </button>
+  </div>;
   return <div className="mt-4">
-    <button type="button" onClick={report} disabled={state === "sending"}
-      className="w-full cursor-pointer rounded-lg border-2 border-ink px-4 py-3 font-semibold text-ink transition-colors hover:bg-leaf/10 disabled:cursor-wait disabled:opacity-60">
-      {state === "sending" ? "Sending report…" : state === "error" ? "Try reporting again" : "Report false positive"}
+    <label htmlFor={`reason-${result.scan_id}`} className="block text-sm font-semibold text-ink">
+      Why do you believe this is wrong?
+    </label>
+    <textarea id={`reason-${result.scan_id}`} value={reason} rows={3} maxLength={REASON_LIMIT}
+      onChange={(event) => setReason(event.target.value)}
+      placeholder="For example: this is our own company intranet, and the login page is expected."
+      className="mt-2 w-full resize-y rounded-lg border-2 border-ink bg-paper p-3 text-sm text-ink" />
+    <p className="mt-1 text-xs text-leaf">{reason.length} / {REASON_LIMIT}</p>
+    <button type="button" onClick={report} disabled={state === "sending" || !reason.trim()}
+      className="mt-2 w-full cursor-pointer rounded-lg border-2 border-ink bg-peel px-4 py-3 font-bold text-ink transition-colors hover:bg-flesh disabled:cursor-not-allowed disabled:opacity-60">
+      {state === "sending" ? "Sending report…" : state === "error" ? "Try sending again" : "Send report"}
     </button>
     {error && <p role="alert" className="mt-2 text-sm text-rot">{error}</p>}
   </div>;

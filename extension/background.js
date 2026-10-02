@@ -1,5 +1,11 @@
-importScripts('content-guard.js', 'stream.js', 'api.js', 'verdicts.js', 'cache.js');
-const { API_BASE, analyzeUrl, savedExplanation, verdictMeta, isHighRisk, rememberResult } = self.Phisang;
+importScripts('content-guard.js', 'stream.js', 'api.js', 'verdicts.js', 'cache.js', 'allowlist.js');
+const { API_BASE, analyzeUrl, savedExplanation, verdictMeta, isHighRisk, rememberResult,
+        allowKey, allowUrl, forgetUrl, listAllowed } = self.Phisang;
+
+// The allowlist can switch protection off for an address, so only an extension
+// page may write to it. content.js runs inside hostile pages and must never be
+// able to allow one by sending a message.
+const fromExtensionPage = sender => Boolean(sender?.url?.startsWith(chrome.runtime.getURL('')));
 const skipOnce = new Map();
 const lastByTab = new Map();
 const lastSafeUrl = new Map();
@@ -8,9 +14,23 @@ let protectionEnabled = true;
 chrome.storage.local.get({ protectionEnabled: true }, (stored) => {
   protectionEnabled = stored.protectionEnabled !== false;
 });
+
+// Held in memory so the tab is redirected in the same turn as the navigation.
+// Awaiting a storage read here would let the real page start loading first,
+// which is the one thing this extension exists to prevent. Hydrated at start and
+// kept current on every write, exactly as protectionEnabled is. A cold start that
+// has not finished hydrating simply scans the address, which is the safe way to
+// be wrong.
+let allowedKeys = new Set();
+listAllowed().then(entries => { allowedKeys = new Set(entries.map(entry => entry.key)); });
+
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "local" && changes.protectionEnabled) {
+  if (area !== "local") return;
+  if (changes.protectionEnabled) {
     protectionEnabled = changes.protectionEnabled.newValue !== false;
+  }
+  if (changes.userAllowlist) {
+    allowedKeys = new Set(Object.keys(changes.userAllowlist.newValue || {}));
   }
 });
 
@@ -42,6 +62,7 @@ function setBadge(tabId, classification, result) {
   // Palette-native badges. The toolbar icon is 16px, so the word carries the
   // state and the colour only reinforces it.
   const map = {
+    allowed: { text: "SKIP", color: "#8AA37E" },
     malware: { text: "STOP", color: "#FFBF00" },
     phishing: { text: "RISK", color: "#E0A526" },
     benign: { text: "OK", color: "#467235" },
@@ -105,6 +126,14 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 
   // A one-visit permission must not linger after navigating somewhere else.
   skipOnce.delete(tabId);
+
+  // Checked before the holding screen, so an allowed address costs no scan at
+  // all. The badge still says the check was skipped, not that it passed.
+  const allowed = allowKey(url);
+  if (allowed && allowedKeys.has(allowed)) {
+    setBadge(tabId, "allowed");
+    return;
+  }
 
   setBadge(tabId, "checking");
   chrome.tabs.update(tabId, { url: checkingUrl(url, tabId) });
@@ -211,6 +240,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         } catch { /* The last result remains readable while the API is offline. */ }
       }
       return payload ? { ...payload, tabId } : null;
+    }
+
+    if (message.type === "ALLOW_URL") {
+      // Persistent and verdict-overriding, so it is refused unless an extension
+      // page asked for it.
+      if (!fromExtensionPage(sender)) return { ok: false, message: "Not allowed from this page." };
+      const key = await allowUrl(message.url);
+      if (!key) return { ok: false, message: "This address cannot be allowed." };
+      allowedKeys.add(key);
+      return { ok: true, key };
+    }
+
+    if (message.type === "FORGET_ALLOWED") {
+      if (!fromExtensionPage(sender)) return { ok: false, message: "Not allowed from this page." };
+      const removed = await forgetUrl(message.key);
+      allowedKeys.delete(message.key);
+      return { ok: removed };
+    }
+
+    if (message.type === "LIST_ALLOWED") {
+      if (!fromExtensionPage(sender)) return { ok: false, entries: [] };
+      return { ok: true, entries: await listAllowed() };
     }
 
     if (message.type === "CONTINUE_ANYWAY") {

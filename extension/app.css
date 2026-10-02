@@ -44,8 +44,16 @@ details ul { padding-left: 20px; font-size: 12px; overflow-wrap: anywhere; }
 .toggle input { accent-color: var(--leaf); width: 18px; height: 18px; }
 footer { margin-top: 24px; border-top: 1px solid #46723540; padding-top: 14px; }
 .local-cache { border-top: 1px solid #46723540; margin-top: 22px; padding-top: 16px; }
+.allow-list { list-style: none; padding: 0; margin: 10px 0 0; }
+.allow-list li { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin: 8px 0; }
+.allow-list span { overflow-wrap: anywhere; font: 11px/1.45 var(--font-mono); color: var(--leaf); }
+.allow-list button { width: auto; flex: none; margin: 0; padding: 4px 10px; font-size: 11px; border-width: 1px; background: transparent; }
 .local-cache .eyebrow { margin: 0; }
 .report { margin-top: 4px; }
+.report-form { margin-top: 12px; }
+.report-form label { display: block; margin-bottom: 6px; }
+.report-form textarea { width: 100%; box-sizing: border-box; resize: vertical; border: 2px solid var(--ink); border-radius: 10px; padding: 10px; font: 13px/1.5 var(--font-sans); background: var(--paper); color: var(--ink); }
+.report-form button { margin-top: 10px; }
 .report p:empty { display: none; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .actions button { flex: 1; margin-top: 0; }

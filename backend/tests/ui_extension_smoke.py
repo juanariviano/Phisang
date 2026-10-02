@@ -198,10 +198,12 @@ async def run():
         # Reporting a false positive is filed against the durable evidence ID and
         # leaves the warning's verdict exactly where it is.
         await page.get_by_role('button', name='Report false positive', exact=True).click()
+        await page.get_by_label('Why do you believe this is wrong?').fill('This is our own intranet.')
+        await page.get_by_role('button', name='Send report', exact=True).click()
         await page.get_by_text('Thanks — your report was saved for review. The verdict above does not change.',
                                exact=True).wait_for()
         assert reports == [('https://phisang.kennethsunjaya.com/api/v1/scans/original/report',
-                            {'client': 'extension', 'reason': ''})], reports
+                            {'client': 'extension', 'reason': 'This is our own intranet.'})], reports
         await page.get_by_role('heading', name='High risk', exact=True).wait_for()
         assert await page.get_by_role('button', name='Report false positive', exact=True).count() == 0
 
@@ -211,6 +213,9 @@ async def run():
                     scan_id='safe', evidence_scan_id='safe', explanation=None)
         await page.add_init_script('self.__checkingResult = ' + json.dumps(safe) + ';')
         checking = f'chrome-extension://{extension_id}/checking.html?url=https%3A%2F%2Fexample.org%2F&tabId={tab_id}'
+        # The rescans above left a hostname entry; this block is about the first
+        # scan of an address, so it starts from an empty cache.
+        await worker.evaluate('self.Phisang.clearCache()')
         await page.goto(checking)
         await page.get_by_role('progressbar').wait_for()
         await page.evaluate('self.__finishScan()')
@@ -225,7 +230,7 @@ async def run():
 
         # The popup says what is held locally, and empties it on request.
         await page.goto(f'chrome-extension://{extension_id}/popup.html')
-        await page.get_by_text('1 address is saved as safe on this device. Visiting it again needs no scan.',
+        await page.get_by_text('1 hostname has a saved result. Other paths reuse it; subdomains are checked separately.',
                                exact=True).wait_for()
         await page.screenshot(path=str(OUTPUT / 'popup-local-cache.png'), full_page=True)
         await page.get_by_role('button', name='Clear local cache', exact=True).click()

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phisang review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..700&family=JetBrains+Mono:wght@400;500&family=Public+Sans:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:"Bricolage Grotesque","Public Sans",ui-sans-serif,system-ui,sans-serif;
+  --font-sans:"Public Sans",ui-sans-serif,system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,monospace;
+  --bench:#eef0e8; --paper:#fbfcf8; --ink:#16210f; --forest:#283f24; --leaf:#4a6b40;
+  --rind:#5c8f47; --peel:#ffbf00; --flesh:#fff78d; --spot:#e0a526; --rot:#8a5a0f; --bruise:#0e1408;
+  --line:#d4dac9; --field:34px;
+}
+*{box-sizing:border-box}
+html{background:var(--bench)}
+body{margin:0;min-height:100dvh;background:var(--bench);color:var(--forest);font-family:var(--font-sans);font-size:13px;-webkit-font-smoothing:antialiased}
+::selection{background:var(--ink);color:var(--peel)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px}
+main{max-width:1680px;margin:0 auto;padding:24px 18px 120px}
+.masthead{display:flex;align-items:center;gap:11px;margin-bottom:3px}
+.mark{flex:none;transform:rotate(-20deg)}
+h1{font-family:var(--font-display);font-size:23px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:0}
+.sub{color:var(--leaf);font-size:12.5px;margin:0 0 18px 42px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+.search{position:relative;display:flex;align-items:center}
+.search svg{position:absolute;left:10px;pointer-events:none;color:var(--leaf)}
+.search input[type=text]{height:var(--field);padding:0 11px 0 31px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font:13px var(--font-sans);width:250px}
+.search input[type=text]:focus{border-color:var(--ink)}
+.tally{font-size:12.5px;color:var(--leaf)}
+.tally b{color:var(--ink);font-weight:600}
+button{font-family:var(--font-sans)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--field);border:1px solid var(--ink);border-radius:7px;padding:0 13px;font:600 12.5px var(--font-sans);color:var(--ink);background:var(--peel);cursor:pointer;transition:background .15s,border-color .15s}
+.btn:hover:not(:disabled){background:var(--flesh)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.ghost:hover:not(:disabled){background:var(--bench);border-color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{height:28px;padding:0 10px;font-size:12px}
+.scroll{overflow:auto;max-height:74vh}
+table{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%}
+thead th{position:sticky;top:0;z-index:3;background:var(--paper);text-align:left;padding:9px 12px;border-bottom:1px solid var(--ink);vertical-align:top}
+.sorter{display:flex;align-items:center;gap:5px;background:none;border:none;padding:0 0 7px;cursor:pointer;font:600 11px var(--font-sans);text-transform:uppercase;letter-spacing:.07em;color:var(--leaf);white-space:nowrap}
+.sorter:hover{color:var(--ink)}
+.sorter[data-active="true"]{color:var(--ink)}
+.sorter svg{opacity:0;transition:opacity .15s,transform .18s}
+.sorter:hover svg{opacity:.4}
+.sorter[data-active="true"] svg{opacity:1}
+.sorter[data-dir="desc"] svg{transform:rotate(180deg)}
+.field{height:var(--field);width:100%;padding:0 9px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font:12.5px var(--font-sans);appearance:none}
+select.field{padding-right:26px;background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a6b40' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;background-size:13px}
+.field:focus{border-color:var(--ink);outline:none}
+tbody td{padding:11px 12px;vertical-align:top;background:var(--paper);border-bottom:1px solid var(--line);transition:background .15s}
+tbody tr:hover td{background:#f2f4ec}
+tbody tr.picked td{background:#fdfbe3}
+tbody tr.settled td{animation:settle .9s ease forwards}
+@keyframes settle{0%{background:#e4ecdb}100%{background:var(--paper)}}
+.stick-l{position:sticky;left:0;z-index:2}
+thead .stick-l{z-index:4}
+.stick-r{position:sticky;right:0;z-index:2;border-left:1px solid var(--line);box-shadow:-6px 0 8px -8px #16210f66}
+thead .stick-r{z-index:4}
+.addr{font:12px/1.5 var(--font-mono);color:var(--ink);overflow-wrap:anywhere;display:block;max-width:290px}
+.sec{color:var(--leaf);font-size:11.5px;margin-top:4px;line-height:1.5}
+.reason{font-size:12.5px;line-height:1.55;max-width:250px;overflow-wrap:anywhere}
+.reason em{color:var(--leaf);font-style:italic}
+.tag{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:5px;padding:2px 7px;font:600 11.5px var(--font-sans);color:var(--ink);white-space:nowrap;background:var(--bench)}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.dot.malware{background:var(--bruise)}
+.dot.phishing{background:var(--spot)}
+.dot.benign{background:var(--rind)}
+.dot.unavailable{background:var(--line)}
+.tag.new{background:#fff3cc;border-color:#e8cf86}
+.tag.approved{background:#e2eedc;border-color:#b9d3ad}
+.tag.rejected{background:#f6e6d8;border-color:#e0c3a4}
+.score{font:600 16px var(--font-sans);color:var(--ink);font-variant-numeric:tabular-nums}
+.lines{font-size:12px;line-height:1.75;color:var(--forest);white-space:nowrap}
+.acts{display:flex;gap:6px}
+input[type=checkbox]{width:15px;height:15px;accent-color:var(--leaf);cursor:pointer;margin:2px 0 0}
+.empty{padding:48px 20px;text-align:center;color:var(--leaf)}
+dialog{border:1px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--forest);padding:0;max-width:500px;width:calc(100vw - 32px)}
+dialog::backdrop{background:#16210f66}
+dialog[open]{animation:pop .18s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+dialog .head{display:flex;align-items:center;gap:9px;padding:17px 19px 0;color:var(--ink)}
+dialog h2{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--ink);margin:0}
+dialog .body{padding:10px 19px 0;font-size:13px;line-height:1.6}
+dialog .targets{margin:11px 0 0;max-height:132px;overflow-y:auto;border:1px solid var(--line);border-radius:7px;padding:9px;font:11.5px/1.7 var(--font-mono);background:var(--bench)}
+dialog .targets div{overflow-wrap:anywhere}
+dialog menu{display:flex;gap:9px;justify-content:flex-end;margin:0;padding:17px 19px 19px}
+label{display:block;font-size:11px;font-weight:600;color:var(--leaf);margin:15px 0 5px;text-transform:uppercase;letter-spacing:.07em}
+textarea,input[type=email],input[type=password],input#code{width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);font:13px var(--font-sans);resize:vertical}
+textarea:focus,input[type=email]:focus,input[type=password]:focus,input#code:focus{border-color:var(--ink);outline:none}
+.hint{font-size:11.5px;color:var(--leaf);margin:6px 0 0}
+.toast{position:fixed;right:18px;bottom:18px;display:flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);padding:11px 15px;border-radius:8px;font-size:12.5px;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;z-index:60;max-width:330px}
+.toast.show{opacity:1;transform:none}
+.err{color:var(--rot);font-size:12.5px;margin:9px 0 0}
+.err:empty{display:none}
+.bulk{position:fixed;left:50%;bottom:18px;transform:translate(-50%,160%);background:var(--ink);color:var(--paper);border-radius:9px;padding:9px 13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;transition:transform .24s ease;z-index:40;max-width:calc(100vw - 32px);box-shadow:0 6px 20px #16210f33}
+.bulk.up{transform:translate(-50%,0)}
+.bulk strong{font-size:13px;font-weight:600}
+.bulk .btn{border-color:#ffffff55}
+.bulk .btn.ghost{color:var(--paper);border-color:#ffffff33}
+.bulk .btn.ghost:hover:not(:disabled){background:#ffffff1a;border-color:#ffffff66}
+.signin{max-width:400px;margin:9vh auto;padding:24px}
+.signin h2{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--ink);margin:0 0 4px}
+input#code{font:15px var(--font-mono);letter-spacing:.28em;text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header class="masthead">
+    <svg class="mark" viewBox="48 2 64 192" width="15" height="44" aria-hidden="true"><path d="M80 38C78 27 76 20 74 12" fill="none" stroke="#4a6b40" stroke-width="9" stroke-linecap="round"/><path d="M80 34C66 44 56 84 56 120c0 32 10 54 24 64-5-34-9-84-4-144z" fill="#ffbf00"/><path d="M76 40c-5 60-1 110 4 144 5 2 9 0 11-6-4-30-4-82-7-138z" fill="#ffbf00"/><ellipse cx="86" cy="183" rx="4.4" ry="5.6" fill="#8a5a0f"/><path d="M84 40c3 56 3 108 7 138 10-10 13-32 13-58 0-36-10-76-24-86z" fill="#ffbf00"/></svg>
+    <h1>Review</h1>
+  </header>
+  <p class="sub">False-positive reports awaiting a decision.</p>
+
+  <section id="signin" class="panel signin">
+    <h2>Sign in</h2>
+    <p style="font-size:12.5px;margin:0;color:var(--leaf)">Email, password, and the code from your authenticator.</p>
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="username">
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password">
+    <label for="code">Authenticator code</label>
+    <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000">
+    <p style="margin:17px 0 0"><button id="go" class="btn" type="button" style="width:100%">Sign in</button></p>
+    <p id="signin-error" class="err" role="alert"></p>
+  </section>
+
+  <section id="app" hidden>
+    <div class="panel">
+      <div class="bar">
+        <div style="display:flex;gap:11px;align-items:center;flex-wrap:wrap">
+          <span class="search"><input id="q" type="text" placeholder="Search address or reason" aria-label="Search"></span>
+          <span class="tally" id="tally"></span>
+          <button id="reset" class="btn ghost sm" type="button">Clear filters</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="refresh" class="btn ghost sm" type="button">Refresh</button>
+          <button id="out" class="btn ghost sm" type="button">Sign out</button>
+        </div>
+      </div>
+      <p id="list-error" class="err" role="alert" style="padding:0 14px"></p>
+      <div class="scroll">
+        <table><thead><tr id="head"></tr></thead><tbody id="rows"></tbody></table>
+      </div>
+      <div id="empty" class="empty" hidden>Nothing matches.</div>
+    </div>
+  </section>
+</main>
+
+<div id="bulk" class="bulk" role="region" aria-label="Bulk actions">
+  <strong id="bulk-count">0 selected</strong>
+  <button id="bulk-approve" class="btn sm" type="button">Approve</button>
+  <button id="bulk-reject" class="btn ghost sm" type="button">Reject</button>
+  <button id="bulk-clear" class="btn ghost sm" type="button">Clear</button>
+</div>
+
+<dialog id="decide">
+  <div class="head"><span id="decide-icon"></span><h2 id="decide-title"></h2></div>
+  <div class="body">
+    <p id="decide-what" style="margin:0"></p>
+    <div id="decide-targets" class="targets"></div>
+    <label for="decide-note">Note for the record</label>
+    <textarea id="decide-note" rows="3" maxlength="1000"></textarea>
+    <p class="hint" id="decide-hint"></p>
+  </div>
+  <menu>
+    <button id="decide-cancel" class="btn ghost" type="button">Cancel</button>
+    <button id="decide-confirm" class="btn" type="button" disabled></button>
+  </menu>
+</dialog>
+<div id="toast" class="toast" role="status"></div>
+<script>
+const $ = id => document.getElementById(id);
+let token = sessionStorage.getItem('phisang-admin') || '';
+let reports = [], sort = { key:'created', dir:'desc' }, filters = {}, query = '';
+const picked = new Set();
+
+const PATHS = {
+  sort:'M8 4l-4 5h8zM8 20l4-5H4z', check:'M4 12.5l5 5L20 6', x:'M6 6l12 12M18 6L6 18',
+  search:'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16.2 16.2L21 21', alert:'M12 4l9 16H3zM12 10v4M12 17.4v.2',
+};
+function icon(name, size = 14){
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('width',size); svg.setAttribute('height',size);
+  svg.setAttribute('fill','none'); svg.setAttribute('stroke','currentColor'); svg.setAttribute('stroke-width','2');
+  svg.setAttribute('stroke-linecap','round'); svg.setAttribute('stroke-linejoin','round');
+  svg.setAttribute('aria-hidden','true');
+  const p = document.createElementNS(ns,'path');
+  p.setAttribute('d', PATHS[name] || '');
+  if (name === 'sort'){ p.setAttribute('fill','currentColor'); p.setAttribute('stroke','none'); }
+  svg.append(p); return svg;
+}
+
+async function call(path, options = {}){
+  const response = await fetch(path, { ...options, headers:{
+    'Content-Type':'application/json', ...(token?{Authorization:`Bearer ${token}`}:{}) , ...options.headers } });
+  const body = await response.json().catch(()=>({}));
+  if (response.status === 401){ signOut(); throw new Error(body.message || 'Please sign in again.'); }
+  if (!response.ok) throw new Error(body.message || 'That did not work. Try again.');
+  return body;
+}
+function signOut(){ token=''; sessionStorage.removeItem('phisang-admin'); $('app').hidden=true; $('signin').hidden=false; }
+function toast(message, name='check'){ const t=$('toast'); t.replaceChildren(icon(name,15), el('span',message));
+  t.classList.add('show'); clearTimeout(t._timer); t._timer=setTimeout(()=>t.classList.remove('show'),3400); }
+function when(v){ if(!v) return '—'; const d=new Date(String(v).endsWith('Z')?v:v+'Z'); return Number.isNaN(d.getTime())?String(v):d.toLocaleString(); }
+function day(v){ if(!v) return '—'; const d=new Date(v); return Number.isNaN(d.getTime())?String(v):d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}); }
+function pct(s){ return typeof s==='number' ? Math.round(s*100)+'%' : '—'; }
+const STATUS_WORD = { new:'Awaiting', approved:'Approved', rejected:'Rejected' };
+
+/* Values are set with textContent throughout: an address, a reason or a scanned
+   page's title is written by someone else and must never become markup here. */
+const el=(tag,text,cls)=>{const n=document.createElement(tag); if(text!=null)n.textContent=text; if(cls)n.className=cls; return n;};
+function tag(text,cls,dot){ const t=el('span',null,`tag ${cls||''}`); if(dot) t.append(el('span',null,`dot ${dot}`)); t.append(el('span',text)); return t; }
+const scanOf = r => r.scan || {};
+const num = v => (typeof v === 'number' ? v : -1);
+
+const COLUMNS = [
+  { key:'status', label:'Status', width:'112px', sort:r=>STATUS_WORD[r.status]||r.status,
+    filter:{kind:'select', options:[['','Any'],['new','Awaiting'],['approved','Approved'],['rejected','Rejected']],
+            test:(r,v)=>r.status===v} },
+  { key:'url', label:'Address', width:'252px', sort:r=>r.url||'',
+    filter:{kind:'text', test:(r,v)=>`${r.url} ${r.host||''}`.toLowerCase().includes(v)} },
+  { key:'count', label:'Reports', width:'96px', numeric:true, sort:r=>r.report_count||0,
+    filter:{kind:'select', options:[['','Any'],['2','2 or more'],['1','Only one']],
+            test:(r,v)=> v==='1' ? (r.report_count||0)===1 : (r.report_count||0)>=Number(v)} },
+  { key:'reason', label:'Reason', width:'212px', sort:r=>(r.reports||[]).map(x=>x.reason||'').join(' '),
+    filter:{kind:'text', test:(r,v)=>(r.reports||[]).some(x=>(x.reason||'').toLowerCase().includes(v))} },
+  { key:'verdict', label:'Verdict', width:'130px', sort:r=>scanOf(r).classification||r.reported.classification||'',
+    filter:{kind:'select', options:[['','Any'],['malware','malware'],['phishing','phishing'],['benign','benign'],['unavailable','unavailable']],
+            test:(r,v)=>(scanOf(r).classification||r.reported.classification)===v} },
+  { key:'risk', label:'Risk', width:'96px', numeric:true, sort:r=>num(scanOf(r).risk_score ?? r.reported.risk_score),
+    filter:{kind:'select', options:[['','Any'],['80','80% and over'],['60','60% and over'],['40','40% and over'],['0','Under 40%']],
+            test:(r,v)=>{const s=(scanOf(r).risk_score ?? r.reported.risk_score ?? 0)*100; return v==='0'? s<40 : s>=Number(v);}} },
+  { key:'checks', label:'Checks', width:'186px', numeric:true, sort:r=>num(scanOf(r).page?.phishing_score),
+    filter:{kind:'select', options:[['','Any'],['listed','Listed in URLhaus'],['password','Has password field'],['fetched','Page fetched'],['skipped','Page skipped']],
+            test:(r,v)=>{const s=scanOf(r), p=s.page||{};
+              if(v==='listed') return !!s.threat_intel?.matched;
+              if(v==='password') return (p.page_signals?.password_inputs||0)>0;
+              if(v==='fetched') return p.status==='ok';
+              return p.status!=='ok';}} },
+  { key:'domain', label:'Domain', width:'168px', sort:r=>scanOf(r).domain_info?.registrar||'',
+    filter:{kind:'text', test:(r,v)=>{const i=scanOf(r).domain_info||{}; return `${i.domain||''} ${i.registrar||''}`.toLowerCase().includes(v);}} },
+  { key:'history', label:'Site history', width:'132px', numeric:true, sort:r=>num(r.site?.scan_count),
+    filter:{kind:'select', options:[['','Any'],['ever','Ever malicious'],['approved','Already approved'],['clean','Never malicious']],
+            test:(r,v)=>{const s=r.site||{};
+              if(v==='ever') return !!s.ever_malicious;
+              if(v==='approved') return !!s.approved_at;
+              return !s.ever_malicious;}} },
+  { key:'created', label:'Reported', width:'112px', sort:r=>r.created_at||'' },
+];
+
+function buildHead(){
+  const tr = $('head');
+  tr.replaceChildren();
+
+  const pickTh = el('th',null,'stick-l'); pickTh.style.width='40px';
+  const all = document.createElement('input');
+  all.type='checkbox'; all.id='all'; all.setAttribute('aria-label','Select every report shown');
+  all.addEventListener('change',()=>{ visible().forEach(r=> all.checked?picked.add(r.url):picked.delete(r.url)); draw(); });
+  pickTh.append(all); tr.append(pickTh);
+
+  for (const column of COLUMNS){
+    const th = el('th');
+    if (column.width) th.style.minWidth = column.width;
+    const sorter = el('button',null,'sorter');
+    sorter.type='button';
+    sorter.dataset.active = String(sort.key===column.key);
+    sorter.dataset.dir = sort.key===column.key ? sort.dir : 'asc';
+    sorter.append(el('span',column.label), icon('sort',10));
+    sorter.setAttribute('aria-label',`Sort by ${column.label}`);
+    sorter.addEventListener('click',()=>{
+      sort = sort.key===column.key ? { key:column.key, dir: sort.dir==='asc'?'desc':'asc' }
+                                   : { key:column.key, dir: column.numeric?'desc':'asc' };
+      buildHead(); draw();
+    });
+    th.append(sorter);
+    if (column.filter){
+      let field;
+      if (column.filter.kind==='select'){
+        field = document.createElement('select');
+        for (const [value,label] of column.filter.options){ const o=document.createElement('option'); o.value=value; o.textContent=label; field.append(o); }
+      } else { field = document.createElement('input'); field.type='text'; field.placeholder='Filter'; }
+      field.className='field';
+      field.value = filters[column.key] || '';
+      field.setAttribute('aria-label',`Filter by ${column.label}`);
+      const apply = ()=>{ filters[column.key]=field.value.trim().toLowerCase(); draw(); };
+      field.addEventListener('input',apply); field.addEventListener('change',apply);
+      th.append(field);
+    }
+    tr.append(th);
+  }
+
+  const actTh = el('th',null,'stick-r'); actTh.style.minWidth='162px';
+  actTh.append(el('span','Decision','sorter'));
+  tr.append(actTh);
+}
+
+function visible(){
+  const find = key => COLUMNS.find(c=>c.key===key);
+  let rows = reports.filter(report=>{
+    const haystack = `${report.url} ${report.host||''} ${(report.reports||[]).map(x=>x.reason||'').join(' ')}`;
+    if (query && !haystack.toLowerCase().includes(query)) return false;
+    for (const [key,value] of Object.entries(filters)){
+      if (!value) continue;
+      const def = find(key);
+      if (def?.filter && !def.filter.test(report,value)) return false;
+    }
+    return true;
+  });
+  const def = find(sort.key);
+  if (def){
+    const direction = sort.dir==='asc' ? 1 : -1;
+    rows = [...rows].sort((a,b)=>{
+      const x=def.sort(a), y=def.sort(b);
+      if (typeof x==='number' && typeof y==='number') return (x-y)*direction;
+      return String(x).localeCompare(String(y),undefined,{numeric:true})*direction;
+    });
+  }
+  return rows;
+}
+</script>
+<script>
+let pending = null;
+function askDecision(ids, decision, chosen){
+  pending = { ids, decision };
+  const approving = decision === 'approved';
+  $('decide-icon').replaceChildren(icon(approving?'check':'x',18));
+  const addresses = chosen.length, filed = ids.length;
+  $('decide-title').textContent = approving
+    ? (addresses>1 ? `Approve ${addresses} addresses` : 'Approve address')
+    : (addresses>1 ? `Reject ${addresses} addresses` : 'Reject address');
+  const covers = filed > addresses ? ` This covers all ${filed} reports filed about them.` : '';
+  $('decide-what').textContent = (approving
+    ? 'The address below will be cleared for every user. Future scans return benign unless the threat database lists it.'
+    : 'The verdict stands. An address already approved is blocked again.') + covers;
+  $('decide-targets').replaceChildren(...chosen.map(r=>el('div',
+    r.report_count>1 ? `${r.url}  (${r.report_count} reports)` : r.url)));
+  const note = $('decide-note');
+  note.value=''; note.placeholder = approving ? 'Why is this address safe?' : 'Why is the verdict right?';
+  $('decide-hint').textContent = `Required. Recorded with your name and the time.`;
+  const confirm = $('decide-confirm');
+  confirm.replaceChildren(icon(approving?'check':'x',13), el('span', approving?'Approve':'Reject'));
+  confirm.className = approving ? 'btn' : 'btn ghost';
+  confirm.disabled = true;
+  $('decide').showModal();
+  note.focus();
+}
+$('decide-note').addEventListener('input',()=>{ $('decide-confirm').disabled = !$('decide-note').value.trim(); });
+$('decide-cancel').addEventListener('click',()=>{ pending=null; $('decide').close(); });
+$('decide').addEventListener('cancel',()=>{ pending=null; });
+$('decide-confirm').addEventListener('click', async ()=>{
+  if (!pending) return;
+  const { ids, decision } = pending;
+  $('decide-confirm').disabled = true;
+  try{
+    await call('/api/v1/admin/reports/review',{ method:'POST',
+      body: JSON.stringify({ report_ids: ids, decision, note: $('decide-note').value.trim() }) });
+    $('decide').close(); pending=null;
+    picked.clear();
+    toast(`${ids.length} report${ids.length>1?'s':''} ${decision}.`, decision==='approved'?'check':'x');
+    await load();
+  }catch(error){
+    $('decide').close(); pending=null;
+    $('list-error').textContent = error.message; toast(error.message,'alert');
+  }
+});
+
+function row(report){
+  const scan = scanOf(report);
+  const tr = el('tr');
+
+  const pick = el('td',null,'stick-l');
+  const box = document.createElement('input');
+  box.type='checkbox'; box.checked=picked.has(report.url);
+  box.setAttribute('aria-label',`Select ${report.url}`);
+  box.addEventListener('change',()=>{ box.checked?picked.add(report.url):picked.delete(report.url);
+    tr.classList.toggle('picked',box.checked); syncBulk(); });
+  if (box.checked) tr.classList.add('picked');
+  pick.append(box); tr.append(pick);
+
+  const status = el('td');
+  status.append(tag(STATUS_WORD[report.status]||report.status, report.status));
+  if (report.status!=='new'){
+    status.append(el('div', `by ${report.reviewed_by||'—'}`,'sec'));
+    if (report.review_note) status.append(el('div', report.review_note,'sec'));
+  }
+  tr.append(status);
+
+  const addr = el('td');
+  addr.append(el('span',report.url,'addr'));
+  addr.append(el('div', `${report.host||'—'} · from ${(report.clients||[]).join(', ')||'unknown'}`,'sec'));
+  tr.append(addr);
+
+  const count = el('td');
+  count.append(el('div', String(report.report_count||0),'score'));
+  count.append(el('div', report.report_count===1 ? 'report' : 'reports','sec'));
+  tr.append(count);
+
+  // Every reason filed about this address, because a reviewer decides once for
+  // all of them and each objection may say something different.
+  const reason = el('td');
+  const said = (report.reports||[]).filter(x=>x.reason);
+  if (!said.length) reason.append(el('div',null,'reason').appendChild(el('em','No reason given.')).parentElement);
+  else said.forEach((item,index)=>{
+    const block = el('div',null,'reason');
+    if (index) block.style.marginTop='7px';
+    block.append(el('span',item.reason));
+    reason.append(block);
+  });
+  tr.append(reason);
+
+  const cls = scan.classification || report.reported.classification || 'unavailable';
+  const verdict = el('td');
+  verdict.append(tag(cls,'',cls));
+  tr.append(verdict);
+
+  const score = scan.risk_score ?? report.reported.risk_score;
+  const risk = el('td');
+  risk.append(el('div',pct(score),'score'));
+  tr.append(risk);
+
+  const page=scan.page||{}, intel=scan.threat_intel||{}, heur=scan.heuristic||{};
+  const checks = el('td');
+  const lines = el('div',null,'lines');
+  lines.append(el('div',`URLhaus: ${intel.matched?'listed':(intel.feed_status||'not listed')}`));
+  lines.append(el('div',`URL rules: ${heur.label||'—'}${heur.risk_score!=null?` (${heur.risk_score}/100)`:''}`));
+  lines.append(el('div',`Page: ${page.status||'skipped'}${page.phishing_score!=null?` · ${page.phishing_score.toFixed(2)}`:''}`));
+  if ((page.page_signals||{}).password_inputs) lines.append(el('div',`${page.page_signals.password_inputs} password field(s)`));
+  checks.append(lines);
+  tr.append(checks);
+
+  const info = scan.domain_info || {};
+  const domain = el('td');
+  if (info.status==='ok'){
+    domain.append(el('div',info.domain||'—'));
+    domain.append(el('div',info.registrar||'Registrar unknown','sec'));
+    domain.append(el('div',`registered ${day(info.registered_at)}`,'sec'));
+    domain.append(el('div',`expires ${day(info.expires_at)}`,'sec'));
+  } else domain.append(el('div', info.status==='not_applicable'?'No record applies':'Unavailable','sec'));
+  tr.append(domain);
+
+  const site = report.site || {};
+  const history = el('td');
+  history.append(el('div',`${site.scan_count ?? '?'} scans`));
+  history.append(el('div',`${site.malicious_count ?? 0} malicious · ${site.safe_count ?? 0} safe`,'sec'));
+  if (site.ever_malicious) history.append(tag('ever malicious','rejected'));
+  if (site.approved_at) history.append(tag('approved','approved'));
+  tr.append(history);
+
+  const created = el('td');
+  created.append(el('div',day(report.last_reported_at)));
+  if (report.report_count>1) created.append(el('div',`first ${day(report.first_reported_at)}`,'sec'));
+  tr.append(created);
+
+  const act = el('td',null,'stick-r');
+  const acts = el('div',null,'acts');
+  const approve = el('button',null,'btn sm'); approve.type='button';
+  approve.append(icon('check',13), el('span','Approve'));
+  approve.addEventListener('click',()=>askDecision(report.report_ids,'approved',[report]));
+  const reject = el('button',null,'btn ghost sm'); reject.type='button';
+  reject.append(icon('x',13), el('span','Reject'));
+  reject.addEventListener('click',()=>askDecision(report.report_ids,'rejected',[report]));
+  acts.append(approve,reject);
+  act.append(acts); tr.append(act);
+  return tr;
+}
+
+const chosenGroups = () => reports.filter(r=>picked.has(r.url));
+const chosenIds = () => chosenGroups().flatMap(r=>r.report_ids);
+
+function syncBulk(){
+  const filed = chosenIds().length;
+  $('bulk-count').textContent = picked.size === filed
+    ? `${picked.size} selected`
+    : `${picked.size} selected · ${filed} reports`;
+  $('bulk').classList.toggle('up', picked.size>0);
+  const shown = visible().map(r=>r.url);
+  const all = $('all');
+  if (all) all.checked = shown.length>0 && shown.every(url=>picked.has(url));
+}
+
+function draw(){
+  const rows = visible();
+  $('rows').replaceChildren(...rows.map(row));
+  $('empty').hidden = rows.length>0;
+  const awaiting = reports.filter(r=>r.status==='new').length;
+  const filed = reports.reduce((sum,r)=>sum+(r.report_count||0),0);
+  $('tally').replaceChildren(el('b',String(rows.length)),
+    el('span',` addresses shown · ${awaiting} awaiting · ${filed} reports in total`));
+  syncBulk();
+}
+
+async function load(){
+  $('list-error').textContent='';
+  try{
+    const body = await call('/api/v1/admin/reports?status=all&limit=200');
+    reports = body.reports;
+    for (const url of [...picked]) if (!reports.some(r=>r.url===url)) picked.delete(url);
+    draw();
+  }catch(error){ $('list-error').textContent = error.message; }
+}
+
+$('q').addEventListener('input',()=>{ query=$('q').value.trim().toLowerCase(); draw(); });
+$('reset').addEventListener('click',()=>{ filters={}; query=''; $('q').value=''; buildHead(); draw(); });
+$('bulk-clear').addEventListener('click',()=>{ picked.clear(); draw(); });
+$('bulk-approve').addEventListener('click',()=>{ if(picked.size) askDecision(chosenIds(),'approved',chosenGroups()); });
+$('bulk-reject').addEventListener('click',()=>{ if(picked.size) askDecision(chosenIds(),'rejected',chosenGroups()); });
+$('refresh').addEventListener('click',load);
+$('out').addEventListener('click',signOut);
+$('go').addEventListener('click', async ()=>{
+  $('go').disabled=true; $('signin-error').textContent='';
+  try{
+    const body = await call('/api/v1/admin/session',{method:'POST',body:JSON.stringify({
+      email:$('email').value.trim(), password:$('password').value, code:$('code').value.trim()})});
+    token=body.token; sessionStorage.setItem('phisang-admin',token);
+    $('password').value=$('code').value='';
+    $('signin').hidden=true; $('app').hidden=false; buildHead(); await load();
+  }catch(error){ $('signin-error').textContent=error.message; }
+  finally{ $('go').disabled=false; }
+});
+$('password').addEventListener('keydown',e=>{ if(e.key==='Enter') $('code').focus(); });
+$('code').addEventListener('keydown',e=>{ if(e.key==='Enter') $('go').click(); });
+$('q').parentElement.prepend(icon('search',14));
+
+if (token){ $('signin').hidden=true; $('app').hidden=false; buildHead(); load(); }
+</script>
+</body>
+</html>

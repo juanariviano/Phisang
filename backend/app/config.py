@@ -52,6 +52,15 @@ class Settings(BaseSettings):
     db_name: str = "PhisangDB"
     db_user: str = ""
     db_password: str = ""
+    # Admin review of false-positive reports. Empty values disable the dashboard
+    # entirely; nothing here has a default, so a misconfigured server is closed
+    # rather than open. Generate them with scripts/admin_setup.py.
+    admin_email: str = ""
+    admin_password_hash: str = ""
+    admin_totp_secret: str = ""
+    admin_session_secret: str = ""
+    admin_session_minutes: int = 60
+
     db_timeout_seconds: int = 10
     # A URLhaus listing stays true far longer than a "not listed" answer does.
     db_urlhaus_match_ttl_seconds: int = 86_400

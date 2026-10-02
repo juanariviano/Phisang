@@ -18,6 +18,11 @@
         <div id="progress" hidden></div>
         <div id="result"><p>Loading the last scan?</p></div>
         <button id="rescan" class="secondary" type="button" hidden>Rescan</button><label class="toggle" for="enabled"><span>Protect navigations</span><input type="checkbox" id="enabled" checked></label>
+        <section class="local-cache" aria-label="Addresses you allowed">
+          <p class="eyebrow">Addresses you allowed</p>
+          <p id="allow-status" class="fine" role="status"></p>
+          <ul id="allow-list" class="allow-list"></ul>
+        </section>
         <section class="local-cache" aria-label="Local cache">
           <p class="eyebrow">Local cache</p>
           <p id="cache-status" class="fine" role="status"></p>
@@ -28,6 +33,7 @@
     <script src="banana.js"></script>
     <script src="verdicts.js"></script>
     <script src="cache.js"></script>
+    <script src="allowlist.js"></script>
     <script src="content-guard.js"></script>
     <script src="stream.js"></script>
     <script src="api.js"></script>

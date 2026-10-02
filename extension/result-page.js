@@ -69,6 +69,11 @@
     dispose?.();
     current = payload;
     container.hidden = false;
+    if (payload?.trusted) {
+      container.textContent = 'Phisang does not check this website. Search engines and a few sites '
+        + 'like them are left alone, so browsing them stays instant. Links you open from here are still checked.';
+      return;
+    }
     if (!payload?.result) {
       container.textContent = 'No scan yet. Open a website with protection enabled to check it.';
       return;

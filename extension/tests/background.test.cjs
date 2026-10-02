@@ -496,3 +496,46 @@ test('a malicious verdict is still overridden, which is the whole point and the 
   assert.equal(w.navigations.length, before);
   assert.equal(w.badges.at(-1).text, 'SKIP');
 });
+
+/* --- Hosts left alone entirely --------------------------------------------- */
+
+test('a search engine is never held, scanned, or looked up', async () => {
+  const w = worker();
+  const before = w.navigations.length;
+  for (const url of ['https://www.google.com/search?q=youtube', 'https://google.co.id/search?q=cuaca',
+    'https://duckduckgo.com/?q=phishing', 'https://youtube.com/watch?v=abc', 'http://google.com/']) {
+    w.navigate(url);
+  }
+  assert.equal(w.navigations.length, before); // No checking screen at all.
+  assert.equal(w.requests.length, 0);         // No API call.
+  assert.deepEqual(w.local, {});              // No cache or allowlist read wrote anything.
+  assert.equal(w.badges.at(-1).text, '');     // No verdict is claimed either.
+});
+
+test('trust is per hostname, so pages anyone can author are still checked', () => {
+  const w = worker();
+  for (const url of ['https://sites.google.com/view/login-bca', 'https://docs.google.com/document/d/x',
+    'https://drive.google.com/file/d/x', 'https://google.com.evil.example/',
+    'https://evil-google.com/', 'https://notgoogle.com/']) {
+    w.navigate(url);
+    assert.match(w.navigations.at(-1), /checking.html/, url);
+  }
+});
+
+test('the popup explains the absence of a verdict instead of reading as a failure', async () => {
+  const w = worker();
+  w.tab.url = 'https://www.google.com/search?q=cuaca';
+  const payload = await w.message({ type: 'GET_TAB_RESULT', tabId: 7 });
+  assert.equal(payload.trusted, true);
+  assert.equal(payload.url, w.tab.url);
+});
+
+test('a stored verdict still wins over the trusted-host notice', async () => {
+  const w = worker();
+  w.tab.url = 'https://www.google.com/search?q=cuaca';
+  w.stored['tab:7'] = { url: 'https://example.org/', result: result() };
+  w.respond(() => Response.json({ explanation: null }));
+  const payload = await w.message({ type: 'GET_TAB_RESULT', tabId: 7 });
+  assert.equal(payload.trusted, undefined);
+  assert.equal(payload.result.classification, 'benign');
+});

@@ -1,6 +1,6 @@
-importScripts('content-guard.js', 'stream.js', 'api.js', 'verdicts.js', 'cache.js', 'allowlist.js');
+importScripts('content-guard.js', 'stream.js', 'api.js', 'verdicts.js', 'cache.js', 'allowlist.js', 'trusted-hosts.js');
 const { API_BASE, analyzeUrl, savedExplanation, verdictMeta, isHighRisk, rememberResult,
-        allowKey, allowUrl, forgetUrl, listAllowed } = self.Phisang;
+        allowKey, allowUrl, forgetUrl, listAllowed, trustedHost } = self.Phisang;
 
 // The allowlist can switch protection off for an address, so only an extension
 // page may write to it. content.js runs inside hostile pages and must never be
@@ -62,6 +62,7 @@ function setBadge(tabId, classification, result) {
   // Palette-native badges. The toolbar icon is 16px, so the word carries the
   // state and the colour only reinforces it.
   const map = {
+    trusted: { text: "", color: "#8AA37E" },
     allowed: { text: "SKIP", color: "#8AA37E" },
     malware: { text: "STOP", color: "#FFBF00" },
     phishing: { text: "RISK", color: "#E0A526" },
@@ -126,6 +127,15 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
 
   // A one-visit permission must not linger after navigating somewhere else.
   skipOnce.delete(tabId);
+
+  // A search engine is navigated constantly, and holding the tab there costs a
+  // visible flash to deliver a verdict nobody needed. These hosts are left alone
+  // entirely: no checking screen, no request, no storage read. Clicking a result
+  // is a new navigation, so the destination is still checked.
+  if (trustedHost(url)) {
+    setBadge(tabId, "trusted");
+    return;
+  }
 
   // Checked before the holding screen, so an allowed address costs no scan at
   // all. The badge still says the check was skipped, not that it passed.
@@ -234,6 +244,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === "GET_TAB_RESULT") {
       const stored = await chrome.storage.session.get(`tab:${tabId}`);
       const payload = stored[`tab:${tabId}`] || lastByTab.get(tabId) || null;
+      if (!payload) {
+        // Say why there is no verdict rather than letting the popup read as a
+        // failed scan.
+        const tab = await chrome.tabs.get(tabId).catch(() => null);
+        if (tab?.url && trustedHost(tab.url)) return { trusted: true, url: tab.url, tabId };
+      }
       if (payload?.result?.scan_id) {
         try {
           payload.result.explanation = await savedExplanation(payload.result);

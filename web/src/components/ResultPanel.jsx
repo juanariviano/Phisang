@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { CLASS_META, verdictMeta } from "../lib/copy.js";
+import { CLASS_META, riskBand, verdictMeta } from "../lib/copy.js";
 import { Banana } from "./Banana.jsx";
 import { readExplanationStream } from "../lib/explanationStream.js";
 import { ScanProgress } from "./ScanProgress.jsx";
@@ -150,6 +150,7 @@ export function ResultPanel({ busy, result, progress = [], onInspectPage }) {
   const meta = busy ? CLASS_META.checking : verdictMeta(result, result.classification);
   const riskPercent = !busy && result.classification !== "unavailable" && Number.isFinite(result.risk_score)
     && result.risk_score >= 0 && result.risk_score <= 1 ? result.risk_score * 100 : null;
+  const band = riskPercent !== null ? riskBand(result.risk_score) : null;
   return <motion.section key={busy ? "checking" : result.scan_id}
     initial={{ opacity: 0, y: reducedMotion ? 0 : 12 }} animate={{ opacity: 1, y: 0 }}
     transition={{ duration: reducedMotion ? 0 : 0.28 }}
@@ -170,11 +171,15 @@ export function ResultPanel({ busy, result, progress = [], onInspectPage }) {
         {riskPercent !== null && <div className="mt-5 rounded-lg border border-leaf/25 px-4 py-3" aria-label="Scan risk score">
           <div className="flex items-baseline justify-between gap-3">
             <span className="text-sm font-semibold">Risk score</span>
-            <strong className={`font-display text-2xl font-extrabold tabular-nums ${meta.tone}`}>{riskPercent.toLocaleString(undefined, { maximumFractionDigits: 1 })}%</strong>
+            <span className={`flex items-baseline gap-2 ${band.tone}`}>
+              <strong className="font-display text-2xl font-extrabold tabular-nums">{riskPercent.toLocaleString(undefined, { maximumFractionDigits: 1 })}%</strong>
+              <span className="text-sm font-bold">{band.label}</span>
+            </span>
           </div>
           <div role="meter" aria-label="Estimated risk" aria-valuemin={0} aria-valuemax={100} aria-valuenow={riskPercent}
+            aria-valuetext={`${Math.round(riskPercent)}%, ${band.label.toLowerCase()} risk`}
             className="mt-2 h-1.5 overflow-hidden rounded-full bg-leaf/15">
-            <div className={`h-full rounded-full ${meta.bananaState === "rotten" ? "bg-bruise" : meta.bananaState === "phishing" ? "bg-rot" : "bg-leaf"}`} style={{ width: `${riskPercent}%` }} />
+            <div className={`h-full rounded-full ${band.fill}`} style={{ width: `${riskPercent}%` }} />
           </div>
           <p className="mt-2 text-xs text-leaf">Higher means more risk. This is an estimate, not a certainty.</p>
         </div>}

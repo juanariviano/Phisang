@@ -32,6 +32,14 @@
   --color-benign: #283f24;
   --color-checking: #467235;
   --color-unavailable: #467235;
+
+  /* Risk-score bands, low to very high. A familiar green-to-red scale so the
+     percentage reads at a glance; each is at least 4.5:1 on the bench and
+     always appears beside its band word. */
+  --color-risk-low: #2d6a1f;
+  --color-risk-medium: #8a6100;
+  --color-risk-high: #a3410a;
+  --color-risk-very-high: #b42318;
 }
 
 html {

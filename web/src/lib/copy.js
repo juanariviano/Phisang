@@ -6,6 +6,19 @@ export const CLASS_META = {
   checking: { bananaState: "checking", verdict: "Checking the link", hint: "Checking for known threats and gathering information about the website.", tone: "text-leaf", dot: "bg-leaf" },
 };
 
+// Score bands for the risk percentage, mirroring the cuts in backend/app/risk.py.
+// Colour never signals alone: every band also shows its word next to the number.
+export const RISK_BANDS = [
+  { from: 0.8, key: "very-high", label: "Very high", tone: "text-risk-very-high", fill: "bg-risk-very-high" },
+  { from: 0.6, key: "high", label: "High", tone: "text-risk-high", fill: "bg-risk-high" },
+  { from: 0.4, key: "medium", label: "Medium", tone: "text-risk-medium", fill: "bg-risk-medium" },
+  { from: 0, key: "low", label: "Low", tone: "text-risk-low", fill: "bg-risk-low" },
+];
+
+export function riskBand(score) {
+  return RISK_BANDS.find(band => score >= band.from) || RISK_BANDS[RISK_BANDS.length - 1];
+}
+
 // Shared with the extension: the displayed high-risk verdict is also its stop rule.
 export function isHighRisk(result, cls = result?.classification) {
   if (!result || cls === "unavailable") return false;

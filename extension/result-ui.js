@@ -1,6 +1,6 @@
 /* Shared, text-only result UI for the popup and navigation warning. */
 (function () {
-  const { API_BASE, readExplanationStream, renderBanana, verdictMeta, reportFalsePositive } = self.Phisang;
+  const { API_BASE, readExplanationStream, renderBanana, riskBand, verdictMeta, reportFalsePositive } = self.Phisang;
   // Matches FalsePositiveReportRequest.reason on the API, so the field cannot
   // accept text the server would reject.
   const REASON_LIMIT = 1000;
@@ -67,10 +67,14 @@
     container.append(heading);
     if (result.classification !== 'unavailable' && Number.isFinite(result.risk_score) && result.risk_score >= 0 && result.risk_score <= 1) {
       const percent = Math.round(result.risk_score * 100);
+      const band = riskBand(result.risk_score);
       const risk = node('div', null, 'risk-meter');
+      risk.dataset.band = band.key;
       risk.setAttribute('role', 'meter'); risk.setAttribute('aria-label', 'Estimated risk');
       risk.setAttribute('aria-valuemin', '0'); risk.setAttribute('aria-valuemax', '100'); risk.setAttribute('aria-valuenow', percent);
-      risk.append(node('strong', `${percent}%`), node('span', ' Estimated risk · an estimate, not a guarantee'));
+      risk.setAttribute('aria-valuetext', `${percent}%, ${band.label.toLowerCase()} risk`);
+      risk.append(node('strong', `${percent}%`), node('b', band.label, 'risk-band'),
+        node('span', ' Estimated risk · an estimate, not a guarantee'));
       container.append(risk);
     }
     if (result.served_from_local_cache) {

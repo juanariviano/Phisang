@@ -15,7 +15,7 @@ write('content-guard.js', banner + '(function () {\n' +
     .replace(/export /g, '') + '\nObject.assign(self.Phisang ||= {}, { fileUrlMessage, FILE_MESSAGE });\n})();\n');
 for (const [source, target, names] of [
   ['web/src/lib/explanationStream.js', 'stream.js', 'readEventStream, readExplanationStream, readScanStream'],
-  ['web/src/lib/copy.js', 'verdicts.js', 'CLASS_META, verdictMeta, isHighRisk'],
+  ['web/src/lib/copy.js', 'verdicts.js', 'CLASS_META, RISK_BANDS, riskBand, verdictMeta, isHighRisk'],
 ]) {
   write(target, banner + '(function () {\n' + read(source).replace(/export /g, '') +
     `\nObject.assign(self.Phisang ||= {}, { ${names} });\n})();\n`);

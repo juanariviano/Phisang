@@ -19,6 +19,12 @@
   --rot: #8a5a0f;
   --bruise: #0e1408;
 
+  /* Risk-score bands, low to very high. Kept in step with web/src/index.css. */
+  --risk-low: #2d6a1f;
+  --risk-medium: #8a6100;
+  --risk-high: #a3410a;
+  --risk-very-high: #b42318;
+
   --font-display: "Bricolage Grotesque", "Public Sans", "Segoe UI", system-ui, sans-serif;
   --font-sans: "Public Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;

@@ -275,14 +275,46 @@ test('navigation scans the hostname once across paths and scans a different subd
   assert.equal(w.requests.length, 2);
 });
 
-test('cached threats block sibling paths without another API request', async () => {
+test('a cached threat asks the server again and still blocks when the server agrees', async () => {
   const w = worker();
   w.respond(() => Response.json(result({ classification: 'phishing' })));
   await checkNavigation(w, 'https://example.org/home');
   await checkNavigation(w, 'https://example.org/login');
-  assert.equal(w.requests.length, 1);
+  assert.equal(w.requests.length, 2);
   assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
   assert.equal(w.badges.at(-1).text, 'STOP');
+});
+
+test('an admin approval releases an address the local cache still holds as a threat', async () => {
+  const w = worker();
+  let approved = false;
+  w.respond(() => Response.json(approved
+    ? result({ decision_stage: 'approved', served_from_history: true, risk_score: 0 })
+    : result({ classification: 'phishing' })));
+  await checkNavigation(w, 'https://example.org/');
+  assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
+  approved = true;
+  await checkNavigation(w, 'https://example.org/');
+  assert.equal(w.navigations.at(-1), 'https://example.org/');
+  assert.equal(hostEntries(w)['example.org'].result.decision_stage, 'approved');
+  // The approval now sits in the cache, so the next visit needs no request.
+  await checkNavigation(w, 'https://example.org/');
+  assert.equal(w.requests.length, 2);
+});
+
+test('a cached threat keeps blocking when the server cannot be reached', async () => {
+  const w = worker();
+  let reachable = true;
+  w.respond(() => {
+    if (!reachable) throw new TypeError('Failed to fetch');
+    return Response.json(result({ classification: 'phishing' }));
+  });
+  await checkNavigation(w, 'https://example.org/home');
+  reachable = false;
+  await checkNavigation(w, 'https://example.org/login');
+  assert.equal(w.navigations.at(-1), 'chrome-extension://test/blocked.html');
+  assert.equal(w.badges.at(-1).text, 'STOP');
+  assert.equal(hostEntries(w)['example.org'].result.classification, 'phishing');
 });
 
 test('failed or incomplete checks are never reused across paths', async () => {

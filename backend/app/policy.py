@@ -242,8 +242,13 @@ async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page:
     # is the only stage that costs neither a URLhaus token nor a page fetch. The
     # caller can request a rescan; incomplete previous scans retry automatically.
     async with step("history", "Checking saved scans", "Looking for an earlier result for this address."):
+        approval = None
         try:
             prior_row = await asyncio.to_thread(history.lookup, normalized)
+            # An approval covers its whole hostname, so a page nobody has scanned
+            # yet is cleared by an approval granted on another page of the site.
+            approval = (prior_row if prior_row is not None and prior_row.get("ApprovedAt")
+                        else await asyncio.to_thread(history.host_approval, hostname_of(normalized)))
         except history.HistoryUnavailable:
             if not rescan and not inspect_page:
                 raise
@@ -251,13 +256,13 @@ async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page:
             prior_row = None
     prior = _prior_from_row(prior_row) if prior_row else None
 
-    # An address an admin cleared after reviewing a false-positive report. The
+    # A hostname an admin cleared after reviewing a false-positive report. The
     # threat feed still runs first: approving your own intranet is a judgement
     # call, but overriding a live malware listing from abuse.ch is almost always
     # either a mistake or a sign the site has since been compromised.
     force_fresh = False
-    if prior_row is not None and prior_row.get("ApprovedAt"):
-        approved, force_fresh = await _approved_result(scan_id, normalized, prior_row, prior)
+    if approval is not None:
+        approved, force_fresh = await _approved_result(scan_id, normalized, approval, prior)
         if approved is not None:
             return approved
 
@@ -285,8 +290,8 @@ async def analyze(raw_url: str, client: str, rescan: bool = False, inspect_page:
     return result
 
 
-async def _approved_result(scan_id, normalized, prior_row, prior):
-    """(benign answer for an approved address, must this scan skip the archive).
+async def _approved_result(scan_id, normalized, approval, prior):
+    """(benign answer for an address on an approved hostname, must this scan skip the archive).
 
     A None answer means scan normally. The second value is set when the threat
     feed lists the address: the approval is ignored, and so is the archive, since
@@ -314,8 +319,8 @@ async def _approved_result(scan_id, normalized, prior_row, prior):
         risk_score=0.0,
         decision_stage="approved",
         threat_intel=intel,
-        signals=["An administrator reviewed a report about this address and cleared it",
-                 f"Approved on {_format_when(prior_row.get('ApprovedAt'))} by {prior_row.get('ApprovedBy') or 'an administrator'}",
+        signals=[f"An administrator reviewed a report about this site and cleared every page on {hostname_of(normalized)}",
+                 f"Approved on {_format_when(approval.get('ApprovedAt'))} by {approval.get('ApprovedBy') or 'an administrator'}",
                  "Not listed in URLhaus; the threat database is still checked on every visit",
                  "The destination page was not fetched during this scan"],
         prior=prior,

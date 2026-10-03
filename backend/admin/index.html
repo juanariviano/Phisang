@@ -339,10 +339,10 @@ function askDecision(ids, decision, chosen){
     : (addresses>1 ? `Reject ${addresses} addresses` : 'Reject address');
   const covers = filed > addresses ? ` This covers all ${filed} reports filed about them.` : '';
   $('decide-what').textContent = (approving
-    ? 'The address below will be cleared for every user. Future scans return benign unless the threat database lists it.'
-    : 'The verdict stands. An address already approved is blocked again.') + covers;
+    ? 'Every page on the site below will be cleared for every user, not just the reported address. Subdomains are not included. Future scans return benign unless the threat database lists the page.'
+    : 'The verdict stands. If the site was approved, the approval is lifted and every page on it is checked again.') + covers;
   $('decide-targets').replaceChildren(...chosen.map(r=>el('div',
-    r.report_count>1 ? `${r.url}  (${r.report_count} reports)` : r.url)));
+    `${r.host || r.url} — reported: ${r.url}${r.report_count>1 ? `  (${r.report_count} reports)` : ''}`)));
   const note = $('decide-note');
   note.value=''; note.placeholder = approving ? 'Why is this address safe?' : 'Why is the verdict right?';
   $('decide-hint').textContent = `Required. Recorded with your name and the time.`;
@@ -452,7 +452,7 @@ function row(report){
   history.append(el('div',`${site.scan_count ?? '?'} scans`));
   history.append(el('div',`${site.malicious_count ?? 0} malicious · ${site.safe_count ?? 0} safe`,'sec'));
   if (site.ever_malicious) history.append(tag('ever malicious','rejected'));
-  if (site.approved_at) history.append(tag('approved','approved'));
+  if (site.approved_at) history.append(tag('site approved','approved'));
   tr.append(history);
 
   const created = el('td');

@@ -1,7 +1,7 @@
 const params = new URLSearchParams(location.search);
 const url = params.get('url') || '';
 const tabId = Number(params.get('tabId'));
-const { renderBanana, scanProgress, analyzeUrl, cachedResult } = self.Phisang;
+const { renderBanana, scanProgress, analyzeUrl, cachedResult, isHighRisk } = self.Phisang;
 renderBanana(document.getElementById('banana'), 'checking', 120);
 document.getElementById('address').textContent = url;
 const controller = new AbortController();
@@ -14,12 +14,21 @@ window.addEventListener('pagehide', () => { controller.abort(); progress?.stop()
     // Reuse the hostname's verdict across paths. The background worker still
     // blocks high-risk cached results through the same rules as fresh results.
     const cached = await cachedResult(url);
-    if (cached) {
+    // A cached threat still asks the server: an admin may have approved the address
+    // since, and only the server knows. Answering from its archive costs no page fetch.
+    if (cached && !isHighRisk(cached)) {
       await chrome.runtime.sendMessage({ type: 'ANALYSIS_RESULT', tabId, url, result: cached });
       return;
     }
     progress = scanProgress(document.getElementById('progress'));
-    const result = await analyzeUrl(url, { onProgress: progress.update, signal: controller.signal });
+    let result;
+    try {
+      result = await analyzeUrl(url, { onProgress: progress.update, signal: controller.signal });
+    } catch (error) {
+      // Unreachable server: keep blocking on the cached threat rather than degrade to unknown.
+      if (!cached || error.name === 'AbortError') throw error;
+      result = cached;
+    }
     await chrome.runtime.sendMessage({ type: 'ANALYSIS_RESULT', tabId, url, result });
   } catch (error) {
     if (error.name === 'AbortError') return;

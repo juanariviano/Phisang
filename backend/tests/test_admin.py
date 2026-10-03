@@ -143,6 +143,7 @@ def approved(monkeypatch):
     monkeypatch.setattr(policy.history, "record", Mock())
     monkeypatch.setattr(policy, "remember", Mock())
     monkeypatch.setattr(policy.history, "lookup", lambda url: approved_row())
+    monkeypatch.setattr(policy.history, "host_approval", lambda host: None)
     monkeypatch.setattr(policy, "_registration_with_progress", AsyncMock(return_value=None))
     lookup = AsyncMock(return_value=ThreatIntel(matched=False, source="URLhaus"))
     monkeypatch.setattr(policy.urlhaus, "lookup", lookup)
@@ -185,6 +186,55 @@ def test_an_approval_is_not_honoured_while_the_threat_feed_is_down(approved, mon
         label="benign", confidence=90, phishing_score=.2, status="ok", page_signals=PageSignals())))
     result = asyncio.run(policy.analyze("https://intranet.example/portal", "web"))
     assert result.decision_stage != "approved"
+
+
+def test_an_approval_clears_other_pages_on_the_same_hostname(approved, monkeypatch):
+    # /login was never scanned; the approval was granted on /portal.
+    monkeypatch.setattr(policy.history, "lookup", lambda url: None)
+    monkeypatch.setattr(policy.history, "host_approval",
+                        lambda host: approved_row() if host == "intranet.example" else None)
+    result = asyncio.run(policy.analyze("https://intranet.example/login", "web"))
+    assert result.decision_stage == "approved"
+    assert result.classification == "benign"
+    assert any("every page on intranet.example" in signal for signal in result.signals)
+
+
+def test_an_approval_does_not_reach_a_subdomain(approved, monkeypatch):
+    monkeypatch.setattr(policy.history, "lookup", lambda url: None)
+    monkeypatch.setattr(policy.history, "host_approval",
+                        lambda host: approved_row() if host == "intranet.example" else None)
+    monkeypatch.setattr(policy.page_stage, "classify", AsyncMock(return_value=PageResult(
+        label="benign", confidence=90, phishing_score=.2, status="ok", page_signals=PageSignals())))
+    result = asyncio.run(policy.analyze("https://login.intranet.example/", "web"))
+    assert result.decision_stage != "approved"
+
+
+class RecordingCursor:
+    def __init__(self):
+        self.statements = []
+
+    def execute(self, sql, params=()):
+        self.statements.append((" ".join(sql.split()), params))
+
+    def fetchone(self):
+        return {"UrlHash": "hash-of-login", "NormalizedUrl": "https://intranet.example/login"}
+
+
+def test_rejecting_lifts_the_approval_from_the_whole_hostname():
+    cur = RecordingCursor()
+    admin._apply_review(cur, 7, "rejected", "admin@example.com", None)
+    sql, params = cur.statements[-1]
+    assert sql.startswith("UPDATE dbo.Sites SET ApprovedAt = NULL")
+    assert "Host = (SELECT Host FROM dbo.Sites WHERE UrlHash = %s)" in sql
+    assert params == ("hash-of-login", "hash-of-login")
+
+
+def test_approving_records_who_approved_on_the_reported_address():
+    cur = RecordingCursor()
+    admin._apply_review(cur, 7, "approved", "admin@example.com", None)
+    sql, params = cur.statements[-1]
+    assert sql == "UPDATE dbo.Sites SET ApprovedAt = %s, ApprovedBy = %s WHERE UrlHash = %s"
+    assert params[1:] == ("admin@example.com", "hash-of-login")
 
 
 def test_review_refuses_a_decision_it_does_not_recognise():

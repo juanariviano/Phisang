@@ -5,7 +5,8 @@ PBKDF2 verifier; the TOTP secret and the session key live in the environment
 beside it. A verified sign-in mints a signed, expiring session token so the code
 is typed once rather than on every request.
 
-Approving a report clears that exact URL for every user, which makes this the
+Approving a report clears every page on that URL's hostname (subdomains stay
+separate) for every user, which makes this the
 most powerful action in the product. Three things keep it honest: an approval is
 recorded with who made it and when, it can be lifted again, and it never
 overrides a live threat-feed listing (see policy.analyze).
@@ -26,6 +27,7 @@ from typing import Optional
 from . import history, totp
 from .config import settings
 from .models import AnalyzeResponse
+from .normalize import hostname_of
 
 logger = logging.getLogger("phisang")
 
@@ -180,12 +182,18 @@ def list_reports(status: str = "new", limit: int = 50) -> list[dict]:
                    r.ReportedVerdict, r.ReportedClassification, r.ReportedRiskScore,
                    r.Reason, r.ReviewStatus, r.CreatedAt, r.ReviewedAt, r.ReviewedBy,
                    r.ReviewNote,
-                   s.Host, s.ApprovedAt, s.ApprovedBy, s.ScanCount, s.MaliciousCount,
+                   s.Host, approval.ApprovedAt, approval.ApprovedBy, s.ScanCount, s.MaliciousCount,
                    s.SafeCount, s.PotentiallyUnsafeCount, s.UnknownCount, s.EverMalicious,
                    s.FirstScannedAt, s.LastScannedAt, s.EffectiveVerdict,
                    scans.RawResponseJson
             FROM dbo.FalsePositiveReports AS r
             LEFT JOIN dbo.Sites AS s ON s.UrlHash = r.UrlHash
+            -- The approval in force for this hostname, wherever on it it was granted.
+            OUTER APPLY (
+                SELECT TOP 1 a.ApprovedAt, a.ApprovedBy FROM dbo.Sites AS a
+                WHERE a.Host = s.Host AND a.ApprovedAt IS NOT NULL
+                ORDER BY a.ApprovedAt DESC
+            ) AS approval
             OUTER APPLY (
                 SELECT TOP 1 x.RawResponseJson FROM dbo.Scans AS x
                 WHERE x.ScanRef = r.ScanRef
@@ -287,13 +295,20 @@ def _apply_review(cur, report_id: int, decision: str, reviewer: str, note: str |
         """,
         (decision, _now(), reviewer[:255], (note or "").strip()[:MAX_NOTE_CHARS] or None, report_id),
     )
-    # Approval is a property of the address, not of the report, so a later report
-    # about the same URL inherits it and lifting it is one update.
-    cur.execute(
-        "UPDATE dbo.Sites SET ApprovedAt = %s, ApprovedBy = %s WHERE UrlHash = %s",
-        (_now() if decision == "approved" else None,
-         reviewer[:255] if decision == "approved" else None, report["UrlHash"]),
-    )
+    # Approval is stored on the reported address but covers its whole hostname
+    # (history.host_approval), so a later report about any page there inherits it.
+    if decision == "approved":
+        cur.execute("UPDATE dbo.Sites SET ApprovedAt = %s, ApprovedBy = %s WHERE UrlHash = %s",
+                    (_now(), reviewer[:255], report["UrlHash"]))
+    else:
+        # Rejecting lifts the approval from every address on the hostname, wherever it was granted.
+        cur.execute(
+            """
+            UPDATE dbo.Sites SET ApprovedAt = NULL, ApprovedBy = NULL
+            WHERE UrlHash = %s OR Host = (SELECT Host FROM dbo.Sites WHERE UrlHash = %s)
+            """,
+            (report["UrlHash"], report["UrlHash"]),
+        )
     logger.info("admin review report_id=%s decision=%s by=%s", report_id, decision, reviewer)
     return {"report_id": report_id, "status": decision, "url": report["NormalizedUrl"]}
 
@@ -334,14 +349,5 @@ def review_many(report_ids: list[int], decision: str, reviewer: str,
 
 
 def is_url_approved(normalized_url: str) -> bool:
-    """True when an admin has cleared this exact address."""
-    if not history.enabled():
-        return False
-    approved = False
-    with history._cursor() as cur:
-        if cur is not None:
-            cur.execute("SELECT ApprovedAt FROM dbo.Sites WHERE UrlHash = %s",
-                        (history.url_hash(normalized_url),))
-            row = cur.fetchone()
-            approved = bool(row and row["ApprovedAt"])
-    return approved
+    """True when an admin has cleared this address's hostname."""
+    return history.host_approval(hostname_of(normalized_url)) is not None

@@ -191,6 +191,30 @@ def lookup(normalized_url: str) -> Optional[dict]:
     return row
 
 
+def host_approval(host: str) -> Optional[dict]:
+    """The newest admin approval on any address of this exact hostname, or None.
+
+    An approval is stored on the reported address but covers its whole hostname.
+    Subdomains stay separate: approving example.com never clears login.example.com.
+    """
+    if not enabled() or not host:
+        return None
+    row = None
+    with _cursor() as cur:
+        if cur is not None:
+            cur.execute(
+                """
+                SELECT TOP 1 NormalizedUrl, ApprovedAt, ApprovedBy
+                FROM dbo.Sites
+                WHERE Host = %s AND ApprovedAt IS NOT NULL
+                ORDER BY ApprovedAt DESC
+                """,
+                (host,),
+            )
+            row = cur.fetchone()
+    return row
+
+
 def record(result: AnalyzeResponse, *, client: str = "web", host: str = "",
            duration_ms: Optional[int] = None, is_rescan: bool = False,
            served_from_history: bool = False) -> None:

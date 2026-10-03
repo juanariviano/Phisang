@@ -240,7 +240,7 @@ async def admin_reports(request: Request, status: str = Query(default="new"),
 
 @app.post("/api/v1/admin/reports/{report_id}/review")
 async def admin_review(report_id: int, body: AdminReviewRequest, request: Request):
-    """Approve or reject. Approving clears that exact address for every user."""
+    """Approve or reject. Approving clears every page on the address's hostname for every user."""
     try:
         reviewer = admin.require_session(_bearer(request))
         return await asyncio.to_thread(admin.review, report_id, body.decision, reviewer, body.note)

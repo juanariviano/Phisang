@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="extension/icons/icon128.png" alt="Phisang logo" width="96" height="96">
+<img src="extension/icons/babanaas.png" alt="Phisang logo" width="96" height="96">
 
 # Phisang
 
